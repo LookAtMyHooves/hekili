@@ -1390,6 +1390,7 @@ me:RegisterAbilities( {
         talent = "blinding_sleet",
         startsCombat = true,
 
+        range = 12,
         handler = function ()
             applyDebuff( "target", "blinding_sleet" )
         end,
@@ -1581,6 +1582,10 @@ me:RegisterAbilities( {
         startsCombat = true,
         notalent = "defile",
 
+        range = 8,
+        usable = function ()
+            return not moving
+        end,
         handler = function ()
             applyBuff( "death_and_decay" )
             if talent.grip_of_the_dead.enabled then applyDebuff( "target", "grip_of_the_dead" ) end
@@ -1752,6 +1757,10 @@ me:RegisterAbilities( {
         talent = "defile",
         startsCombat = true,
 
+        range = 8,
+        usable = function ()
+            return not moving
+        end,
         handler = function ()
             applyBuff( "death_and_decay" )
             applyDebuff( "target", "defile" )
@@ -1777,6 +1786,7 @@ me:RegisterAbilities( {
         talent = "empower_rune_weapon",
         startsCombat = false,
 
+        range = 8,
         handler = function ()
             applyBuff( "empower_rune_weapon" )
             gain( 1, "runes" )
@@ -2125,6 +2135,7 @@ me:RegisterAbilities( {
 
         toggle = "cooldowns",
 
+        range = 8,
         handler = function ()
             summonPet( "gargoyle", 25 )
             gain( 50, "runic_power" )
@@ -2147,6 +2158,7 @@ me:RegisterAbilities( {
 
         cycle = "festering_wound",
 
+        range = 8,
         handler = function ()
             applyDebuff( "target", "festering_wound", nil, min( 6, debuff.festering_wound.stack + 4 ) )
             applyBuff( "unholy_frenzy" )
