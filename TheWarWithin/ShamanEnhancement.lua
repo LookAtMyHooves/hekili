@@ -1221,6 +1221,7 @@ spec:RegisterAbilities( {
 
         toggle = "interrupts",
 
+        range = 8,
         handler = function ()
             summonTotem( "capacitor_totem" )
         end,
@@ -1360,6 +1361,7 @@ spec:RegisterAbilities( {
         talent = "crash_lightning",
         startsCombat = true,
 
+        range = 12,
         handler = function ()
             if active_enemies > 1 then
                 applyBuff( "crash_lightning" )
@@ -1401,6 +1403,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
+        range = 8,
         handler = function ()
             applyBuff( "doom_winds" )
             -- TODO: See how/if the legacy legendary works in 10.0.
@@ -1515,6 +1518,7 @@ spec:RegisterAbilities( {
         talent = "elemental_blast",
         startsCombat = false,
 
+        usable = function() return not (moving or cast) end,
         handler = function ()
             consume_maelstrom()
 
@@ -1575,6 +1579,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
+        range = 8,
         handler = function ()
             -- instant MW stack?
             applyBuff( "feral_spirit" )
@@ -1939,6 +1944,7 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
+        usable = function () return not (moving or cast) end,
         handler = function ()
             consume_maelstrom()
 
@@ -2277,6 +2283,7 @@ spec:RegisterAbilities( {
         talent = "sundering",
         startsCombat = true,
 
+        range = 11,
         handler = function ()
             applyDebuff( "target", "sundering" )
 
@@ -2347,6 +2354,7 @@ spec:RegisterAbilities( {
         talent = "thunderstorm",
         startsCombat = false,
 
+        range = 10,
         handler = function ()
             applyDebuff( "target", "thunderstorm" )
             if buff.vesper_totem.up and vesper_totem_dmg_charges > 0 then trigger_vesper_damage() end
