@@ -1110,6 +1110,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
+        range = 12,
         handler = function ()
             applyDebuff( "target", "blinding_sleet" )
             active_dot.blinding_sleet = max( active_dot.blinding_sleet, active_enemies )
@@ -1132,6 +1133,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
+        range = 12,
         handler = function ()
             gain( 2, "runes" )
             applyBuff( "breath_of_sindragosa" )
@@ -1248,6 +1250,10 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
+        range = 8,
+        usable = function ()
+            return not moving
+        end,
         handler = function ()
             applyBuff( "death_and_decay" )
             applyDebuff( "target", "death_and_decay" )
@@ -1380,6 +1386,7 @@ spec:RegisterAbilities( {
         talent = "empower_rune_weapon",
         startsCombat = false,
 
+        range = 8,
         usable = function() return talent.empower_rune_weapon.rank + talent.empower_rune_weapon_2.rank > 0, "requires an empower_rune_weapon talent" end,
 
         handler = function ()
@@ -1659,6 +1666,7 @@ spec:RegisterAbilities( {
         talent = "pillar_of_frost",
         startsCombat = false,
 
+        range = 8,
         handler = function ()
             applyBuff( "pillar_of_frost" )
             if set_bonus.tier30_2pc > 0 then
@@ -1743,6 +1751,7 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
+        range = 8,
         handler = function ()
             applyBuff( "remorseless_winter" )
 
