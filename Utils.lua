@@ -12,27 +12,45 @@ local state = Hekili.State
 
 local GetPlayerAuraBySpellID = C_UnitAuras.GetPlayerAuraBySpellID
 local GetBuffDataByIndex, GetDebuffDataByIndex = C_UnitAuras.GetBuffDataByIndex, C_UnitAuras.GetDebuffDataByIndex
+local FindAura = AuraUtil.FindAura
+local UnpackAuraData = AuraUtil.UnpackAuraData
 
 local GetSpellBookItemName = function(index, bookType)
     local spellBank = (bookType == BOOKTYPE_SPELL) and Enum.SpellBookSpellBank.Player or Enum.SpellBookSpellBank.Pet;
     return C_SpellBook.GetSpellBookItemName(index, spellBank);
 end
 
-ns.UnitBuff = function( unitToken, index, filter )
-    local b = GetBuffDataByIndex( unitToken, index, filter )
-    if b and b.name then
-        return b.name, b.icon, b.applications, b.dispelName, b.duration, b.expirationTime, b.sourceUnit, b.isStealable, b.nameplateShowPersonal, b.spellID, b.canApplyAura, b.isBossAura, b.nameplateShowAll, b.timeMod, unpack( b.points )
-    end
+ns.UnitBuff = function( unit, index, filter )
+    return UnpackAuraData( GetBuffDataByIndex( unit, index, filter ) )
 end
 
-ns.UnitDebuff = function( unitToken, index, filter )
-    local d = GetDebuffDataByIndex( unitToken, index, filter )
-    if d and d.name then
-        return d.name, d.icon, d.applications, d.dispelName, d.duration, d.expirationTime, d.sourceUnit, d.isStealable, d.nameplateShowPersonal, d.spellID, d.canApplyAura, d.isBossAura, d.nameplateShowAll, d.timeMod, unpack( d.points )
-    end
+ns.UnitDebuff = function( unit, index, filter )
+    return UnpackAuraData( GetDebuffDataByIndex( unit, index, filter ) )
+end
+
+
+ns.UnitBuffByID = function( unitToken, spellID, filter )
+    local playerOrPet = UnitIsUnit( "player", unitToken ) or UnitIsUnit( "pet", unitToken )
+    filter = filter or "HELPFUL"
+
+    return FindAura( function( _, _, _, ... )
+        local id, isFromPlayerOrPet = select( 10, ... ), select( 13, ... )
+        return id == spellID and ( not playerOrPet or isFromPlayerOrPet )
+    end, unitToken, filter )
+end
+
+ns.UnitDebuffByID = function( unitToken, spellID, filter )
+    local playerOrPet = UnitIsUnit( "player", unitToken ) or UnitIsUnit( "pet", unitToken )
+    filter = filter or "HARMFUL"
+
+    return FindAura( function( _, _, _, ... )
+        local id, isFromPlayerOrPet = select( 10, ... ), select( 13, ... )
+        return id == spellID and ( not playerOrPet or isFromPlayerOrPet )
+    end, unitToken, filter )
 end
 
 local UnitBuff, UnitDebuff = ns.UnitBuff, ns.UnitDebuff
+local UnitBuffByID, UnitDebuffByID = ns.UnitBuffByID, ns.UnitDebuffByID
 
 local GetItemInfo = C_Item.GetItemInfo
 local GetSpellInfo = C_Spell.GetSpellInfo
@@ -550,24 +568,7 @@ ns.FindPlayerAuraByID = FindPlayerAuraByID
 -- Duplicate spell info lookup.
 function ns.FindUnitBuffByID( unit, id, filter )
     if unit == "player" then return FindPlayerAuraByID( id ) end
-
-    local playerOrPet = false
-
-    if filter == "PLAYER|PET" then
-        playerOrPet = true
-        filter = nil
-    end
-
-    local i = 1
-    local name, icon, count, debuffType, duration, expirationTime, caster, stealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff( unit, i, filter )
-
-    while( name ) do
-        if spellID == id and ( not playerOrPet or UnitIsUnit( caster, "player" ) or UnitIsUnit( caster, "pet" ) ) then break end
-        i = i + 1
-        name, icon, count, debuffType, duration, expirationTime, caster, stealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, nameplateShowAll, timeMod, value1, value2, value3 = UnitBuff( unit, i, filter )
-    end
-
-    return name, icon, count, debuffType, duration, expirationTime, caster, stealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, nameplateShowAll, timeMod, value1, value2, value3
+    return UnitBuffByID( unit, id, filter )
 end
 
 
@@ -978,42 +979,46 @@ function Hekili:GetLoadoutExportString()
         es:AddValue( 8, hashVal )
     end
 
-    local treeNodes = C_Traits.GetTreeNodes( treeID )
-    for i, treeNodeID in ipairs( treeNodes ) do
-        local treeNode = C_Traits.GetNodeInfo( configID, treeNodeID )
+	local treeNodes = C_Traits.GetTreeNodes(treeID);
+	for i, treeNodeID in ipairs(treeNodes) do
+		local treeNode = C_Traits.GetNodeInfo(configID, treeNodeID);
 
-        local isNodeSelected = treeNode.ranksPurchased > 0
-        local isPartiallyRanked = treeNode.ranksPurchased ~= treeNode.maxRanks
-        local isChoiceNode = treeNode.type == Enum.TraitNodeType.Selection
+		local isNodeGranted = treeNode.activeRank - treeNode.ranksPurchased > 0;
+		local isNodePurchased = treeNode.ranksPurchased > 0;
+		local isNodeSelected = isNodeGranted or isNodePurchased;
+		local isPartiallyRanked = treeNode.ranksPurchased ~= treeNode.maxRanks;
+		local isChoiceNode = treeNode.type == Enum.TraitNodeType.Selection or treeNode.type == Enum.TraitNodeType.SubTreeSelection;
 
-        es:AddValue( 1, isNodeSelected and 1 or 0 )
+		es:AddValue(1, isNodeSelected and 1 or 0);
+		if(isNodeSelected) then
+			es:AddValue(1, isNodePurchased and 1 or 0);
 
-        if ( isNodeSelected ) then
-            es:AddValue( 1, isPartiallyRanked and 1 or 0 )
-            if ( isPartiallyRanked ) then
-                es:AddValue( bitWidthRanksPurchased, treeNode.ranksPurchased )
-            end
+			if isNodePurchased then
+				es:AddValue(1, isPartiallyRanked and 1 or 0);
+				if(isPartiallyRanked) then
+					es:AddValue(bitWidthRanksPurchased, treeNode.ranksPurchased);
+				end
 
-            es:AddValue( 1, isChoiceNode and 1 or 0 )
-            if ( isChoiceNode) then
-                local entryIndex = 0
+				es:AddValue(1, isChoiceNode and 1 or 0);
+				if(isChoiceNode) then
+					local entryIndex = 0
 
-                for i, entryID in ipairs( treeNode.entryIDs ) do
-                    if ( entryID == treeNode.activeEntry.entryID ) then
-                        entryIndex = i
-                        break
+                    for i, entryID in ipairs(treeNode.entryIDs) do
+                        if(entryID == treeNode.activeEntry.entryID) then
+                            entryIndex = i
+                        end
                     end
-                end
 
-                if ( entryIndex <= 0 or entryIndex > 4 ) then
-                    return "error: unable to generate"
-                end
+					if(entryIndex <= 0 or entryIndex > 4) then
+						error("Error exporting tree node " .. treeNode.ID .. ". The active choice node entry index (" .. entryIndex .. ") is out of bounds. ");
+					end
 
-                -- store entry index as zero-index
-                es:AddValue( 2, entryIndex - 1 )
-            end
-        end
-    end
+					-- store entry index as zero-index
+					es:AddValue(2, entryIndex - 1);
+				end
+			end
+		end
+	end
 
     return es:GetExportString()
 end

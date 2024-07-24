@@ -20,22 +20,8 @@ local GetItemSpell = C_Item.GetItemSpell
 local GetItemCooldown = C_Item.GetItemCooldown
 local IsUsableItem = C_Item.IsUsableItem
 local GetSpellLossOfControlCooldown = C_Spell.GetSpellLossOfControlCooldown
-local UnitBuff = function(unitToken, index, filter)
-    local auraData = C_UnitAuras.GetBuffDataByIndex(unitToken, index, filter)
-    if not auraData then
-        return nil
-    end
+local UnitBuff, UnitDebuff = ns.UnitBuff, ns.UnitDebuff
 
-    return AuraUtil.UnpackAuraData(auraData)
-end
-local UnitDebuff = function(unitToken, index, filter)
-    local auraData = C_UnitAuras.GetDebuffDataByIndex(unitToken, index, filter)
-    if not auraData then
-        return nil
-    end
-
-    return AuraUtil.UnpackAuraData(auraData)
-end
 local GetSpellCharges = function(spellID)
     local spellChargeInfo = C_Spell.GetSpellCharges(spellID);
     if spellChargeInfo then
@@ -4754,6 +4740,8 @@ ns.metatables.mt_equipped = mt_equipped
 
 -- Aliases let a single buff name refer to any of multiple buffs.
 -- Developed mainly for RtB; it will also report "stack" or "count" as the sum of stacks of multiple buffs.
+local mt_alias_debuff
+
 do
     local autoReset = setmetatable( {
         applied = 1,
