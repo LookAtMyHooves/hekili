@@ -685,6 +685,7 @@ spec:RegisterAbilities( {
         cast = 0.0,
         cooldown = 120.0,
         gcd = "global",
+        range = 20,
 
         talent = "abomination_limb",
         startsCombat = false,

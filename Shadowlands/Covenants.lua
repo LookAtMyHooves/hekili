@@ -320,6 +320,7 @@ if baseClass == "DEATHKNIGHT" then
 
             toggle = "essences",
 
+            range = 20,
             handler = function ()
                 applyBuff( "abomination_limb" )
                 if soulbind.kevins_oozeling.enabled then applyBuff( "kevins_oozeling" ) end
