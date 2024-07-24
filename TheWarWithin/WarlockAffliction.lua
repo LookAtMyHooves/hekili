@@ -1,5 +1,5 @@
 -- WarlockAffliction.lua
--- October 2023
+-- July 2024
 
 if UnitClassBase( "player" ) ~= "WARLOCK" then return end
 
@@ -56,83 +56,115 @@ spec:RegisterTalents( {
     dark_pact                      = { 71936, 108416, 1 }, -- Sacrifices 20% of your current health to shield you for 200% of the sacrificed health plus an additional 24,582 for 20 sec. Usable while suffering from control impairing effects.
     darkfury                       = { 71941, 264874, 1 }, -- Reduces the cooldown of Shadowfury by 15 sec and increases its radius by 2 yards.
     demon_skin                     = { 71952, 219272, 2 }, -- Your Soul Leech absorption now passively recharges at a rate of ${$s1/10}.1% of maximum health every $t1 sec, and may now absorb up to $s2% of maximum health.; Increases your armor by $m4%.
-    demonic_circle                 = { 71933, 268358, 1 }, -- Summons a Demonic Circle for 15 min. Cast Demonic Circle: Teleport to teleport to its location and remove all movement slowing effects. You also learn:  Demonic Circle: Teleport Teleports you to your Demonic Circle and removes all movement slowing effects.
+    demonic_circle                 = { 100941, 268358, 1 }, -- [48018] Summons a Demonic Circle for $d. Cast Demonic Circle: Teleport to teleport to its location and remove all movement slowing effects.$?s58081[; If you cast Demonic Circle: Summon while controlling an Eye of Kilrogg, the circle will appear where the eye is located.][]
     demonic_embrace                = { 71930, 288843, 1 }, -- Stamina increased by 10%.
     demonic_fortitude              = { 71922, 386617, 1 }, -- Increases you and your pets' maximum health by 5%.
     demonic_gateway                = { 71955, 111771, 1 }, -- Creates a demonic gateway between two locations. Activating the gateway transports the user to the other gateway. Each player can use a Demonic Gateway only once per 90 sec.
     demonic_inspiration            = { 71928, 386858, 1 }, -- Increases the attack speed of your primary pet by 5%. Increases Grimoire of Sacrifice damage by 10%.
     demonic_resilience             = { 71917, 389590, 2 }, -- Reduces the chance you will be critically struck by 2%. All damage your primary demon takes is reduced by 8%.
+    demonic_tactics                = { 71925, 452894, 1 }, -- Your spells have a $s1% increased chance to deal a critical strike.; You gain $s2% more of the Critical Strike stat from all sources.
     fel_armor                      = { 71950, 386124, 2 }, -- When Soul Leech absorbs damage, 5% of damage taken is absorbed and spread out over 5 sec. Reduces damage taken by 1.5%.
     fel_domination                 = { 71931, 333889, 1 }, -- Your next Imp, Voidwalker, Incubus, Succubus, Felhunter, or Felguard Summon spell is free and has its casting time reduced by 90%.
-    fel_pact                       = { 71932, 386113, 2 }, -- Reduces the cooldown of Fel Domination by 30 sec.
-    fel_synergy                    = { 71918, 389367, 1 }, -- Soul Leech also heals you for 15% and your pet for 50% of the absorption it grants.
-    fiendish_stride                = { 71948, 386110, 2 }, -- Reduces the damage dealt by Burning Rush by 25%. Burning Rush increases your movement speed by an additional 5%.
+    fel_pact                       = { 71932, 386113, 1 }, -- Reduces the cooldown of Fel Domination by ${$s1/-1000} sec.
+    fel_synergy                    = { 71924, 389367, 2 }, -- Soul Leech also heals you for $s1% and your pet for $s2% of the absorption it grants.
+    fiendish_stride                = { 71948, 386110, 1 }, -- Reduces the damage dealt by Burning Rush by ${$abs($s1)}%. Burning Rush increases your movement speed by an additional $s2%.
     frequent_donor                 = { 71937, 386686, 1 }, -- Reduces the cooldown of Dark Pact by 15 sec.
-    grim_feast                     = { 71926, 386689, 1 }, -- Drain Life now channels 30% faster and restores health 30% faster.
-    grimoire_of_synergy            = { 71924, 171975, 2 }, -- Damage done by you or your demon has a chance to grant the other one 5% increased damage for 15 sec.
     horrify                        = { 71916, 56244 , 1 }, -- Your Fear causes the target to tremble in place instead of fleeing in fear.
     howl_of_terror                 = { 71947, 5484  , 1 }, -- Let loose a terrifying howl, causing 5 enemies within 10 yds to flee in fear, disorienting them for 20 sec. Damage may cancel the effect.
     ichor_of_devils                = { 71937, 386664, 1 }, -- Dark Pact sacrifices only 5% of your current health for the same shield value.
-    inquisitors_gaze               = { 71939, 386344, 1 }, -- Your spells and abilities have a chance to summon an Inquisitor's Eye that deals 7,763 Shadowflame damage every 0.8 sec for 11.5 sec.
     lifeblood                      = { 71940, 386646, 2 }, -- When you use a Healthstone, gain 7% Leech for 20 sec.
     mortal_coil                    = { 71947, 6789  , 1 }, -- Horrifies an enemy target into fleeing, incapacitating for 3 sec and healing you for 20% of maximum health.
     nightmare                      = { 71916, 386648, 1 }, -- Increases the amount of damage required to break your fear effects by 60%.
-    profane_bargain                = { 71919, 389576, 2 }, -- When your health drops below 35%, the percentage of damage shared via your Soul Link is increased by an additional 5%. While Grimoire of Sacrifice is active, your Stamina is increased by 3%.
+    pact_of_gluttony               = { 71926, 386689, 1 }, -- [452930] Instantly restores $s1% health$?s262031[, plus an additional ${$262080d/$262080t1*$262080s1}% over $262080d.][.]
     resolute_barrier               = { 71915, 389359, 2 }, -- Attacks received that deal at least 5% of your health decrease Unending Resolve's cooldown by 10 sec. Cannot occur more than once every 30 sec.
     sargerei_technique             = { 93179, 405955, 2 }, -- Shadow Bolt and Drain Soul damage increased by 8%.
     shadowflame                    = { 71941, 384069, 1 }, -- Slows enemies in a 12 yard cone in front of you by 70% for 6 sec.
     shadowfury                     = { 71942, 30283 , 1 }, -- Stuns all enemies within 8 yds for 3 sec.
     socrethars_guile               = { 93178, 405936, 2 }, -- Agony damage increased by 8%.
-    soul_conduit                   = { 71923, 215941, 2 }, -- Every Soul Shard you spend has a 5% chance to be refunded.
-    soul_link                      = { 71925, 108415, 1 }, -- 10% of all damage you take is taken by your demon pet instead. While Grimoire of Sacrifice is active, your Stamina is increased by 5%.
+    soul_conduit                   = { 71939, 215941, 1 }, -- Every Soul Shard you spend has a $?s137043[$s1%]?s137046[$s3%][$s2%] chance to be refunded.
+    soul_link                      = { 71923, 108415, 2 }, -- $s2% of all damage you take is taken by your demon pet instead. $?a137044[][; While Grimoire of Sacrifice is active, your Stamina is increased by $s3%.]
     soulburn                       = { 71957, 385899, 1 }, -- Consumes a Soul Shard, unlocking the hidden power of your spells. Demonic Circle: Teleport: Increases your movement speed by 50% and makes you immune to snares and roots for 6 sec. Demonic Gateway: Can be cast instantly. Drain Life: Gain an absorb shield equal to the amount of healing done for 30 sec. This shield cannot exceed 30% of your maximum health. Health Funnel: Restores 140% more health and reduces the damage taken by your pet by 30% for 10 sec. Healthstone: Increases the healing of your Healthstone by 30% and increases your maximum health by 20% for 12 sec.
     strength_of_will               = { 71956, 317138, 1 }, -- Unending Resolve reduces damage taken by an additional 15%.
-    summon_soulkeeper              = { 71939, 386256, 1 }, -- Summons a Soulkeeper that consumes all Tormented Souls you've collected, blasting nearby enemies for 651 Chaos damage per soul consumed over 8 sec. Deals reduced damage beyond 8 targets and only one Soulkeeper can be active at a time. You collect Tormented Souls from each target you kill and occasionally escaped souls you previously collected.
     sweet_souls                    = { 71927, 386620, 1 }, -- Your Healthstone heals you for an additional 10% of your maximum health. Any party or raid member using a Healthstone also heals you for that amount.
+    swift_artifice                 = { 71918, 452902, 1 }, -- Reduces the cast time of Soulstone and Create Healthstone by $s1%.
     teachings_of_the_black_harvest = { 71938, 385881, 1 }, -- Your primary pets gain a bonus effect. Imp: Successful Singe Magic casts grant the target 4% damage reduction for 5 sec. Voidwalker: Reduces the cooldown of Shadow Bulwark by 30 sec. Felhunter: Reduces the cooldown of Devour Magic by 5 sec. Sayaad: Reduces the cooldown of Seduction by 10 sec and causes the target to walk faster towards the demon.
     teachings_of_the_satyr         = { 71935, 387972, 1 }, -- Reduces the cooldown of Amplify Curse by 15 sec.
     wrathful_minion                = { 71946, 386864, 1 }, -- Increases the damage done by your primary pet by 5%. Increases Grimoire of Sacrifice damage by 10%.
 
     -- Affliction
-    absolute_corruption            = { 72053, 196103, 1 }, -- Corruption is now permanent and deals 15% increased damage. Duration reduced to 24 sec against players.
-    agonizing_corruption           = { 72038, 386922, 2 }, -- Seed of Corruption's explosion increases the stack count of Agony by 1 on all targets hit.
-    creeping_death                 = { 72058, 264000, 1 }, -- Your Agony, Corruption, Siphon Life, and Unstable Affliction deal damage 15% faster.
-    dark_harvest                   = { 72057, 387016, 1 }, -- Each target affected by Soul Rot increases your haste and critical strike chance by 2.5% for 8 sec.
+    absolute_corruption            = { 72051, 196103, 1 }, -- $?a445465[Wither][Corruption] is now permanent and deals $s2% increased damage.; Duration reduced to $s1 sec against players.
+    contagion                      = { 72041, 453096, 2 }, -- Increases critical strike damage dealt by Agony, $?a445465[Wither][Corruption], and Unstable Affliction by $s1%.
+    creeping_death                 = { 72058, 264000, 1 }, -- Your Agony, $?a445465[Wither][Corruption], and Unstable Affliction deal damage $s1% faster.
+    cull_the_weak                  = { 72038, 453056, 2 }, -- Malefic Rapture damage is increased by $s1% for each enemy it hits, up to $s2 enemies.
+    cunning_cruelty                = { 72054, 453172, 1 }, -- Shadow Bolt and Drain Soul have a chance to trigger a Shadow Bolt Volley, dealing $<damage> Shadow damage to $s1 enemies within $453176a1 yards of your current target.
+    dark_harvest                   = { 102029, 387016, 1 }, -- Each target affected by Soul Rot increases your haste and critical strike chance by ${$s1/10}.1% for $387018d.
     dark_virtuosity                = { 72043, 405327, 2 }, -- Shadow Bolt and Drain Soul deal an additional 5% damage.
-    doom_blossom                   = { 71986, 416621, 1 }, -- When Seed of Corruption deals damage to a target suffering from your Unstable Affliction they explode, dealing 7,743 Shadow damage to all enemies within 10 yards.
-    drain_soul                     = { 72045, 198590, 1 }, -- Drains the target's soul, causing 30,353 Shadow damage over 3.8 sec. Damage is increased by 100% against enemies below 20% health. Generates 1 Soul Shard if the target dies during this effect.
-    dread_touch                    = { 71986, 389775, 1 }, -- Malefic Rapture causes targets suffering from your Unstable Affliction to take 30% additional damage from your damage over time effects for 8 sec.
-    focused_malignancy             = { 72042, 399668, 2 }, -- Malefic Rapture deals 15% increased damage to targets suffering from Unstable Affliction.
-    grand_warlocks_design          = { 71988, 387084, 1 }, -- $?a137043[Summon Darkglare]?a137044[Summon Demonic Tyrant][Summon Infernal] cooldown is reduced by $?a137043[${$m1/-1000}]?a137044[${$m2/-1000}][${$m3/-1000}] sec.
-    grim_reach                     = { 71988, 389992, 1 }, -- When Darkglare deals damage, it deals 50% of that damage to all enemies affected by your damage over time effects.
-    grimoire_of_sacrifice          = { 72054, 108503, 1 }, -- Sacrifices your demon pet for power, gaining its command demon ability, and causing your spells to sometimes also deal 5,889 additional Shadow damage. Lasts until canceled or until you summon a demon pet.
+    deaths_embrace                 = { 72033, 453189, 1 }, -- Increases Drain Life healing by $s1% while your health is at or below $s2% health. ; Damage done by your Agony, $?a445465[Wither][Corruption], Unstable Affliction, and Malefic Rapture is increased by $s3% when your target is at or below $s4% health.
+    drain_soul                     = { 72045, 388667, 1 }, -- [198590] $?s388667[][Replaces Shadow Bolt.; ]Drains the target's soul, causing $o1 Shadow damage over $d.; Damage is increased by $s2% against enemies below $s3% health.; Generates 1 Soul Shard if the target dies during this effect.
+    focused_malignancy             = { 72042, 399668, 1 }, -- Malefic Rapture deals $s1% increased damage to targets suffering from Unstable Affliction.
+    grimoire_of_sacrifice          = { 72037, 108503, 1 }, -- Sacrifices your demon pet for power, gaining its command demon ability, and causing your spells to sometimes also deal $196100s1 additional Shadow damage.; Lasts $196099d or until you summon a demon pet.
     haunt                          = { 72032, 48181 , 1 }, -- A ghostly soul haunts the target, dealing 10,798 Shadow damage and increasing your damage dealt to the target by 10% for 18 sec. If the target dies, Haunt's cooldown is reset.
-    haunted_soul                   = { 71989, 387301, 1 }, -- Your Haunt spell also increases the damage of your damage over time effects to all targets by 20% while active.
-    inevitable_demise              = { 72046, 334319, 2 }, -- Damaging an enemy with Agony increases the damage dealt by your next Drain Life by 7%. This effect stacks up to 50 times.
-    kindled_malice                 = { 72040, 405330, 2 }, -- Malefic Rapture and Seed of Corruption deal an additional 4% damage.
-    malefic_rapture                = { 72049, 324536, 1 }, -- Your damaging periodic effects from your spells erupt on all targets, causing $324540s1 Shadow damage per effect.
-    malevolent_visionary           = { 71987, 387273, 2 }, -- Darkglare increases its damage by an additional 3% for each damage over time effect active. Darkglare lasts an additional 5 sec.
-    nightfall                      = { 72047, 108558, 1 }, -- Corruption damage has a chance to cause your next Shadow Bolt or Drain Soul to deal 25% increased damage. Shadow Bolt is instant cast and Drain Soul channels 50% faster when affected.
-    pandemic_invocation            = { 72052, 386759, 1 }, -- Refreshing Corruption, Agony, Unstable Affliction, or Siphon Life with less than 5 seconds remaining will deal 6,282 Shadow damage and has a 6.66% chance to grant you a Soul Shard.
-    phantom_singularity            = { 72036, 205179, 1 }, -- Places a phantom singularity above the target, which consumes the life of all enemies within 15 yards, dealing 62,014 damage over 12.3 sec, healing you for 25% of the damage done.
-    sacrolashs_dark_strike         = { 72035, 386986, 2 }, -- Corruption damage is increased by 7%, and each time it deals damage any of your Curses active on the target are extended by 0.5 sec.
-    seed_of_corruption             = { 72050, 27243 , 1 }, -- Embeds a demon seed in the enemy target that will explode after 9.2 sec, dealing 12,209 Shadow damage to all enemies within 10 yards and applying Corruption to them. The seed will detonate early if the target is hit by other detonations, or takes 4,916 damage from your spells.
-    seized_vitality                = { 71990, 387250, 2 }, -- Haunt deals 10% additional damage. When the Haunt spell ends or is dispelled, the soul returns to you, healing for 50% of the damage it did to the target.
-    shadow_embrace                 = { 72044, 32388 , 2 }, -- Shadow Bolt and Drain Soul apply Shadow Embrace, increasing your damage dealt to the target by 1.5% for 16 sec. Stacks up to 3 times.
-    siphon_life                    = { 72053, 63106 , 1 }, -- Siphons the target's life essence, dealing 27,148 Shadow damage over 15 sec and healing you for 30% of the damage done.
-    soul_flame                     = { 72041, 199471, 2 }, -- When you kill a target, its soul bursts into flames, dealing 5,235 Shadowflame damage to nearby enemies. Deals reduced damage beyond 8 targets.
+    improved_haunt                 = { 102031, 458034, 1 }, -- Increases the damage of Haunt by $s1% and reduces its cast time by $s2%. Haunt now applies Shadow Embrace.
+    improved_malefic_rapture       = { 72035, 454378, 1 }, -- Increases Malefic Rapture damage by $s1% and reduces its cast time by $s2%.
+    improved_shadow_bolt           = { 72045, 453080, 1 }, -- Reduces the cast time of Shadow Bolt by $s1% and increases its damage by $s2%.
+    infirmity                      = { 102032, 458036, 1 }, -- The stack count of Agony is increased by $s1 when applied by Vile Taint.; Enemies damaged by Phantom Singularity take $458219s1% increased damage from you for its duration.
+    kindled_malice                 = { 72040, 405330, 2 }, -- Malefic Rapture damage increased by $s1%. $?a445465[Wither][Corruption] damage increased by $s2%.
+    malediction                    = { 72046, 453087, 2 }, -- Increases the critical strike chance of Agony, $?a445465[Wither][Corruption], and Unstable Affliction by $s1%.
+    malefic_touch                  = { 102030, 458029, 1 }, -- Malefic Rapture deals an additional $458131s1 Shadowflame damage to each target it affects.
+    malevolent_visionary           = { 71987, 387273, 1 }, -- Increases the damage of your Darkglare by $s1%. When Darkglare extends damage over time effects it also sears affected targets for $453233s1 Shadow damage.
+    malign_omen                    = { 72057, 458041, 1 }, -- [458043] Your next Malefic Rapture deals $s1% increased damage and extends the duration of your damage over time effects and Haunt by $s2 sec.
+    nightfall                      = { 72047, 108558, 1 }, -- $?a445465[Wither][Corruption] damage has a chance to cause your next Shadow Bolt or Drain Soul to deal $264571s2% increased damage. ; Shadow Bolt is instant cast and Drain Soul channels $264571s3% faster when affected.
+    oblivion                       = { 71986, 417537, 1 }, -- Unleash wicked magic upon your target's soul, dealing $o Shadow damage over $d.; Deals $s2% increased damage, up to ${$s2*$s3}%, per damage over time effect you have active on the target.
+    perpetual_unstability          = { 102246, 459376, 1 }, -- The cast time of Unstable Affliction is reduced by $s2%.; Refreshing Unstable Affliction with $s1 or less seconds remaining deals $459461s1 Shadow damage to its target.
+    phantom_singularity            = { 102033, 205179, 1 }, -- Places a phantom singularity above the target, which consumes the life of all enemies within $205246A2 yards, dealing ${8*$205246s2} damage over $d, healing you for ${$205246e2*100}% of the damage done.
+    ravenous_afflictions           = { 102247, 459440, 1 }, -- Critical strikes from your Agony, $?a445465[Wither][Corruption], and Unstable Affliction have a chance to grant Nightfall.
+    relinquished                   = { 72052, 453083, 1 }, -- Agony has 1.$m1 times the normal chance to generate a Soul Shard.
+    sacrolashs_dark_strike         = { 72053, 386986, 1 }, -- $?a445465[Wither][Corruption] damage is increased by $s1%, and each time it deals damage any of your Curses active on the target are extended by ${$s2/1000}.1 sec.
+    seed_of_corruption             = { 72050, 27243 , 1 }, -- Embeds a demon seed in the enemy target that will explode after $d, dealing $27285s1 Shadow damage to all enemies within $27285A1 yards and applying $?a445465[Wither][Corruption] to them.; The seed will detonate early if the target is hit by other detonations, or takes ${$SPS*$s1/100} damage from your spells.
+    shadow_embrace                 = { 100940, 32388 , 1 }, -- $?s388667[Drain Soul][Shadow Bolt] applies Shadow Embrace, increasing your damage dealt to the target by $?s388667[$32390s1%][$453206s2%] for $32390d. Stacks up to $?s388667[$32390u][$453206u] times.
+    siphon_life                    = { 72051, 452999, 1 }, -- $?a445465[Wither][Corruption] deals $s1% increased damage and its periodic damage heals you for $s2% of the damage dealt.
     soul_rot                       = { 72056, 386997, 1 }, -- Wither away all life force of your current target and up to 3 additional targets nearby, causing your primary target to suffer 66,731 Nature damage and secondary targets to suffer 33,365 Nature damage over 8 sec. For the next 8 sec, casting Drain Life will cause you to also Drain Life from any enemy affected by your Soul Rot, and Drain Life will not consume any mana.
-    soul_swap                      = { 72037, 386951, 1 }, -- Copies your damage over time effects and Haunt from the target, preserving their duration.; Your next use of Soul Swap within $86211d will exhale a copy damage of the effects onto a new target within 10 sec will exhale a copy damage of the effects onto a new target.
-    souleaters_gluttony            = { 71920, 389630, 2 }, -- Soul Rot cooldown is reduced by ${$s1/-1000} sec.
-    sow_the_seeds                  = { 72039, 196226, 1 }, -- Seed of Corruption now embeds demon seeds into 2 additional nearby enemies.
     summon_darkglare               = { 72034, 205180, 1 }, -- Summons a Darkglare from the Twisting Nether that extends the duration of your damage over time effects on all enemies by 8 sec. The Darkglare will serve you for 20 sec, blasting its target for 4,987 Shadow damage, increased by 25% for every damage over time effect you have active on their current target.
-    tormented_crescendo            = { 72031, 387075, 1 }, -- While Agony, Corruption, and Unstable Affliction are active, your Shadow Bolt has a 30% chance and your Drain Soul has a 20% chance to make your next Malefic Rapture cost no Soul Shards and cast instantly.
-    unstable_affliction            = { 72048, 316099, 1 }, -- Afflicts one target with 87,464 Shadow damage over 21 sec. If dispelled, deals 93,756 damage to the dispeller and silences them for 4 sec. Generates 1 Soul Shard if the target dies while afflicted.
-    vile_taint                     = { 72036, 278350, 1 }, -- Unleashes a vile explosion at the target location, dealing 48,433 Shadow damage over 10 sec to 8 enemies within 10 yds and applies Agony and Curse of Exhaustion to them.
-    withering_bolt                 = { 72055, 386976, 2 }, -- Shadow Bolt and Drain Soul deal 7% increased damage, up to 21%, per damage over time effect you have active on the target.
-    wrath_of_consumption           = { 72033, 387065, 1 }, -- Corruption and Agony each grant an application of Wrath of Consumption when a target dies, increasing all periodic damage dealt by 3% for 30 sec, stacking up to 5 times.
-    writhe_in_agony                = { 72051, 196102, 1 }, -- Agony's damage starts at 4 stacks and may now ramp up to 18 stacks.
-    xavius_gambit                  = { 71921, 416615, 2 }, -- Unstable Affliction deals 15% increased damage.
+    summoners_embrace              = { 72037, 453105, 1 }, -- Increases the damage dealt by your spells and your demon by $s1%.
+    tormented_crescendo            = { 72031, 387075, 1 }, -- While Agony, $?a445465[Wither][Corruption], and Unstable Affliction are active, your Shadow Bolt has a $s1% chance and your Drain Soul has a $s2% chance to make your next Malefic Rapture cost no Soul Shards and cast instantly.
+    unstable_affliction            = { 72049, 316099, 1 }, -- Afflicts one target with $o2 Shadow damage over $d. ; If dispelled, deals ${$m2*$s1/100} damage to the dispeller and silences them for $196364d.$?s231791[; Generates $231791m1 Soul $LShard:Shards; if the target dies while afflicted.][]
+    vile_taint                     = { 102033, 278350, 1 }, -- Unleashes a vile explosion at the target location, dealing $386931o1 Shadow damage over $386931d to $s2 enemies within $a1 yds and applies Agony and Curse of Exhaustion to them.
+    volatile_agony                 = { 72039, 453034, 1 }, -- Refreshing Agony with $s1 or less seconds remaining deals $453035s1 Shadow damage to its target and enemies within $453035a1 yards.; Deals reduced damage beyond $s2 targets.
+    withering_bolt                 = { 72055, 386976, 1 }, -- Shadow Bolt and Drain Soul deal $s1% increased damage, up to ${$s1*$s2}%, per damage over time effect you have active on the target.
+    writhe_in_agony                = { 72048, 196102, 1 }, -- Agony's damage starts at $s3 stacks and may now ramp up to $s2 stacks.
+    xavius_gambit                  = { 71921, 416615, 1 }, -- Unstable Affliction deals $s1% increased damage.
+
+    -- Hellcaller
+    aura_of_enfeeblement           = { 94822, 440059, 1 }, -- While Unending Resolve is active, enemies within $449587a1 yds are affected by Curse of Tongues and Curse of Weakness at $s1% effectiveness.
+    blackened_soul                 = { 94837, 440043, 1 }, -- Spending Soul Shards on damaging spells will further corrupt enemies affected by your Wither, increasing its stack count by $s1.; Each time Wither gains a stack it has a chance to collapse, consuming a stack every $445731t1 sec to deal $445736s1 Shadowflame damage to its host until 1 stack remains.
+    bleakheart_tactics             = { 94854, 440051, 1 }, -- Wither damage increased $s1%. When Wither gains a stack from Blackened Soul, it has a chance to gain an additional stack.
+    curse_of_the_satyr             = { 94822, 440057, 1 }, -- [442804] Increases the time between an enemy's attacks by $s1% and the casting time of all spells by $s3% for $d.$?s103112[; Soulburn: Your Curse of Weakness will affect all enemies in a $104222A yard radius around your target.][]; Curses: A warlock can only have one Curse active per target.
+    hatefury_rituals               = { 94854, 440048, 1 }, -- Wither deals $s1% increased periodic damage but its duration is $s2% shorter.
+    illhoofs_design                = { 94835, 440070, 1 }, -- Sacrifice $s1% of your maximum health. Soul Leech now absorbs an additional $s2% of your maximum health.
+    malevolence                    = { 94842, 442726, 1 }, -- Dark magic erupts from you and corrupts your soul for $442726d, causing enemies suffering from your Wither to take $446285s1 Shadowflame damage and increase its stack count by $s1.; While corrupted your Haste is increased by $442726s1% and spending Soul Shards on damaging spells grants $s2 additional stack of Wither.
+    mark_of_perotharn              = { 94844, 440045, 1 }, -- Critical strike damage dealt by Wither is increased by $s1%. ; Wither has a chance to gain a stack when it critically strikes. Stacks gained this way do not activate Blackened Soul.
+    mark_of_xavius                 = { 94834, 440046, 1 }, -- $?s980[Agony damage increased by $s1%.][Wither damage increased by $s2%.]; Blackened Soul deals $s3% increased damage per stack of Wither.
+    seeds_of_their_demise          = { 94829, 440055, 1 }, -- After Wither reaches $s1 stacks or when its host reaches $s2% health, Wither deals $445736s1 Shadowflame damage to its host every $445731t1 sec until 1 stack remains.; When Blackened Soul deals damage, you have a chance to gain $?s137046[$s4 stacks of Flashpoint][Tormented Crescendo].
+    xalans_cruelty                 = { 94845, 440040, 1 }, -- Shadow damage dealt by your spells and abilities is increased by $s3% and your Shadow spells gain $s1% more critical strike chance from all sources.
+    xalans_ferocity                = { 94853, 440044, 1 }, -- Fire damage dealt by your spells and abilities is increased by $s1% and your Fire spells gain $s4% more critical strike chance from all sources.
+    wither                         = { 94840, 445468, 1 }, -- [445468] Bestows a vile malediction upon the target, burning the sinew and muscle of its host, dealing $s1 Shadowflame damage immediately and an additional $445474o1 Shadowflame damage over $445474d.$?s137046[; Periodic damage generates 1 Soul Shard Fragment and has a $s2% chance to generate an additional 1 on critical strikes.; Replaces Immolate.][; Replaces Corruption.]
+    zevrims_resilience             = { 94835, 440065, 1 }, -- Dark Pact heals you for $108416s5 every $108416t5 sec while active.
+
+    -- Soul Harvester
+    demoniacs_fervor               = { 94832, 449629, 1 }, -- Your demonic soul deals $s1% increased damage to $?s137043[targets affected by your Unstable Affliction.][the main target of Hand of Gul'dan.]
+    demonic_soul                   = { 94851, 449614, 1 }, -- A demonic entity now inhabits your soul, allowing you to detect if a Soul Shard has a Succulent Soul when it's generated. ; A Succulent Soul empowers your next $?s137043[Malefic Rapture, increasing its damage by $449793s2%, and unleashing your demonic soul to deal an additional $449801s1 Shadow damage.][Hand of Gul'dan, increasing its damage by $449793s3%, and unleashing your demonic soul to deal an additional $449801s1 Shadow damage.]
+    eternal_servitude              = { 94824, 449707, 1 }, -- Fel Domination cooldown is reduced by ${$s1/-1000} sec.
+    feast_of_souls                 = { 94823, 449706, 1 }, -- When you kill a target, you have a chance to generate a Soul Shard that is guaranteed to be a Succulent Soul.
+    friends_in_dark_places         = { 94850, 449703, 1 }, -- Dark Pact now shields you for an additional $s1% of the sacrificed health.
+    gorebound_fortitude            = { 94850, 449701, 1 }, -- You always gain the benefit of Soulburn when consuming a Healthstone, increasing its healing by 30% and increasing your maximum health by 20% for 12 sec.
+    gorefiends_resolve             = { 94824, 389623, 1 }, -- Targets resurrected with Soulstone resurrect with $s1% additional health and $s2% additional mana.
+    necrolyte_teachings            = { 94825, 449620, 1 }, -- $?s137043[Shadow Bolt and Drain Soul damage increased by $s2%. Nightfall increases the damage of Shadow Bolt and Drain Soul by an additional $s1%.][Shadow Bolt damage increased by $s2%. Power Siphon increases the damage of Demonbolt by an additional $s3%.]
+    quietus                        = { 94846, 449634, 1 }, -- Soul Anathema damage increased by $s1% and is dealt $s2% faster.; Consuming $?s137043[Nightfall][Demonic Core] activates Shared Fate or Feast of Souls.
+    sataiels_volition              = { 94838, 449637, 1 }, -- $?s137043[Corruption deals damage $s1% faster and Haunt grants Nightfall.][Wild Imp damage increased by $s2% and Wild Imps that are imploded have an additional $s3% chance to grant a Demonic Core.]
+    shadow_of_death                = { 94857, 449638, 1 }, -- Your $?s137043[Soul Rot][Summon Demonic Tyrant] spell is empowered by the demonic entity within you, causing it to grant ${$449858s1/10} Soul Shards that each contain a Succulent Soul.
+    shared_fate                    = { 94823, 449704, 1 }, -- When you kill a target, its tortured soul is flung into a nearby enemy for $450591d. This effect inflicts $450593s1 Shadow damage to enemies within $450593a1 yds every $450591t1 sec.; Deals reduced damage beyond $s1 targets.
+    soul_anathema                  = { 94847, 449624, 1 }, -- Unleashing your demonic soul bestows a fiendish entity unto the soul of its targets, dealing $450538o1 Shadow damage over $450538d.; If this effect is reapplied, any remaining damage will be added to the new Soul Anathema.
+    wicked_reaping                 = { 94821, 449631, 1 }, -- Damage dealt by your demonic soul is increased by $s1%.; Consuming $?s137043[Nightfall][Demonic Core] feeds the demonic entity within you, causing it to appear and deal $?s137043[$449826s1][${$449826s1*($s2/100)}] Shadow damage to your target.
 } )
 
 
@@ -145,7 +177,6 @@ spec:RegisterPvpTalents( {
     impish_instincts    = 5579, -- (409835) Taking direct Physical damage reduces the cooldown of Demonic Circle by 2 sec. Cannot occur more than once every 5 sec.
     jinx                = 5386, -- (426352) Casting a curse now applies Corruption and Agony to your target, but curses now costs ${$s1/10} Soul $LShard:Shards;.
     nether_ward         = 18  , -- (212295) Surrounds the caster with a shield that lasts 3 sec, reflecting all harmful spells cast on you.
-    oblivion            = 12  , -- (417537) Unleash wicked magic upon your target's soul, dealing 96,889 Shadow damage over 3 sec. Deals 10% increased damage, up to 30%, per damage over time effect you have active on the target.
     rampant_afflictions = 5379, -- (335052) Unstable Affliction can now be applied to up to 3 targets, but its damage is reduced by 25%.
     rot_and_decay       = 16  , -- (212371) Shadow Bolt damage increases the duration of your Unstable Affliction, Corruption, Agony, and Siphon Life on the target by 3.0 sec. Drain Life, Drain Soul, and Oblivion damage increases the duration of your Unstable Affliction, Corruption, Agony, and Siphon Life on the target by 1.0 sec.
     shadow_rift         = 5392, -- (353294) Conjure a Shadow Rift at the target location lasting 2 sec. Enemy players within the rift when it expires are teleported to your Demonic Circle. Must be within 40 yds of your Demonic Circle to cast.
@@ -192,6 +223,12 @@ spec:RegisterAuras( {
         duration = 15,
         max_stack = 1
     },
+    -- Time between attacks increased $w1% and casting speed increased by $w2%.
+    aura_of_enfeeblement = {
+        id = 449587,
+        duration = 8.0,
+        max_stack = 1,
+    },
     -- Talent: Invulnerable, but unable to act.
     -- https://wowhead.com/beta/spell=710
     banish = {
@@ -213,7 +250,7 @@ spec:RegisterAuras( {
     corruption = {
         id = 146739,
         duration = function () return ( talent.absolute_corruption.enabled and ( target.is_player and 24 or 3600 ) or 14 ) * ( talent.creeping_death.enabled and 0.85 or 1 ) end,
-        tick_time = function () return 2 * ( talent.creeping_death.enabled and 0.85 or 1 ) * haste end,
+        tick_time = function () return 2 * ( 1 - 0.15 * talent.creeping_death.rank ) * ( 1 - 0.15 * talent.sataiels_volition.rank ) * haste end,
         type = "Magic",
         max_stack = 1
     },
@@ -224,6 +261,11 @@ spec:RegisterAuras( {
         duration = 12,
         mechanic = "snare",
         type = "Magic",
+        max_stack = 1
+    },
+    curse_of_the_satyr = {
+        id = 440057,
+        duration = 120,
         max_stack = 1
     },
     -- Speaking Demonic increasing casting time by $w1%.
@@ -281,13 +323,6 @@ spec:RegisterAuras( {
         duration = 5,
         max_stack = 1
     },
-    -- Damage done increased by $w2%.
-    -- https://wowhead.com/beta/spell=171982
-    demonic_synergy = {
-        id = 171982,
-        duration = 15,
-        max_stack = 1
-    },
     -- Doomed to take $w1 Shadow damage.
     -- https://wowhead.com/beta/spell=603
     doom = {
@@ -306,24 +341,11 @@ spec:RegisterAuras( {
         type = "Magic",
         max_stack = 1
     },
-    -- Talent: Suffering $w1 Shadow damage every $t1 seconds.
-    -- https://wowhead.com/beta/spell=198590
-    drain_soul = {
-        id = 198590,
-        duration = function () return 5 * ( buff.nightfall.up and 0.5 or 1 ) * haste end,
-        tick_time = function ()
-            if not settings.manage_ds_ticks then return nil end
-            return ( buff.nightfall.up and 0.5 or 1 ) * haste
-        end,
-        type = "Magic",
-        max_stack = 1
-    },
-    -- Damage taken from $auracaster's damage over time effects increased by 30%.
-    dread_touch = {
-        id = 389868,
-        duration = 8,
-        type = "Magic",
-        max_stack = 1
+    -- Healing for $m1% of maximum health every $t1 sec.; Spell casts are not delayed by taking damage.
+    empowered_healthstone = {
+        id = 262080,
+        duration = 6.0,
+        max_stack = 1,
     },
     -- Controlling Eye of Kilrogg.  Detecting Invisibility.
     -- https://wowhead.com/beta/spell=126
@@ -337,6 +359,14 @@ spec:RegisterAuras( {
         id = 118699,
         duration = 20,
         type = "Magic",
+        max_stack = 1,
+    },
+    -- Damage is being delayed every $t1 sec.
+    fel_armor = {
+        id = 387846,
+        duration = 3600,
+        tick_time = 0.5,
+        pandemic = true,
         max_stack = 1,
     },
     -- Talent: Imp, Voidwalker, Succubus, Felhunter, or Felguard casting time reduced by $/1000;S1 sec.
@@ -406,12 +436,6 @@ spec:RegisterAuras( {
         type = "Magic",
         max_stack = 1
     },
-    inevitable_demise = {
-        id = 334320,
-        duration = 20,
-        max_stack = 50,
-        copy = { 334463, "inevitable_demise_az" }
-    },
     -- Taking $w1% increased Fire damage from Infernal.
     -- https://wowhead.com/beta/spell=340045
     infernal_brand = {
@@ -419,12 +443,17 @@ spec:RegisterAuras( {
         duration = 8,
         max_stack = 15
     },
-    -- Talent: Observed by an Inquisitor's Eye.
-    -- https://wowhead.com/beta/spell=388068
-    inquisitors_gaze = {
-        id = 388068,
+    -- Damage taken increased by $s1%.
+    infirmity = {
+        id = 458219,
         duration = 3600,
-        max_stack = 1
+        max_stack = 1,
+    },
+    -- Inflicts Shadow damage.
+    laserbeam = {
+        id = 212529,
+        duration = 0.0,
+        max_stack = 1,
     },
     -- Talent: Leech increased by $w1%.
     -- https://wowhead.com/beta/spell=386647
@@ -433,7 +462,18 @@ spec:RegisterAuras( {
         duration = 20,
         max_stack = 1
     },
-    --
+    -- Haste increased by $w1% and $?s324536[Malefic Rapture grants $w2 additional stack of Wither to targets affected by Unstable Affliction.][Chaos Bolt grants $w3 additional stack of Wither.]; All of your active Withers are acute.
+    malevolence = {
+        id = 442726,
+        duration = 20.0,
+        max_stack = 1,
+    },
+    -- Your next Malefic Rapture deals $s1% increased damage and extends the duration of your damage over time effects and Haunt by $s2 sec.
+    malign_omen = {
+        id = 458043,
+        duration = 30.0,
+        max_stack = 1,
+    },
     -- https://wowhead.com/beta/spell=77215
     mastery_potent_afflictions = {
         id = 77215,
@@ -560,6 +600,12 @@ spec:RegisterAuras( {
         type = "Magic",
         max_stack = 1
     },
+    -- Dealing $450593s1 Shadow damage to enemies within $450593a1 yds every $t1 sec.
+    shared_fate = {
+        id = 450591,
+        duration = 3.0,
+        max_stack = 1,
+    },
     -- Talent: Suffering $w1 Shadow damage every $t1 sec and siphoning life to the casting Warlock.
     -- https://wowhead.com/beta/spell=63106
     siphon_life = {
@@ -569,6 +615,19 @@ spec:RegisterAuras( {
         type = "Magic",
         max_stack = 1
     },
+    -- Dealing $o1 Shadow damage over $d.
+    soul_anathema = {
+        id = 450538,
+        duration = function() return 10.0 - ( 1 - 0.2 * talent.quietus.rank ) end,
+        tick_time = function() return ( 1 - 0.2 * talent.quietus.rank ) end,
+        max_stack = 1,
+
+        -- Affected by:
+        -- mastery_potent_afflictions[77215] #2: { 'type': APPLY_AURA, 'subtype': ADD_PCT_MODIFIER_BY_LABEL, 'sp_bonus': 2.5, 'target': TARGET_UNIT_CASTER, 'modifies': PERIODIC_DAMAGE_HEALING, }
+        -- quietus[449634] #0: { 'type': APPLY_AURA, 'subtype': ADD_PCT_MODIFIER_BY_LABEL, 'points': 25.0, 'target': TARGET_UNIT_CASTER, 'modifies': PERIODIC_DAMAGE_HEALING, }
+        -- quietus[449634] #1: { 'type': APPLY_AURA, 'subtype': ADD_PCT_MODIFIER_BY_LABEL, 'points': -20.0, 'target': TARGET_UNIT_CASTER, 'modifies': AURA_PERIOD, }
+        -- quietus[449634] #2: { 'type': APPLY_AURA, 'subtype': ADD_PCT_MODIFIER_BY_LABEL, 'points': -20.0, 'target': TARGET_UNIT_CASTER, 'modifies': BUFF_DURATION, }
+    },
     -- Absorbs $w1 damage.
     -- https://wowhead.com/beta/spell=108366
     soul_leech = {
@@ -576,16 +635,7 @@ spec:RegisterAuras( {
         duration = 15,
         max_stack = 1
     },
-    -- Talent: $s1% of all damage taken is split with the Warlock's summoned demon.    The Warlock is healed for $s2% and your demon is healed for $s3% of all absorption granted by Soul Leech.
-    -- https://wowhead.com/beta/spell=108446
-    soul_link = {
-        id = 108446,
-        duration = 3600,
-        type = "Magic",
-        max_stack = 1
-    },
-    -- Talent: Suffering $s2 Nature damage every $t2 sec.
-    -- https://wowhead.com/beta/spell=386997
+    -- Mana cost of Drain Life reduced by $s1%.
     soul_rot = {
         id = 386997,
         duration = function() return 8 + ( set_bonus.tier31_2pc > 0 and 4 or 0 ) end,
@@ -600,16 +650,6 @@ spec:RegisterAuras( {
         duration = 3600,
         max_stack = 1
     },
-    soul_swap = {
-        id = 399680,
-        duration = 10,
-        max_stack = 1,
-
-        source = "nobody",
-        agony = false,
-        corruption = false,
-        unstable_affliction = false
-    },
     -- Talent: Consumes a Soul Shard, unlocking the hidden power of your spells.    |cFFFFFFFFDemonic Circle: Teleport|r: Increases your movement speed by $387633s1% and makes you immune to snares and roots for $387633d.    |cFFFFFFFFDemonic Gateway|r: Can be cast instantly.    |cFFFFFFFFDrain Life|r: Gain an absorb shield equal to the amount of healing done for $387630d. This shield cannot exceed $387630s1% of your maximum health.    |cFFFFFFFFHealth Funnel|r: Restores $387626s1% more health and reduces the damage taken by your pet by ${$abs($387641s1)}% for $387641d.    |cFFFFFFFFHealthstone|r: Increases the healing of your Healthstone by $387626s2% and increases your maximum health by $387636s1% for $387636d.
     -- https://wowhead.com/beta/spell=387626
     soulburn = {
@@ -619,6 +659,12 @@ spec:RegisterAuras( {
         onRemove = function()
             setCooldown( "soulburn", action.soulburn.cooldown )
         end,
+    },
+    -- Maximum health is increased by $s1%.
+    soulburn_healthstone = {
+        id = 387636,
+        duration = 12.0,
+        max_stack = 1,
     },
     -- Soul stored by $@auracaster.
     -- https://wowhead.com/beta/spell=20707
@@ -636,6 +682,12 @@ spec:RegisterAuras( {
         type = "Magic",
         max_stack = 1
     },
+    -- $?s137043[Malefic Rapture deals $s2% increased damage.][Hand of Gul'dan deals $s3% increased damage.]; Unleashes your demonic entity upon consumption, dealing an additional $449801s~1 Shadow damage to enemies.
+    succulent_soul = {
+        id = 449793,
+        duration = 30.0,
+        max_stack = 1,
+    },
     -- Talent: Summons a Darkglare from the Twisting Nether that blasts its target for Shadow damage, dealing increased damage for every damage over time effect you have active on any target.
     -- https://wowhead.com/beta/spell=205180
     summon_darkglare = {
@@ -643,13 +695,6 @@ spec:RegisterAuras( {
         duration = function() return 20 + 5 * talent.malevolent_visionary.rank end,
         type = "Magic",
         max_stack = 1
-    },
-    -- Talent:
-    -- https://wowhead.com/beta/spell=386256
-    summon_soulkeeper = {
-        id = 386256,
-        duration = 8,
-        max_stack = 10
     },
     --
     -- https://wowhead.com/beta/spell=101508
@@ -689,6 +734,11 @@ spec:RegisterAuras( {
         max_stack = 1,
         copy = { 342938, 316099 }
     },
+    unstable_affliction_silence = {
+        id = 196364,
+        duration = 4,
+        max_stack = 1
+    },
     -- Talent: Suffering $w1 Shadow damage every $t1 sec.
     -- https://wowhead.com/beta/spell=286931
     vile_taint = {
@@ -699,20 +749,13 @@ spec:RegisterAuras( {
         max_stack = 1,
         copy = "vile_taint_dot"
     },
-    -- Talent: Periodic damage increased by $s1%.
-    -- https://wowhead.com/beta/spell=387066
-    wrath_of_consumption = {
-        id = 387066,
-        duration = 30,
-        max_stack = 5,
-        copy = 337130
-    },
-    -- Talent: Damage done increased by $w1%.
-    -- https://wowhead.com/beta/spell=386865
-    wrathful_minion = {
-        id = 386865,
-        duration = 8,
-        max_stack = 1
+    -- Suffering $w1 Shadowflame damage every $t1 sec.$?a339892[ ; Damage taken by Chaos Bolt and Incinerate increased by $w2%.][]
+    wither = {
+        id = 445474,
+        duration = function() return 18.0 * ( 1 - 0.15 * talent.hatefury_rituals.rank ) end,
+        tick_time = function() return 2.0 * ( 1 - 0.15 * talent.creeping_death.rank ) * ( 1 - 0.25 * talent.sataiels_volition.rank) end,
+        pandemic = true,
+        max_stack = 8, -- ??
     },
 
 
@@ -816,25 +859,6 @@ spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( _, subtype, _, sourc
                 action.seed_of_corruption.flying = GetTime()
             elseif subtype == "SPELL_AURA_APPLIED" or subtype == "SPELL_AURA_REFRESH" then
                 action.seed_of_corruption.flying = 0
-            end
-        elseif spellID == class.abilities.soul_swap_exhale.id then
-            local unit = UnitTokenFromGUID( destGUID )
-
-            SoulSwapCorruption = false
-            SoulSwapAgony = false
-            SoulSwapUnstableAffliction = false
-            SoulSwapSource = destGUID
-
-            if unit then
-                if FindUnitDebuffByID( unit, class.auras.corruption.id ) then
-                    SoulSwapCorruption = true
-                end
-                if FindUnitDebuffByID( unit, class.auras.agony.id ) then
-                    SoulSwapAgony = true
-                end
-                if FindUnitDebuffByID( unit, class.auras.unstable_affliction.id ) then
-                    SoulSwapUnstableAffliction = true
-                end
             end
         end
     end
@@ -964,14 +988,6 @@ spec:RegisterHook( "reset_precast", function ()
     end
 
     class.abilities.summon_pet = class.abilities.summon_felhunter
-
-    if buff.soul_swap.up then
-        buff.soul_swap.source = SoulSwapSource
-        if SoulSwapAgony then buff.soul_swap.agony = true end
-        if SoulSwapCorruption then buff.soul_swap.corruption = true end
-        if SoulSwapUnstableAffliction then buff.soul_swap.unstable_affliction = true end
-        if Hekili.ActiveDebug then Hekili:Debug( "Soul Swap available; Agony: " .. tostring( buff.soul_swap.agony ) .. ", Corruption: " .. tostring( buff.soul_swap.corruption ) .. ", Unstable Affliction: " .. tostring( buff.soul_swap.unstable_affliction ) .. "." ) end
-    end
 
     if not SUMMON_DEMON_TEXT then
         SUMMON_DEMON_TEXT = GetSpellInfo( 180284 )
@@ -1120,7 +1136,7 @@ spec:RegisterAbilities( {
         end,
     },
 
-    -- Corrupts the target, causing 6,386 Shadow damage over 14 sec.
+    -- Corrupts the target, causing $s3 Shadow damage and $?a196103[$146739s1 Shadow damage every $146739t1 sec.][an additional $146739o1 Shadow damage over $146739d.]
     corruption = {
         id = 172,
         cast = 0,
@@ -1130,12 +1146,26 @@ spec:RegisterAbilities( {
 
         spend = 0.01,
         spendType = "mana",
+        notalent = "wither",
 
         startsCombat = true,
 
         handler = function ()
             applyDebuff( "target", "corruption" )
         end,
+    },
+
+    -- [386646] When you use a Healthstone, gain $s2% Leech for $386647d.
+    create_healthstone = {
+        id = 6201,
+        cast = function() return 3.0 * ( 1 - 0.5 * talent.swift_artifice.rank ) end,
+        cooldown = 0.0,
+        gcd = "spell",
+
+        spend = 0.020,
+        spendType = 'mana',
+
+        startsCombat = false,
     },
 
     -- Reduces the target's movement speed by 50% for 12 sec. Curses: A warlock can only have one Curse active per target.
@@ -1230,7 +1260,9 @@ spec:RegisterAbilities( {
 
     -- Increases the time between an enemy's attacks by 20% for 2 min. Curses: A warlock can only have one Curse active per target.
     curse_of_weakness = {
-        id = 702,
+        id = function() return talent.curse_of_the_satyr.enabled and 442804 or 702 end,
+        known = 702,
+        flash = { 702, 442804 },
         cast = 0,
         cooldown = 0,
         gcd = "spell",
@@ -1247,7 +1279,7 @@ spec:RegisterAbilities( {
             removeBuff( "amplify_curse" )
             removeDebuff( "target", "curse_of_exhaustion" )
             removeDebuff( "target", "curse_of_tongues" )
-            applyDebuff( "target", "curse_of_weakness" )
+            applyDebuff( "target", talent.curse_of_the_satyr.enabled and "curse_of_the_satyr" or "curse_of_weakness" )
             setCooldown( "curse_of_fragility", max( 6, cooldown.curse_of_fragility.remains ) )
             setCooldown( "curse_of_tongues", max( 6, cooldown.curse_of_tongues.remains ) )
 
@@ -1256,6 +1288,8 @@ spec:RegisterAbilities( {
                 applyDebuff( "target", "agony" )
             end
         end,
+
+        copy = { 702, "curse_of_the_satyr", 442804 },
     },
 
 
@@ -1349,7 +1383,7 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "shadow",
 
-        spend = 0.2,
+        spend = 0.1,
         spendType = "mana",
 
         talent = "demonic_gateway",
@@ -1388,7 +1422,6 @@ spec:RegisterAbilities( {
         id = 234153,
         cast = function () return 5
             * haste
-            * ( talent.grim_feast.enabled and 0.7 or 1 )
             * ( legendary.claw_of_endereth.enabled and 0.5 or 1 ) end,
         channeled = true,
         breakable = true,
@@ -1396,18 +1429,10 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "shadow",
 
-        spend = function () return active_dot.soul_rot > 0 and 0 or 0.03 end,
+        spend = function () return buff.soul_rot.up and 0 or 0.03 end,
         spendType = "mana",
 
         startsCombat = true,
-
-        cycle = function()
-            if talent.soul_rot.enabled then return "soul_rot" end
-        end,
-
-        cycle_to = function()
-            if talent.soul_rot.enabled then return true end
-        end,
 
         start = function ()
             applyDebuff( "target", "drain_life" )
@@ -1493,7 +1518,7 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "shadow",
 
-        spend = 0.05,
+        spend = 0.04,
         spendType = "mana",
 
         startsCombat = true,
@@ -1507,7 +1532,7 @@ spec:RegisterAbilities( {
     fel_domination = {
         id = 333889,
         cast = 0,
-        cooldown = function () return 180 - 30 * talent.fel_pact.rank + conduit.fel_celerity.mod * 0.001 end,
+        cooldown = function () return 180 - 90 * talent.eternal_servitude.rank - 60 * talent.fel_pact.rank + conduit.fel_celerity.mod * 0.001 end,
         gcd = "off",
         school = "shadowstrike",
 
@@ -1549,7 +1574,7 @@ spec:RegisterAbilities( {
     -- Talent: A ghostly soul haunts the target, dealing 2,273 Shadow damage and increasing your damage dealt to the target by 10% for 18 sec. If the target dies, Haunt's cooldown is reset.
     haunt = {
         id = 48181,
-        cast = 1.5,
+        cast = function() return 1.5 * ( 1 - 0.25 * talent.improved_haunt.rank ) end,
         cooldown = 15,
         gcd = "spell",
         school = "shadow",
@@ -1566,7 +1591,7 @@ spec:RegisterAbilities( {
         end,
     },
 
-        -- Sacrifices 25% of your maximum health to heal your summoned Demon for twice as much over 4.0 sec.
+    -- Sacrifices 25% of your maximum health to heal your summoned Demon for twice as much over 4.0 sec.
     health_funnel = {
         id = 755,
         cast = 5,
@@ -1588,7 +1613,7 @@ spec:RegisterAbilities( {
     howl_of_terror = {
         id = 5484,
         cast = 0,
-        cooldown = 40,
+        cooldown = function() return 40 - 15 * talent.annihilans_bellow.rank end,
         gcd = "spell",
         school = "shadow",
 
@@ -1620,7 +1645,10 @@ spec:RegisterAbilities( {
     -- Talent: Your damaging periodic effects from your spells erupt on all targets, causing $324540s1 Shadow damage per effect.
     malefic_rapture = {
         id = 324536,
-        cast = function () return ( buff.tormented_crescendo.up or buff.calamitous_crescendo.up ) and 0 or 1.5 end,
+        cast = function ()
+            if buff.tormented_crescendo.up or buff.calamitous_crescendo.up then return 0 end
+            return 1.5 * ( 1 - 0.15 * talent.improved_malefic_rapture.rank )
+        end,
         cooldown = 0,
         gcd = "spell",
         school = "shadow",
@@ -1631,7 +1659,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         texture = 236296,
 
-        usable = function () return active_dot.agony + active_dot.corruption + active_dot.seed_of_corruption + active_dot.unstable_affliction + active_dot.vile_taint + active_dot.phantom_singularity + active_dot.soul_rot + active_dot.siphon_life > 0, "requires affliction dots" end,
+        usable = function () return active_dot.agony + active_dot.corruption + active_dot.seed_of_corruption + active_dot.unstable_affliction + active_dot.vile_taint + active_dot.phantom_singularity + active_dot.siphon_life > 0, "requires affliction dots" end,
 
         handler = function ()
             removeStack( "cruel_epiphany" )
@@ -1646,7 +1674,6 @@ spec:RegisterAbilities( {
                 if dot.unstable_affliction.up then dot.unstable_affliction.expires = dot.unstable_affliction.expires + 2 end
                 if dot.vile_taint.up          then dot.vile_taint.expires          = dot.vile_taint.expires          + 2 end
                 if dot.phantom_singularity.up then dot.phantom_singularity.expires = dot.phantom_singularity.expires + 2 end
-                if dot.soul_rot.up            then dot.soul_rot.expires            = dot.soul_rot.expires            + 2 end
                 if dot.siphon_life.up         then dot.siphon_life.expires         = dot.siphon_life.expires         + 2 end
             end
 
@@ -1655,6 +1682,8 @@ spec:RegisterAbilities( {
                 active_dot.dread_touch = active_dot.unsable_affliction
             end
 
+            if debuff.wither.up then applyDebuff( "target", "wither", nil, debuff.wither.stack + ( buff.malevolence.up and 2 or 1 ) ) end
+
             --[[ if talent.malefic_affliction.enabled and active_dot.unstable_affliction > 0 then
                 if buff.malefic_affliction.stack == 3 then
                     if debuff.unstable_affliction.up then applyDebuff( "target", "dread_touch" )
@@ -1662,6 +1691,25 @@ spec:RegisterAbilities( {
                 else addStack( "malefic_affliction" ) end
             end ]]
             if legendary.malefic_wrath.enabled then addStack( "malefic_wrath" ) end
+        end,
+    },
+
+    -- [430014] Dark magic erupts from you and corrupts your soul for $442726d, causing enemies suffering from your Wither to take $446285s1 Shadowflame damage and increase its stack count by $s1.; While corrupted your Haste is increased by $442726s1% and spending Soul Shards on damaging spells grants $s2 additional stack of Wither.
+    malevolence = {
+        id = 442726,
+        cast = 0.0,
+        cooldown = 60.0,
+        gcd = "spell",
+
+        spend = 0.010,
+        spendType = 'mana',
+
+        talent = "malevolence",
+        startsCombat = true,
+
+        handler = function()
+            if debuff.wither.up then applyDebuff( "target", "wither", nil, debuff.wither.stack + 6 ) end
+            applyBuff( "malevolence" )
         end,
     },
 
@@ -1720,7 +1768,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         pvptalent = "oblivion",
 
-        usable = function() return debuff.agony.up or debuff.doom.up or debuff.corruption.up or debuff.unstable_affliction.up or debuff.vile_taint.up or debuff.phantom_singularity.up or debuff.soul_rot.up or debuff.siphon_life.up, "requires an active dot effect" end,
+        usable = function() return debuff.agony.up or debuff.doom.up or debuff.corruption.up or debuff.unstable_affliction.up or debuff.vile_taint.up or debuff.phantom_singularity.up or debuff.siphon_life.up, "requires an active dot effect" end,
 
         start = function ()
             applyDebuff( "target", "oblivion" )
@@ -1752,46 +1800,7 @@ spec:RegisterAbilities( {
         end,
     },
 
-    --[[ Begins a ritual that sacrifices a random participant to summon a doomguard. Requires the caster and 4 additional party members to complete the ritual.
-    ritual_of_doom = {
-        id = 342601,
-        cast = 0,
-        cooldown = 3600,
-        gcd = "spell",
-        school = "shadow",
-
-        spend = 1,
-        spendType = "soul_shards",
-
-        startsCombat = false,
-
-        toggle = "cooldowns",
-
-        handler = function ()
-        end,
-    },
-
-    -- Begins a ritual to create a summoning portal, requiring the caster and 2 allies to complete. This portal can be used to summon party and raid members.
-    ritual_of_summoning = {
-        id = 698,
-        cast = 0,
-        cooldown = 120,
-        gcd = "spell",
-        school = "shadow",
-
-        spend = 0.05,
-        spendType = "mana",
-
-        startsCombat = false,
-
-        toggle = "cooldowns",
-
-        handler = function ()
-            applyBuff( "ritual_of_summoning" )
-        end,
-    }, ]]
-
-    -- Talent: Embeds a demon seed in the enemy target that will explode after 9.1 sec, dealing 2,936 Shadow damage to all enemies within 10 yards and applying Corruption to them. The seed will detonate early if the target is hit by other detonations, or takes 1,363 damage from your spells.
+    -- Embeds a demon seed in the enemy target that will explode after $d, dealing $27285s1 Shadow damage to all enemies within $27285A1 yards and applying $?a445465[Wither][Corruption] to them.; The seed will detonate early if the target is hit by other detonations, or takes ${$SPS*$s1/100} damage from your spells.
     seed_of_corruption = {
         id = 27243,
         cast = 2,
@@ -1826,7 +1835,7 @@ spec:RegisterAbilities( {
         id = 686,
         cast = function()
             if buff.nightfall.up then return 0 end
-            return 2 * haste
+            return 2 * ( 1 - 0.15 * talent.improved_shadow_bolt.rank ) * haste
         end,
         cooldown = 0,
         gcd = "spell",
@@ -1850,6 +1859,21 @@ spec:RegisterAbilities( {
             if talent.shadow_embrace.enabled and debuff.shadow_embrace.stack < 3 then applyDebuff( "target", "shadow_embrace", nil, debuff.shadow_embrace.stack + 1 ) end
         end,
     },
+
+     -- Conjure a Shadow Rift at the target location lasting $d. Enemy players within the rift when it expires are teleported to your Demonic Circle.; Must be within $s2 yds of your Demonic Circle to cast.
+     shadow_rift = {
+        id = 353294,
+        cast = 0.0,
+        cooldown = 60.0,
+        gcd = "spell",
+
+        spend = 0.01,
+        spendType = "mana",
+
+        pvptalent = "shadow_rift",
+        startsCombat = false,
+        buff = "demonic_circle",
+     },
 
     -- Talent: Slows enemies in a 12 yard cone in front of you by 70% for 6 sec.
     shadowflame = {
@@ -1886,7 +1910,7 @@ spec:RegisterAbilities( {
         end,
     },
 
-    -- Talent: Siphons the target's life essence, dealing 5,782 Shadow damage over 15 sec and healing you for 30% of the damage done.
+    -- Siphons the target's life essence, dealing 5,782 Shadow damage over 15 sec and healing you for 30% of the damage done.
     siphon_life = {
         id = 63106,
         cast = 0,
@@ -1897,7 +1921,6 @@ spec:RegisterAbilities( {
         spend = 0.01,
         spendType = "mana",
 
-        talent = "siphon_life",
         startsCombat = false,
 
         handler = function ()
@@ -1905,106 +1928,24 @@ spec:RegisterAbilities( {
         end,
     },
 
-    -- Talent: Wither away all life force of your current target and up to 3 additional targets nearby, causing your primary target to suffer 10,339 Nature damage and secondary targets to suffer 5,169 Nature damage over 8 sec. For the next 8 sec, casting Drain Life will cause you to also Drain Life from any enemy affected by your Soul Rot, and Drain Life will not consume any mana.
-    soul_rot = {
-        id = function() return talent.soul_rot.enabled and 386997 or 325640 end,
-        cast = 1.5,
-        cooldown = function() return 60 - 8 * talent.souleaters_gluttony.rank end,
-        gcd = "spell",
-        school = "nature",
-
-        spend = 0.005,
-        spendType = "mana",
-
-        startsCombat = true,
-
-        toggle = "cooldowns",
-
-        handler = function ()
-            applyDebuff( "target", "soul_rot" )
-            active_dot.soul_rot = min( 4, active_enemies )
-            if legendary.decaying_soul_satchel.enabled then applyBuff( "decaying_soul_satchel", nil, active_dot.soul_rot ) end
-            if talent.dark_harvest.enabled then applyBuff( "dark_harvest", nil, active_dot.soul_rot ) end
-        end,
-
-        copy = { 386997, 325640 }
-    },
-
-    -- Talent: Copies your damage over time effects and Haunt from the target, preserving their duration.; Your next use of Soul Swap within $86211d will exhale a copy damage of the effects onto a new target.
-    soul_swap = {
-        id = 386951,
+    soul_rip = {
+        id = 410598,
         cast = 0,
-        cooldown = 30,
-        gcd = "spell",
-        icd = 30,
-        school = "shadow",
-
-        spend = 1,
-        spendType = "soul_shards",
-
-        talent = "soul_swap",
-        startsCombat = true,
-        nobuff = "soul_swap",
-
-        handler = function ()
-            applyBuff( "soul_swap" )
-            buff.soul_swap.corruption = debuff.corruption.up
-            buff.soul_swap.agony = debuff.agony.up
-            buff.soul_swap.unstable_affliction = debuff.unstable_affliction.up
-            buff.soul_swap.source = target.unit
-            if debuff.unstable_affliction.up then removeDebuff( "unstable_affliction" ) end
-        end,
-
-        bind = "soul_swap_exhale"
-    },
-
-
-    -- Talent: Applies Corruption, Agony, and Unstable Affliction to your target.
-    soul_swap_exhale = {
-        id = 399685,
-        cast = 0,
-        cooldown = 30,
-        gcd = "spell",
-        school = "shadow",
-
-        talent = "soul_swap",
-        startsCombat = true,
-        buff = "soul_swap",
-
-        usable = function() return buff.soul_swap.source ~= target.unit, "cannot apply to source of dots" end,
-
-        handler = function ()
-            if buff.soul_swap.agony then applyDebuff( "target", "agony" ) end
-            if buff.soul_swap.corruption then applyDebuff( "target", "corruption" ) end
-            if buff.soul_swap.unstable_affliction then applyDebuff( "target", "unstable_affliction" ) end
-            removeBuff( "soul_swap" )
-        end,
-
-        bind = "soul_swap"
-    },
-
-    --[[ Removed in 10.0.5 -- Talent: Sacrifice 8% of your Soul Leech to gain a Soul Shard.
-    soul_tap = {
-        id = 387073,
-        cast = 0,
-        cooldown = 0,
+        cooldown = 60,
         gcd = "spell",
         school = "shadow",
 
         spend = 1,
         spendType = "soul_shards",
 
-        talent = "soul_tap",
-        startsCombat = false,
-
-        usable = function() return buff.soul_leech.v1 > health.max * 0.08, "requires soul_leech" end,
+        startsCombat = true,
+        pvptalent = "soul_rip",
 
         handler = function ()
-            removeBuff( "soul_leech" )
+            applyDebBuff( "target", "soul_rip" )
         end,
-    }, ]]
+    },
 
-    -- Talent: Consumes a Soul Shard, unlocking the hidden power of your spells. Demonic Circle: Teleport: Increases your movement speed by 50% and makes you immune to snares and roots for 8 sec. Demonic Gateway: Can be cast instantly. Drain Life: Gain an absorb shield equal to the amount of healing done for 30 sec. This shield cannot exceed 30% of your maximum health. Health Funnel: Restores 140% more health and reduces the damage taken by your pet by 30% for 10 sec. Healthstone: Increases the healing of your Healthstone by 30% and increases your maximum health by 20% for 12 sec.
     soulburn = {
         id = 385899,
         cast = 0,
@@ -2027,7 +1968,7 @@ spec:RegisterAbilities( {
     -- Stores the soul of the target party or raid member, allowing resurrection upon death. Also castable to resurrect a dead target. Targets resurrect with 60% health and at least 20% mana.
     soulstone = {
         id = 20707,
-        cast = 3,
+        cast = function() return 3 * ( 1 - 0.5 * talent.swift_artifice.rank ) end,
         cooldown = 600,
         gcd = "spell",
         school = "shadow",
@@ -2089,7 +2030,7 @@ spec:RegisterAbilities( {
     summon_darkglare = {
         id = 205180,
         cast = 0,
-        cooldown = function() return 120 - 30 * talent.grand_warlocks_design.rank end,
+        cooldown = 120,
         gcd = "spell",
         school = "shadow",
 
@@ -2108,7 +2049,6 @@ spec:RegisterAbilities( {
             -- if debuff.impending_catastrophe.up then debuff.impending_catastrophe.expires = debuff.impending_catastrophe.expires + 8 end
             if debuff.scouring_tithe.up then debuff.scouring_tithe.expires = debuff.scouring_tithe.expires + 8 end
             if debuff.siphon_life.up then debuff.siphon_life.expires = debuff.siphon_life.expires + 8 end
-            if debuff.soul_rot.up then debuff.soul_rot.expires = debuff.soul_rot.expires + 8 end
             if debuff.unstable_affliction.up then debuff.unstable_affliction.expires = debuff.unstable_affliction.expires + 8 end
         end,
     },
@@ -2214,25 +2154,6 @@ spec:RegisterAbilities( {
         end,
     },
 
-    -- Talent: Summons a Soulkeeper that consumes all Tormented Souls you've collected, blasting nearby enemies for 580 Chaos damage every 1 sec for each Tormented Soul consumed. You collect Tormented Souls from each target you kill and occasionally escaped souls you previously collected.
-    summon_soulkeeper = {
-        id = 386256,
-        cast = 1,
-        cooldown = 0,
-        gcd = "spell",
-        school = "shadowflame",
-
-        talent = "summon_soulkeeper",
-        startsCombat = true,
-        buff = "tormented_souls",
-        nobuff = "summon_soulkeeper",
-
-        handler = function ()
-            applyBuff( "summon_soulkeeper", nil, buff.tormented_souls.stack )
-            removeBuff( "tormented_souls" )
-        end,
-    },
-
 
     summon_voidwalker = {
         id = 697,
@@ -2296,13 +2217,17 @@ spec:RegisterAbilities( {
 
         handler = function ()
             applyBuff( "unending_resolve" )
+            if talent.aura_of_enfeeblement.enabled then
+                applyDebuff( "target", "curse_of_tongues" )
+                applyDebBuff( "target", "curse_of_weakness" )
+            end
         end,
     },
 
     -- Talent: Afflicts one target with 18,624 Shadow damage over 21 sec. If dispelled, deals 32,416 damage to the dispeller and silences them for 4 sec. Generates 1 Soul Shard if the target dies while afflicted.
     unstable_affliction = {
         id = function () return pvptalent.rampant_afflictions.enabled and 342938 or 316099 end,
-        cast = 1.5,
+        cast = function() return 1.5 * ( 1 - 0.2 * talent.perpetual_unstability.rank ) end,
         cooldown = 0,
         gcd = "spell",
         school = "shadow",
@@ -2361,6 +2286,24 @@ spec:RegisterAbilities( {
                 max_stack = 1
             }
         }
+    },
+
+    -- Bestows a vile malediction upon the target, burning the sinew and muscle of its host, dealing $s1 Shadowflame damage immediately and an additional $445474o1 Shadowflame damage over $445474d.$?s137046[; Periodic damage generates 1 Soul Shard Fragment and has a $s2% chance to generate an additional 1 on critical strikes.; Replaces Immolate.][; Replaces Corruption.]
+    wither = {
+        id = 445468,
+        cast = 0.0,
+        cooldown = 0.0,
+        gcd = "spell",
+
+        spend = 0.015,
+        spendType = 'mana',
+
+        talent = "wither",
+        startsCombat = true,
+
+        handler = function()
+            applyDebuff( "target", "wither" )
+        end,
     }
 } )
 
@@ -2382,6 +2325,7 @@ spec:RegisterSetting( "agony_macro", nil, {
     set = function () end,
 } )
 
+-- TODO: Confirm if this will work with Wither.
 spec:RegisterSetting( "corruption_macro", nil, {
     name = "|T136118:0|t Corruption Macro",
     desc = "Using a macro makes it easier to apply your DOT effects to other targets without switching targets.",
@@ -2424,4 +2368,4 @@ spec:RegisterOptions( {
 } )
 
 
-spec:RegisterPack( "Affliction", 20240312.1, [[Hekili:T3tAVnoUs(BjyW42UpCBP0PpEBsE49MzxGzWSZBWlZS7hwSrwXworiYwELKt6giW)23IK6Ghvrs5J(yW7lD7irwvXQkwx8qxhC9VF9vZJRsU(xdNe(MjNgeoEYho7DN9(RVQ6tRtU(Q1XZUp(w4hRIxc)7FBXIS0zvP5RyV6tz5XZzGOmFtXm413vvTU8V86xFBA1DBUz8S8LVUmD5MSywpMveVOI93ZE91xDZM0SQFA113GI)tpfG56KzWJF7zaytNppr02KYzxFfRTVAsWRMC2Fz70)Z0v5fBNEv6YFy70nRzqB82FE7pdn60xfe(QG37tJEd0O)285qtwNKLTD6VKp7ELwm5dDGbgdnqz70fCaNKmplPSeaY)4FxTFmi)FK(XTt)J)22PPR0BrWRcEl0IF)XK473oTkhqsCwYI0zBN(pJxxTPirPXtyJM)zYY8hauVz1MYeGMFiUin(ga)Qn9Dqt)T4Qz3TDAWKXHnKSuRM8HxfmbA1FupwIxnNp6wNLU4taL(B)cm(YYFuQhVtWq58QLPLLPRUD70I4zPXzQTInUVQv4)dmHpGGBlssaUu8n5BG)CEEv5jBNUD6pY)HC3d)lMCcarj)FBslyqWsxdAzrZLGrNQBTmd4jbJp7FdiMzvBIZ6KORYbs7tjmY9H40mgNvAO92xfYgATkdv1sU7IHoKLwLueNLbmVz3fV6wgLcG7oGljbItfAUavcCH0vjDOwaL45ZH(9hRkRy4wL05IitgZWhHPCeJ2xWys5Gk7FplVSmF5iHEgOhYh782KLwwPqHbFGtH)HSwoWXMm(Dsn7ncMn0SsOn)gmIRy45ky4cY9I0kGpKUaEq(Mm2OfgBpMYMEDd0CgA)HFSg0XWBUlfy0GDLI8fWVU(kbTvoEDrcyj5M4QlwKKfnpFz6kUo1ltxCrv6YKlNm4K1jvJJZsHzf)Sr3EXfVUCZYL5RIGwH)(MzqVKzM7IzzjXpKefVo7LZtweVjR6IjVmF9fGINFaOQiD19jvrbr3SzXIYx(qC2M2NcAD3fxgbtD5VTpWlefEH7m8cIk)0QzSHgmWsxud3aX)hLKvMCXKXN9Yz5RMNYG5fnGzS2iCWWUb3S88S55pUA88nfC503)9TpcCuKfvKx1(UlM80t0V97)ElG9IjJ6ZynCVhRH6J1WJZyfbS9CSgeTmEfytZqXlTC8njz5ffW)ugvDxsu5MvZadwjfp9KsZytSa7wjlkJUnE5nP9sVpeh)H(H)W9g)brjFCw2M5jymGIn38POhVljBDuj8VzAdCWmee6b8KBJsbsRaS1KeLcQf9HacjiGq7eq4bJaeZlJA0Fm4dGr2zJJx9PO5RlB1YEXqfoXY0II8IO8frlky(ilsMhb23bPx(JLppCYiT2V6tl3KagIwvawpZy0F560vqCrppSxAVHwP9qx0EypP9WdjTVUinN53t3otOSDMajRmNqAsLY(ZtprBzYQPjIU1YOh98HbVaSb(8oGWCSWAZ40vvGMAYSkOriWHzAL19xX6EpKeAQ(XW8HswtzwgswEtsbZm5OrJUCOvhme8q6rwGNJSaIrM75hAwvihz4kx3wKUmhc0L1JY4zfPqqDj84DGa8wvng99JtwXi(5eHabPOWA(mG(2SMpXcGxjlDNOQ4IBtQkhB2MO48KldHbJaVL5pkSAdnSCGxDoaNCUlEZkcB6BQd8nkUniwgPEslnaEolFmEnX48Uyq5i6M8SkwGQ1nH9co1Mbj2j)uMZNiXFgXccwmDo)2zZD3kiy)LLUBwB6zUBQiYt2OL9kig0KvjlttkViuAwFx4PUbiibmH2LHYDCPiNHOcrUesAzZlsIzQ0BMD3G5j8zlspACrYY40vLNhoyiKn244BZx9PMhEjWahVm(JdyVPtJaCRp7EW66GHTsZ013XP4fjp9eRXspOP1J4qbrTORbTWBTijKOYUCqE6PtAnzG86XSH0NKaXdq2hGwnyyqUNDp1OdnXYj38247en2bdFr6T3vf1WqFJCR7WRXKaok7mAb5ffXfcNd51IfQzd8Vi5JjZ2arvWcY6f1sQrstY3aAyqISqOxzBQQ4I14v3FEWasyE5fbkkvi8zg5p0tIYhAbH97n0TmocpBKqFtOpxRHPyiPUp8bul3)HQOnRh093RHOjw7CCCYfbUqh)fCC1myW1j5V7fI(j)MzXLv1dBtn8rdAa6zduucV8mzAGWKmvFpvUVCl9SwxBcH)3Tcgf0O6BQizbKX9Dm8AJ2Kmy0NEjQiW84I7Vf0p5DTtJs4db8tdo2z2LeuU6JhdSKz3FXPJgOkZhOPs0(NLfCnIwPx6QhYVpjAD(JjfqO(l2uYSDpPnSMlNmWzBb4RpnqEuoVag5rS38swCoCUle(zNjE1HeyiNEKE(PumIgz5PkM5KCe)5bHi2vfXkCxCX8lFdyQSMgQYlwc)peUYmqvzwYQ55d4Ob5f1s5GbsGYjA3f8WKKioz3S(iGlXyYvuaDbCmpIvUvU2RSYTqDxIXeS70A9RwXMXUacLXkJI)U2MQXJe68nMdQJXp5HuHbS5qeqL1kyx(M3)0twBq4KbwCnlp7QgtueL2Kbpga6tAjGMumUJHG9EHEIPTbfuNrAD(OgbS9IHF4dp)edhrJCd9hQAaDtXsdMiHfeFuTOs6D(JV1Lg47Ts4dpcpneJ1O(qbbQCt1yWEO65g(zp)VQ0K1LpNoEvdkWUh0tniyLigh6icKlchSVHqocIDCOt8yj6reW5cAtg4FSKwIx6sw4E6mW)0g8A94Zv0C6Txy)y2NMX5E8S9fbrWAgKwzlcp)9doobPoSojLME2oYB7xBAmNp09SXrN)xh2J5JsbjRZAKd(0odsQLN)wPPcAXHYCVXgpNdUE(spQDQijNj0biripqiArS0QXqxwjNmSHZz0pWLFeO8dEGRl7GzlAMvnXWaHe6re6s4VzqBaCJbgs6iFLMwrnflfMfcpWAuvNorebxR(CtiDMw(AkJu9ePMcyz4Zdjytoe3WYyybRsP3ZkNpBD4zkNdhQcWZFlOGYM1D6KrdyRLC38rrdh1zxAEomr5MMLs3lf0wwPu1t9yemCiTzIgLZaWnTsQjscojSnQoqx8aQ7NSDOUWRJ308WrdCOaGJrEmVuAtYHlp4iNnP6SsgzDFsY6KIwIPJpYEztsItm4YDV9Yt1sLiWGj4WzsNDfc3kNnqxT(9EQ2AJ93KccyVo)M4SADGJJaqAAMABmyv4zajknU1Kp)xf1(GvuBflpVbrk8nyTR7i(VXZcqp28lWgJYbWDykLTxOLmHIJt2dDgoPkiChP5k3iYkDlXurJbOHWIVPmpJjg7ETU9KoKH5kFWS4v8FHGAVRuqBp8ou2duO0EicC6g0Db(La2F(RZVpE92HYdRwYBeS9fBXfqjbVcB8if2cvulyKSCLG)wHMr0RobjCkVYWWgq9Bfh8dwEP8E0xLaRi0i)xFYxsZjQq5js1UOD78(2f7m1apTi0M2G95cYrXZ3xnmFXLjrSF)s2pYxSicc3dMLWRdp12ivK3mFBHhoXsz2A8zeoHxTz59QffOr34V1WbMn1QNASF9uGoJ0Iu2zRJKPaR7rw0TzTfkiqNccPOawG)GWBEuYd8GuMpVCCYhtlRGoR)C2Ks1T(ff9E5fNbJn15gHGU83TD6)DY2PpcbylolcByNFGAISKDibyhMHFSvyTD6VFxxdAE)DaCtkH)e(N0LqeP8Jct2MKxkFmdehrMfPf8d4aPkwzwEvZU4mqnC4zZlJeH1oAG5weSzhFEra6gZSEFaZS2QSRkBeFkIEtzkn6c9s5wCYi0RM1aAuEUtOoAK5wtTzpRIPck2k4Yj7rSlnFrWLQBeQrEkVc3j5vic3narEfqjVWMdAr94qiVmr5UjVcjLxHwKxH7H8sSlPnS8O51VrWPB0GvLtRBby3SbqYUozgyK4fNnsRCYqIRa4vF2LbdUl(H8znAsCJw)0c2XwID6UYxvFcMKTCTD66I8hsz2BIbJpaV6LnnGz(kh(3crVAOw49)JcXzKAvsQ49ob2n5mRFYGXMHnvFNgM5O3)50ZLbFfK9A38rkvahnXN7znTcwy6JuqTAT2MUjnlkeNf5E6dglY48d1lN4F1XIyqo6o25ruk0n2gNMv7SCEKM4tUnAnB3WNuWQ5P39ilpFE0InfFIShF339D8ZLieoXVXYMgM9wNonlKdiSf(KnrKe)qndK93q(kpwYoqK3dt1UIZIKcf5LshMXxsDKhzhOX)Ru2j383bEufJwAoPLTJG6e9t(ieM8Q4mUmwyKun3FIX3app6nw8COfvOBqGoJMDGCxVozoD)hzi9yRhhxc6R4oE1migVcGnXIRKSxD9R518nqD9VR5USmin3luw2qqDtyqAKpOKxEitu2vHsE1snWw379ejednk84CyJS2bdSWkg5dzYRnMjn2MjSbxWSAx0aVRQbQyOvzXJ625dE4XdoVufj2wQgK1GXOW)egL9HE6MdOssD(sQPy5G66ywd8yzMT63WljF3wfKFmQL3SGYZNfnZxak2lGAa8TgaCD51x9a4KbGy3nnX1x9yCXkqmbVKNEz6Y15fv1hi9NXDb(S2RCa2fJq(s2DKWgq8ks2S(i(drF9l8tXp7SW)d5RamXF9ZumrtLJ8Zeza324kxTEyWhh5eLM2QnWdAtoIa3jyjkpcodcTDEs99rA4Q1EHstNVidQDvASBa3jyjkveodYT0iKenYzxJaDTx7jqDYsCR9Fyb(rcSFEO5tjv9Sk8mETcTsduN0Q7jlhwGFKa7NhA(nUbBtvuSbxP2Oq1hAWRa4)yv5M1mVYmq3KmA3TwZ)daqdlp)V)BBNcHPuajInpTKfdW8wyE2bD(HgN4WcCAWIhfwlmXFDZHd3jrFqH(BDRC0dv6JkWPb7XLJCGG(2Fgjg26qIFwVII9D4uO0c9QrCYBFoIrnbmL2Ph6dyPnmx)GjscyAWglP3(HJUe50aT0EsQFqSjpqD2qtEXeq7dhuOXVl4oGGZiAK9M7fqX(u2cd60P6wGOVGEhh8V)4rPus99h0HeAaiBQdn4JTTpOqIrkhhdKqO8DyrIrWpFgrs7Mesd0DBEi)Cs0E5P8SE5MGoUp5BJUNz65v71EgcLvGA86(gNqVIq9id(JgG)cr35RteTOuC)N(mQv4QBnnWG)H4M1ddUxmzuZWBhjSDMUCrw0bnyMzbPOcVn2Jjzpb)rdWFHOB3AWglTlg8piAW4xoKKAW(ry7mD5ISA5Ogrd1ASPpfJ1vRv0oSIsJRxsCCH1m7bG3Qc2NXLRw7pkDpUiBMJubK5E63GL4mpKw1dCqEnyIJmBnxfRwl4TZrgvR6bo8FK5S5oY3QLFIELzIWiPA3Hgpk7JSEaFx36I46gU6spWo5UCahZ2AUkwPk(lX1DkIQIFYU9hp2LD0W3dbbI2VRU0dS7VSZzZvXkvQq7ACihB47dKnVFuranAJ8L29gdu51zb2EO4S36AwXo(99koAjBRF4BxZx7ydFFGSh6aenYxA3Bm0BTmVCTS3EJSIDp1YS3wR4Zi1NJ09vnAAje9J(ADwZGrFURQ9Wcq3gM028w1BRA0cgqWcTmUcCoUOUPQ9qNtACz)UQUrX6ZOoWR)tQoG546BfDGotfulLP8HvV1weY769sNWp8HpgV2aO1p3ZcEhNZcHBFk19EVoweq8ZXAxUJRNfXAoTh8GpBq8GYvPwJ09GSPa5HLUnsnQwUBCznORyyEBoqHccT6DuJJY(I8fzKgiLFv)xN3JMzR9fWh2v5NAnEpelFmXIUUNISqkD3dafFmanQxN2nY(Z6LVhI1k)GAB4WVpni4QhEiEq5dhw7xeMVoOumbo2d(mzqDhsEWEVB3ShHZ(cD05VIlTIdYK39AR0raZ9AR095Widbo2dvvkoXUPQsyeChHgLBLDdAeBs39G3rm1b5Yjtd0iTON4y)JhIsWVp(SDa6DtUrTdipO7pmYi7paSdkpIFDdAQ90(x3GMkDNDZzX2F(Nw2CWjEN635xM)PRVI)l2hVB(bDe(XVY)AGxdOR)7nFYVP2wcxFL0DcaRZxnRG91pon(6RgcKXw(rZy70lzzCSD6aPBRcQtzABJhTD6tpjGHsvPOOfo4LBT55PqaXt6(yzRxisrduXN5HlHtBiKN1DWHb5zE8dOjVauYJ4u31qEJAq5jSpo3yxRtc4zE1ojEUFxVtG86cW5uldr5oBz70ZzcZMpJZwuKQU(xd1u9A6t94fuUyx5eY)n7lbFr6ArZ(ICzsPPWlDWQBVrc6KdgI1M7fOTtbwyGG)HOAwFDe1QEOvL7g1imfsCvm7esypNOoGtuyxzr83zLAo3le1QmtpXya1ehXvXslVXvj35FP0dek1AQYJykPNQPKEWe)HeIMaAXFGdXpLfgN6HhfXpg1SVI)qhI)qNI)WEi(1TifQzrkKPG8gzfKBKvqq1oWnzgCwlftiq7iyF4HT39p8X3zn8tbr0CBx1i978SP)(lB0oKVvS4CgrycM(IyCKZ6TDD9GkuSZ)v79VLSS2QtCN2QADBBfg(yP3ASo1c6MiujkjIFMdK0WQTl0yTYf05MvFRDDeZzAwc806y2PHcAEFibVFNcK7RiE)70496C2gzbdx876RgHr3dyZZVQ(GM2Mfrt)6(MllJglb8P)vmwKNsKWgd72GcZrSxDwKMJUvAF7DB17TzvZecDAMi2B1D7lQWi776ScQfp22mL(GxMwIc4JZtW0e6GaD2MCvu6VHgImaAMZy810Gtl1Faheqkh7RQH00YgDAZcAk4KeFPnAC5547THAwt14YsboBNQ1ojL87WbkOnlsNjev(6hqbi9QqzcM2w0ae5z2kxYZmvH3tQkygTYBScPpqcjxuVC8ATFBqeXhnUoajSrxdHbZUK)AzWd9PvvtZ(Bo(NZcbY0ScBGjwWISRsQgMqNaJn(dMylLHEna6hf7H(rVXUdUq4zsrRB8HCRJdHmjHZQ0R(eE2v8RSnJSQexl8(XJoPnsxNKAZaLtF6ESuOp0SAuM8w)(x0uko0pFj6EVXmriOAzeEg)jAZnbBRN1ns4dq(WGojwFa5PDGeXskhb6Ux7qa23Keb26Gk)LC4O7KvMq7U16DoY7COWHQUl0DeQsEz4GL27P6mr0kbx78I(Z5apAHtnYeUwRFa60J2hjUvdvNb76lscF4Qv0w6VmjnrwtyUrIRPfmkN1X92K281c46RcShgcflSoidBmXZ5mrAETSk5Pkoj7(UgWjzA3AFjjY6gY(ykWJWM23dxcvY(koWf0VPR8rXUw8j(yGtxKF4yKQKKgIo1vKhH0ob2xsRtnf9JSUDYI22)(swDCSq7KaTDBPAl1CJEQLyr7hofezsGD0sBn3ZrEDZmUuk8sAXFV8hdh7elTldoGsX)6QiMd8EbpZzdRl7P1iH7(uVWjlAFowgFQMCcPDWybg6weqm1IGoTe1)Gs(8squPDWF2EpICnYAjkP30SQGk1poodYsTdplsYaDziW)4gp3HkKHWrc0rnQvFws(AMJ9sw7AJqVEwb)xkPylY8UPugxnbRybmascUSnjTLPsF)6lJoTkcHvsHEGNqN4jSdp66I14jDHDguhfZoHbT0qq9VIsYkH)CY4Zqnm5QcMO12(7XY4O71xWvGWZlrbi2XIamO1cRNSMW9I1qvGrKJeZrG1GIfjwJEfb6H2PJ1TNNYMsBnUAcW1df1SfRid9G4CSQ9keh(9MaUMqhXzubGEqDOxIcySmYBiaCwx9IkIM1Dpip0BcbmMwViVqfYtpWREqEAxYa8uVhQZ5SEMO2o95TBhfSotEaXfDKhSlLr)w6cnP8EmmdDmmDFK2SmmTFo4TomdrgMeot91cBZsv3YecvTX6CLGK9)qBbwj0zc7Zonr)AFwV5rCo4qE2saNFcRYMpFR(E8OXZUu7ranZ5JkeFvhe7RcH5Cy8Zd42UTB0L(TI1y8fJTHHl(sG38La)5l(ypW00Rd(IJkzvNC0TfPlZtlyl9wuzm8AiXMeZYNG2mhv1sDJCzEwUIIZR3JEALpfzF4ksF0xakLCHzR6kAwSsH)uJMpGELi0k3K8P)SdMuLO07uAyRngsYmUnpJSyxctRF4dCfVtqQ7SMH02v9On7NEtbefG2GmKAhnT8G0Y8EvWeQSTCtv4RsMfYZYhPge6K9T(OJoF7ULeN(Yp9qLWceDz5p)VQ1L1LYDX66iImgcWsk0JsPFQ(mkKC(ukoTZ1l5cP1WvzaUVljNWezDLh9KsCUECoqJp4ysZOTxOrz4JnX7YULitsXtz5cTUkc9MACow)gE1cPDmqSUseUcORKpRJpKe1sACa((g21N917BO06x3bZwERee1wP7ZBME1t7zJeM007yFSQTfBTk7ejcNBxP8nqN5RflRzu5I0IWXH9B1moOV1NQlQSGnDEBPC)wM1ABXRLwIsCMmDnABPRd5YT7GC9BT212JqMRz9jCsTriAE3famAWaWT3vvViBm9iZwjB1EIIfBIyz7ZYQlzRL8UvOdHsicxmsVen6cSbFBVsX7XY7C6KU1tQfRYlYeUBn5DNwTHh5nsNuWwsl5dUuYXIaTHT8USVlMr3ZQTcm1yC3eVHT60YeGWIhFsyJfTtN0mtdFp5ps3Hd2TVWwhlsRLn7GTShDofI2N(qTWXSDSeA2(8il9SH2hAoUJKwiq8LM0o3HoKIHykGQYdZGVg1PJAxb3FDrl7maJftu4Xm(l3UAqEHjrhm0EX0eHmyiVdfMGkOLBLqVza6P0yIHXkwpVpjzD9jAJ2hMPhblb1Cwd)fz6)7790zNbfySpd8soGNs5Np1felB4yxA5VHavYVjoJv24QMn6qlBYsnHACxIEKzDxzbNf0qDyyjmq5IgWDWFikuK8Niy3zNitc8ak29QczJe8INn0vIud8KVQvpMMnpZUvijSpUXUm6lJDEmzy1cYnQ3LO)KrD32jcRisUXVpCAPuiO2o8wllrZljoLlYdN6pbYy1zX9yrE1KQbuRwx7lK3)vd6ril96u7OPD2DEcXklINB)LMY7IK5arLFXwZDpreR(SeiYS0TmIsC8xSVNIQD)9VoIk)55iQGggV9JBcDixUOe9AXSV12(lZXnX6buVx0F)iype19g79P(XsHpxl4u3pTefrMUWjdpQN4exKRCPWOR5XWVavH2mZfpo1jO5zy7Cy4ghUpgk01OOBCA5QScZyVjHzVqcSzYXR4p1vTpOl9rVwOp6sp85QoPU1jCwot6ItSZNqN(w(7HUtK0w2P)5)m78548qGFcsSx7nUdWVTolr0oHWRf3xO6R4tXv6vD7Cvn)Vzh4k1oQNlfGuL8isLzNllnTdr08xzdBzluIsGyfd0oX63KyAVyoRc(X8u84OO5ORQ0ouXE7L0wYfOEywUQ5mshvdcXYrmtta2ZZmgMjbQYWYTkGovQdG8YcWVlqSwuaj962AK0LsqE7WE3aaBNEMuWxdBRzEzhiz55ZJwSPWr(iwbcBvd5aYE(cwHr8QzjLvfXzrSZ(aNdZkLZMQ7YlU(QRsx(d8NC9))]] )
+spec:RegisterPack( "Affliction", 20240723, [[Hekili:D3tAZnoUY9BzQTwnsZmRgr6XZXglVvYlFz3k1MxfVV8(qQikAjkBwdLOcjL94QCPF7Pb4bU6gauwYZXx8Hiy3nA03Ob0SGz)1SRwgxLm7pdNe(UjFi8SXHHto7Spo7QQh2Mm7QTXl(C8nWFSjEn8Z)1vRYsxuLMVH9OhYYJxYarz(UIfWJVTQAB5V(23EtA1T7UE8I81VTmD9USy2BSOiEvf7)x82zxD9U0SQFFZSRXX)hayUnzb8XV)CaSPlxMup2KYfZUIn2FzYh(LWZ(19Z)RBt2p)Fgxa)aWA6M9ZhwMxuTFE(QrarwKVkndiTyovxoEBrcqwxhxnDvsw0Y81PB4u3BsxnTkDDYLtg8ITjvJJZsVlz)Fy8AVE6Bl3TED(Miyu4p)U4I04RZsEdJNnDrws8DjrXBZEZYKvX7YQMo5n5BNwKu6haQks385KQOGOR3TAv5BUloBx3Nooy8TXLr7kt4pTpWlefEHhm8cIkFyZc2udMyPRAGBq9VJsYktMoz85Vzr(MLPmyoTfmJ1MHdgkMClYZZwMF)MXl3vWxN(5FU7JaPUSOI8QUNnDYJps)0F(NTa2Ptg1N5A4tEUgQpxdpnZveW2Z5Aq064n7IZme8slhFDswErb8JYOQBtIk3TzrCwwsXJpQmmMIfOBMSQm6M41xN2l5(qC8h6h(dFY4pik5llY2TmbJbuS76hIU)2KSTrLWpZ0M43FBkyhd(KBIsbsRaS1KeLcIf9HacjiGq7eq4rJaQ1lJALFm4dGr2fJJ38q0YTLDszVEOcNyDArrEru(QOvfaM3vKSmQkFnS6LFF5RcNmsB8BEy9UeWq0McW6zgJ(l3MUzzwYRc7L0BOvAp0fTh2tAp8ys7BlsZlsREq3otOSDMajRmVG0KkL9NhFK2YKvtteVwhJE0Rgg8AWg4ReaH5yHnMXPBQaj1KfvWGqGdZ0k71)f2R3Jvcnr)yqFOKnuMLHK1xNuWmtoA0OlhA1bdbpKEMf45mlGyM5w)qZQc5mdx46MI015PfjS3OmErr6Q0fj84DIZs2ung95Jt2Wi(LeHaLaKhm8fa9TBlxXcGhyPjllQkU4MKQYXMJjkop5YqyYuJ3Y87RTAddSCGxVCao5CB8Une203TPSInrII7cDLrQVOJgapNL3hVLyEEBmiCeDDEga(UHWEaNAZYx8z5pL58jQ(FJYslRQvNZVzXs3JkTkzDP7H1kv5XqRJ8KnBzpcIbnztY60KYPHsA9IWtDdqyfWeAxgk)IRb2ki(eveVLjdZg(15LLdwLEZTvrfjRJt3uEX7KFL7G4ZH1Dq1XyHbcP5XhfksqS6rX3KV5HlcgFow4pTWFAYxswSd80XC8)AG9pED8xgjj4TdM1vGAt0nz7QQaioUiEZNViyajmVCAGYeD7TXBa9ZOsW8oKGd3mnq(d9KO8HwgAYl8g6wMhHNpA0GLWNWzLqSrl(mmhueUBEh(eQJ7Fxv0UTde))wWd3wNZJxmnWf64pGJR2jth1lKnAP)xx)EYpzrCzvZ0ULJjE6ObTa9CvHWlpxMgimtq9UNj)UCRpSrVmH7eG))DlmkOr1EzrYkilWBz41gTvMU9wUE4QK(8w1zPUmU4Z3aYN8xvirvBxd8DaoBa(wdLR(XJbwYIpp9SrduxZhOjs09VLfCjIUvV0n3L)5KOT53NuaHFUAxjZEYKoxTqU2ohlaFD1a5z5YcyMhXEYBy(E5CxiKiHZn1P0GHwMPxCgfJODT8SrkCyHZHNheIyCT2)1TXflV8DGPYgAOkVyn8BWf6cquzrYML5d4Ob5bnRYbdKaLt0Ei4z32taqRjExUGeE7wgbMIQnCjlfxlxlXbcoCAT5rByQMRa)O24i1pRBOA8OAH7w9(MamtUlT2s1sW9BzJK0LV7Jp(O1beozGlhXY6snOJIY0e99ywORIsanPOSgdHB8A9uJ6cbOjNOMmIe(xADtm8tF6vVWWTZi3q)UQwq3wUUGjsybXJuhQKEM)4BBPb(EVe(qIZWeXydQpuqGk3unIR7QELHx1l(nLHSTSDiiuIbfy3F5zgeSs8HdDeVX0Wbp1aghbrko0jESeRic4CbTjd8pYrlrhDjl4oDg4pSHQ2m)Cf7M(4RTFS4HfCUhpFZ6qgyddsSPdHx8XbNMqsh2Kss7B2nZ7EVUKwUyOBTXrx8Bd7H(OuiX6Sg5qnTZGKg5fVxsvqlQtMpo285cW)Zx7zTtbj58EocP94bcrlJc71eFIirIbVyylNZ49a)(rGWp4bgcPKT8yoIwTQjggiKqpYIUe(BN0ga3yIHK8X3Ojr0qXsXAHWdSgA1ztQdJRtEUnUotlFnY3dAuKAlHIHppSYOWG4ow(bRy1Q7ZSckdIumKnC4qvaEX7bbuMw3ztgnGTBMc9X6bosyxAzoOOCDgeBy(AdjdCb0owPu978ygmCiTzIwHZaWnTsIislCsyBut0UoYZWR12H6lEcEt7hoAGdbaCmYJ5LsAsoC5bN4Ch9Z6UqrNWo)5d0LZ(ONYr24hT5eagqZVooRzr50WrKK7vhJbRcpLK6QLAeu63ffTuq8FNhqOEyAtXMJY(Ypo1W0l0sgB5PjqsHklvLafKMRWKjlXPetf1DqlHfFDzEgBzu84bKXYGzvFWI4n8)cb1EN0y3B4DunhPOQ8yjWPby3v2vcy)4xGxXKTFLGRx16ebBF1QQmkj4veeNihMu(lXiz5Ic(9cntfOTRalTba)Q2SFWYlb1NNkeBfRg5(4tSYAEnRLwIuneA3WUVVIDoBGNMa6Iq1UWVCaJ8D1N58TmjI93VH9h5RwfbX3bQf8AWs1eB15mXBk1WjwkXsRtIWj8knk3PiuGgTTdBGdO(0jSA0TqkqNrArk9v3izkWAh6H2KNwOGaDkiKIcgbbFclElJsUJhvYYLLJt(sAzf8Y6FotZuTXtOO3lNEolPttfKqqG(N2p)FMSF(9qy17NxLVFoSkd)rnLwcpiT629Z)37wXA6A5Mb0(8Bb4Muc)l8J01qCOl3pNxq(3Wgrw2(5xNWbn85RslkRgBroRmlVQTrYcudcEXYYO6GzhnWSlLAB6SPbO9gwtRiYSXQ0yxTRHkR)MlS0Ol0lj86MZwVCgdOr5foH6OrMDhxBBZHjhw3nQYP4r0OyVo4YPkYkJ8C9k8GwVcr4UbiRxbuRxykIwepogRxMO8WwVcjxVcTSEf(ewVQButdZpA()Bx4qTCWQ1L1wr0nVawE3MSaSu86ZhPvuriNva8QF2LbdUn(U8fTItClx)(Q9ZZ3K9a7NjSFOA(A)8Tf53LYm6edwGag2BAhaZgwo8ZI63QLAHN)FcFuka3njP1p3jWUoNzcugm2SUP6f1WwhDFWsRqdEniFRdZBPuTB0w(CR60TWc6qsXZQnABcO0SOqCwKBDimwKX5yOxUZ)MJfXGC0TXBwkhehRbozLnlNhZjUgUXOzDLBsbBxF8(nYYZxgTAxXdKVXp9tGc7)OmbIP4VZsKg0EBYKMf3beadxzRoCI)wddK9)q6l3dVtw6NbvTR4SiP4raDWRGaD3p))kVc(7)ED5bHpuuFqq1ea8)DkeD98)c4rvmAbuIvNbn54N8fiG5nXz814AlLQP9tm)g45raWI7dT4dDdcun6K)VDPB3MSK(9hzS6X2vg(kOVl3XBwab6vaSjweMKVL49AFmVPzB(7gUllHsZoIXsBHiuyqgKpOKxzitukkojVqPgyt8CprcXuJcpoN2dnPKbwyfJ8Hm5LfZKg7Yj2GlywOlAGlkIGkg6ew8OKD(GhEqHllvrcnJPZWTGpQuh96A(tyu2h6rOdOsscFjnuSCKDcM1ap2SrR(n8ALx0Wy8JZPClJjRpxpmFbyDhHPbW3BaWTLZU6oWjdarXXND2v3hxSbwMGhYZXmD9w(PHDfZ(9l5UaF5(5fmlCfSWWkZxdJkEhS8wNX5cyT(MKsi6R)Juw8Gb)kZvYgat8h)sft0uzl)Y60G7gCLRrpm4lJCIstB1g4bDiNqG7eSefkbNbHoopP((SA4A0EHstNVitQdD14WaUtWsu0iCgK7vJqs0iNInc01ESNa1jlXT0)Xf4NiW(8qZNrk6zDXZ4Xk0knqDsRUvwoUa)eb2NhA(DUbBBvuSbxPXOq1hBWRa4)XMYDBzELzGUnz02CP2p))baOHLN)3)L9ZHWukGeXwMwYIbyzhmp)OQFOXjoUaNgS4rH1bt8h3EivDs0hvO)E3ch9qK(KcCAWEA5ihjOV)pqIHTjK4x2ROy)ibf2KPIoL1M5gX89thvOfyeTIEMvAauQ)GOaj1kIYgIRtNQBOEFb9bo5)WPJsPw0pcGMqcaPTb0GpwJfqGKWjphiHq474IeJOaEgrsxlNObArRO4NDNU7fG(z5Houc5lAjeJ5Ap2tVYwbQXJ7RRNEf0Zjg8Nma)vIUZ3MupIsqYdId8LuBAIOm5yW)yCPrHb3Ptg1o9oqc7GPlxKvhh1WxIzWQKlv4Jrrs4yd(tgG)kr3ULGn2Tqm4FuKGXV3ZiLG9JWoy6YfzrhNANXM(uFpxJwr6WkknU50WXf2WShXCNiyFMxUgT)O098ICyQbcAeJMm3t)YzdN5HmQEGdYB4nCKzB4oYkrM)5CMrnQEGd)NzohUkwPkOiXnzhcJKAChB8O0Fs9a(UUqXWLnC9k9a7KBCooMTnCvSsvprIBYperf)w7E64X(Ahn89yHar631R0dS7)ANZHRIvQuHo04qo1W3hiBE1)HaA0b5lT7ngOYRZcS9qW5jlRzf74xLH4OLCS(HVdnFTtn89bYEidqmiFPDVXqVLY8Y1Yt2BKvS7PuM9XAfFgP(CIUkwrtlH49OVXs1my0NRHvpSai6bpB6TQxeROfmGGfAzEf4CErDjS6HmN08Y(1WARG1ZOmWB)bvgWCE99ImGWub5gMiD0N7SfH8SEV)g8t229XBnaAZN7zbVJZzHW9uk19tEFSiGis)iQbASEaLahuBa1HTFweBm0tGh8SbXJkx1SOfpzYMcKhx6MyxKmp6)6cgM3nauOGqQ(aL4OSViFHSObs5h17nM90z26Pc4J72YtT9RhHTpMAtxFIlzHgLK54rXNcqJ61PR3OFzV89qWrpQ2gi4bpbtAegBo(q8OYhoU2VimFDuPycC8e4Zh3UG5u1av2JW5PcDu936BeHJIY7bYmPmvDyq74hulXInY1NKgOrgrpXXt3h7PZPijOpS1nQUQ7O2ZrMBcYXJDqfi632GMY3W3OGE)F87RBBf7pi6bB235jmZtZUI)xSVJd5hDk4p(t(xAInaA2)w73mIu7k9SRKoLXSxU5BIqBVXcWvwcef0SRgce6EE7GVF(LSqs3pFG0jKN6KT1n4r7N)4J1WqPSfu4MdE5rB2d31q8fSRMe8kvvpav8z2q7CAdH8SUf)gKNzlpttEbOKhXj9PL8g1IsaI4xQm1WZ8ILP(Z97YLbwVMUF(5Dme2LfbhXkxye7NFbBvDw1S)mutgSvMQzAbszStZU8)RitjDEj7oOXIPQbNR9o)y)CGkdQjrKv)MRAKUvaTkn2UsHTMJVkANqc7PUWaorHDDKWFMvQ5cVquN8cTS3akzZ6ByHoEJRYEUF(R5lfm5gnHKr1FnPwKUTwM4RYnteti9m7cPHhrHYqcbMaAHYahcLuMwCQDCsekXOMNQqzOdHYqNcLH9rOuXIuita5DYcixlloGkl4WYyW5DekX6OGo9H11D)IWNwN3YgRPM2BuN2fDHNm9NFzRqH8nVdNHuh4GPVhgR58EBGxpmdbZ0QZqNgK6C)zfg(yo3Amdnmqh5E6N2L0kxJAwRYVlORB78B27gjMmY7DAFvtLRNYi(BFGwgjKqg5GcC7BfzeG3)bnEpvq(mCXVpHAxmeFatp)QMdZwxEfTVN47xsz0yjYp9VXgRZCjQ2gd7gNXMhzRVCDIp6MR99T7kNlMvnH8hIvvDF61fwI9nvPNOU(fW0uOXltwWtWhNNGjjiGTfFvVtwcr5QjLbYpscsj5tTYFy6KU7INV2744g3JcnJwiiimGRlFvSZD81Cr0BO9LJFxPxJmnDqdmXIqiqIrlkAgB()jY5)WEs)9JGhQyaaLb3BS7GjeEUueAgFFXiyqi16MXPcMyJv1jkWVtGmIKU(Ai2pE0l6cZXjP2or50NEXsuOp0iznVw85IH1qh9QXx30TzfyBPAzeEoMQjO(FUyMWNG8PHUvxX0WhqEMaKixc)CeOBzwGaS77(ASjGk)HC4OBJwMqfxqYoN5IcmZHkTD7EbvPR)EoyPnlRQjIwdV6vDlxv4CNiNzK9tJu)au1JUpQ(AZsvd21TDpF6QvHo6B9(2WQim3iX10IeHZ6O964GPvBdWkB7coBJM7kleEgpM5wsvCPzdHn0ERzp7Qaojt7v7Rjj3mq292nNkP99u3(uSlmC(c97eLmW52gWNdC6I8lLaPQhOHiv6fjCHqANapvsB3w7yM28(tfZcMsODsG20SureAVv40cPS7U4hHThyhT0gS9CM3mmJtHURfeXZL)UuWoXs7vGdOu87Q)AX8p2u4fxdSPAw(f0R4Bqao9r7FXYevYyddg0otSadnT)qUzvflxO22eOH9sFujXnjiQmo4F7UbbMHSnsscqTB3Js9bJZGeve4zvsgiudX4h36LouHmQDAaVOg1Ql3MVL5eVKnUUGXBup4)LsUu1jF1MZ6vtWYkKbqsWLTlPREe6DQRm60s9hl3XEGNqN4juGhD5Og8KUYodsqXSElg1mKR6MHwPYFglfcXJNYLsWt0qbi2Xsnyg1W6IsYkHP0KXN3XldWs1TNSMq3SgQYfH0X7Nawdkw8J1OhCtpKoDSHS80ZugRXHsgxoSU4Cy5t3dIZX2XQqC4NyACjbbXzKcBpOo0JpnglJ8SbJZ6A20i0my7b5HEgOXyA9I8cvip9WF6b5PD8I5PzB0Pawpne7N)QU(ma7LjpAO1VyJAfUr)o6cn)4EmndDmnDFywSmnTFcyTondrMMeot91cB7wroRh7(dTnyLqLjSq70i9B9zBdhXzud5jabm4jSAv(Q96nqqRdCPXJaAMpgvi(lci231Dtvv8d8ZEr7ICPF7ajgFXyp(DXxc8MVe4pFXh1EtlSo4lQUpd60sdDuFPMSKUPiDDo7R9yabLXWJHmCsmlvc6WCuQj1o0X8uCefN308vALkfPBjRZJ0xakLCH5Oev5jwPiFQrZBPOkALws(CFjGjv5i)KVP0W2eeKKzCBEwuaz5Q8cYHF6tCjYxGuJzndPDBWrx2p9Mcik2SbzinozAPltiiignc7UkQSTCtvyn2UvYZY34bA0571PZTOBTNB6uFNMURQ20eDj4V430ELTLYVILU5hzDFBzawsHEu28Z01OqY5tPq0o3BKUErtNN8u39TABNnvz0tkX5wV5an(GJjTZ2EHgLPpMI3LITdtsWtzNbPl79HqnoNRFhVZG0ogi2djcxb65o2o8AdVM7KEhLYH)hB5Ep7B13qPDUwaZowTee12J7lA126P5Tr1w40FX(yKBp22uc8y5VlDz(AXYAUZzT0ESHV6incogEVMfd9gFPPKZ1mRl6k073Zmye1juMmDnA7iHJ5wRBxrxzF1P31d8VX1L2F6xWj121llFNN3SHAmrgYV3ZBRt9iNXYs27rIHzDB1LS)sEsRjwgP3(d9fSbFFVRWuDnQ02T0N9(5SjInBQJsK3bkCxDDk7dq7g2ZiwLCSbo7yBLl7lzTOpZQTcOAmwO4nStMwgz1g34kHTgVoBsRMgEpxps3dd25UEVJnK1JDNhl7rNQq0(0hQfoMT2oVTpPr2MzdPp0CChjTJGhWMgBSf72LshIjaQUgzgq2iHmQDbCCzrJDuxLeR3eqlBWyTdZ4N)UAaDYO7fZrOcMMETe8W5TteeDVp6TUekzt1PRkRb6ViEQBpFlbiwqWXU02m381kFZojv3zbDRrwQ9sRBj0tLO7m4Dw4a1PHLiRKtoN7i9yuqg5VxhDh2VmjWDCF4vFXgj4fpBORmug4jFvRUhTDRYHvWgSVrkDzivg78yFWQ5IBuFirzjJAr)7GvSg343hoTuO6ylzArYBM(F7djo2aYtNMV3kXQNH75I8250aOoPUUhi3Wtd6rOb96yqOjDkoPwyLFWZ2mPPYPQfwfjCDrfwX2BBpre7lqtLkJsGiEjsHH0CEcS27oUQs0XUeHFDAqF6Sp)XUmCsbc1SWP2FIe1IJUxbhEsBsFxKRCffOoCpg157RrX8mdjfTpZXcJ0wRR7gOU7CF6Swftml3BlDf9XAjBSNpgttoEd)tDLcjDIP9A)s0TU3oGEulNtqjO6NGbvwOKzf5XbDWRk1QOk5knbB5E8J)PC45O9YX75E7vWG2)3ZFgN4jgBC6lOk)AFQOXxPmQ9jDAYYiyu8x0mR)HCM7OR6pKs3r7Tdn3dg9lB)Po91dS0P9tfLUwPoRk4ZXrEWY5mIUC7UkLjoQSC8GKCQPhXhwHdD8IQHAy5G5OTs2ZtAJvZDA1sJR8JQXlaip3o(jK3AMDsc4Dj6kc8pVBAFyaG1VCjf8n8ZAcd2bswE(YOv7kEalIEpbcBlw4aYE0ZwHr8MfjLvfXzrSgfNZHz5JVR628IzxDv66)g)tM9)d]] )
