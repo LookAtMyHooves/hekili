@@ -1518,7 +1518,7 @@ spec:RegisterAbilities( {
         talent = "elemental_blast",
         startsCombat = false,
 
-        usable = function() return not (moving or cast) end,
+        usable = function() return not (moving or action.elemental_blast.cast_time) end,
         handler = function ()
             consume_maelstrom()
 
@@ -1944,7 +1944,7 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
-        usable = function () return not (moving or cast) end,
+        usable = function () return not (moving or action.lightning_bolt.cast_time) end,
         handler = function ()
             consume_maelstrom()
 
