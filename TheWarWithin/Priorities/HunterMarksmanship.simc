@@ -2,6 +2,7 @@ actions.precombat+=/summon_pet,if=!talent.lone_wolf
 # Determine the stronger trinket to sync with cooldowns. In descending priority: buff effects > damage effects, longer > shorter cooldowns, longer > shorter cast times. Special case to consider Mirror of Fractured Tomorrows weaker than other buff effects since its power is split between the dmg effect and the buff effect.
 actions.precombat+=/variable,name=trinket_1_stronger,value=!trinket.2.has_cooldown|trinket.1.has_use_buff&(!trinket.2.has_use_buff|!trinket.1.is.mirror_of_fractured_tomorrows&(trinket.2.is.mirror_of_fractured_tomorrows|trinket.2.cooldown.duration<trinket.1.cooldown.duration|trinket.2.cast_time<trinket.1.cast_time|trinket.2.cast_time=trinket.1.cast_time&trinket.2.cooldown.duration=trinket.1.cooldown.duration))|!trinket.1.has_use_buff&(!trinket.2.has_use_buff&(trinket.2.cooldown.duration<trinket.1.cooldown.duration|trinket.2.cast_time<trinket.1.cast_time|trinket.2.cast_time=trinket.1.cast_time&trinket.2.cooldown.duration=trinket.1.cooldown.duration))
 actions.precombat+=/variable,name=trinket_2_stronger,value=!variable.trinket_1_stronger
+actions.precombat+=/hunters_mark,if=active_dot.hunters_mark=0
 actions.precombat+=/salvo,precast_time=10
 actions.precombat+=/use_item,name=algethar_puzzle_box
 # Precast Aimed Shot on one or two targets unless we could cleave it with Volley on two targets.
@@ -15,6 +16,7 @@ actions+=/muzzle
 actions+=/tranquilizing_shot
 actions+=/call_action_list,name=cds
 actions+=/call_action_list,name=trinkets
+actions+=/hunters_mark,if=active_dot.hunters_mark=0&target.time_to_pct_80>20
 actions+=/call_action_list,name=st,if=active_enemies<3|!talent.trick_shots
 actions+=/call_action_list,name=trickshots,if=active_enemies>2
 
@@ -28,13 +30,11 @@ actions.cds+=/lights_judgment,if=buff.trueshot.down
 actions.cds+=/potion,if=buff.trueshot.up&(buff.bloodlust.up|target.health.pct<20)|boss&fight_remains<26
 actions.cds+=/salvo,if=active_enemies>2|cooldown.volley.remains<10
 
-actions.st+=/steady_shot,if=talent.steady_focus&steady_focus_count&(buff.steady_focus.remains<8|buff.steady_focus.down&!buff.trueshot.up)
-actions.st+=/rapid_fire,if=buff.trick_shots.remains<execute_time
+actions.st+=/steady_shot,if=talent.steady_focus&steady_focus_count&buff.steady_focus.remains<8
 actions.st+=/kill_shot,if=buff.razor_fragments.up
-actions.st+=/volley,if=buff.salvo.up|variable.trueshot_ready|cooldown.trueshot.remains>45|boss&fight_remains<12
-actions.st+=/explosive_shot
 actions.st+=/rapid_fire,if=talent.surging_shots|action.aimed_shot.full_recharge_time>action.aimed_shot.cast_time+cast_time
-actions.st+=/kill_shot,if=!buff.trueshot.up
+actions.st+=/volley,if=buff.salvo.up|variable.trueshot_ready|cooldown.trueshot.remains>45|fight_remains<12
+actions.st+=/explosive_shot,if=active_enemies>1
 actions.st+=/trueshot,if=variable.trueshot_ready
 # Trigger Salvo if Volley isn't being used to trigger it.
 actions.st+=/multishot,if=buff.salvo.up&!talent.volley
@@ -43,6 +43,7 @@ actions.st+=/wailing_arrow,if=buff.precise_shots.down|buff.trueshot.up|active_en
 # With Serpentstalker's Trickery target the lowest remaining Serpent Sting. Don't overwrite Precise Shots unless either Trueshot is active or Aimed Shot would cap before its next cast. Overwrite freely if it can cleave.
 actions.st+=/aimed_shot,cycle_targets=1,if=buff.precise_shots.down|(buff.trueshot.up|full_recharge_time<gcd+cast_time)|(buff.trick_shots.remains>execute_time&active_enemies>1)
 actions.st+=/kill_shot
+actions.st+=/explosive_shot
 actions.st+=/chimaera_shot,if=buff.precise_shots.up
 actions.st+=/arcane_shot,if=buff.precise_shots.up
 actions.st+=/barrage,if=talent.rapid_fire_barrage

@@ -33,7 +33,7 @@ spec:RegisterResource( Enum.PowerType.LunarPower, {
         end,
 
         interval = 0.5,
-        value = 3
+        value = 2.5
     },
 
     celestial_infusion = {
@@ -1623,6 +1623,8 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
         -- in_any
         elseif k == "in_any" then
             return eclipse.state == "IN_SOLAR" or eclipse.state == "IN_LUNAR" or eclipse.state == "IN_BOTH"
+        elseif k == "in_none" then
+            return eclipse.state ~= "IN_SOLAR" and eclipse.state ~= "IN_LUNAR" and eclipse.state ~= "IN_BOTH"
         -- in_solar
         elseif k == "in_solar" then
             return eclipse.state == "IN_SOLAR"
@@ -3229,7 +3231,7 @@ spec:RegisterAbilities( {
         gcd = "spell",
 
         spend = function ()
-            if state.spec.balance then return ( talent.soul_of_the_forest.enabled and buff.eclipse_solar.up and 1.3 or 1 ) * ( talent.wild_surges.enabled and -12 or -10 ) end
+            if state.spec.balance then return ( talent.soul_of_the_forest.enabled and buff.eclipse_solar.up and 1.3 or 1 ) * ( talent.wild_surges.enabled and -8 or -6 ) end
             return 0.002
         end,
         spendType = function()
