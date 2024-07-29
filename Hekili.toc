@@ -51,7 +51,7 @@ TheWarWithin\EvokerAugmentation.lua
 TheWarWithin\HunterBeastMastery.lua
 TheWarWithin\HunterMarksmanship.lua
 TheWarWithin\HunterSurvival.lua
-# TheWarWithin\MageArcane.lua
+TheWarWithin\MageArcane.lua
 # TheWarWithin\MageFire.lua
 # TheWarWithin\MageFrost.lua
 TheWarWithin\MonkBrewmaster.lua
@@ -62,10 +62,10 @@ TheWarWithin\PaladinProtection.lua
 TheWarWithin\PaladinRetribution.lua
 # TheWarWithin\PriestDiscipline.lua
 # TheWarWithin\PriestHoly.lua
-# TheWarWithin\PriestShadow.lua
+TheWarWithin\PriestShadow.lua
 TheWarWithin\RogueAssassination.lua
-# TheWarWithin\RogueOutlaw.lua
-# TheWarWithin\RogueSubtlety.lua
+TheWarWithin\RogueOutlaw.lua
+TheWarWithin\RogueSubtlety.lua
 TheWarWithin\ShamanElemental.lua
 TheWarWithin\ShamanEnhancement.lua
 # TheWarWithin\ShamanRestoration.lua
