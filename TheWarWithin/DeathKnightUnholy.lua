@@ -1375,11 +1375,16 @@ me:RegisterAbilities( {
         texture = function () return talent.raise_abomination.enabled and 298667 or 237511 end,
 
         toggle = "cooldowns",
-
+        
+        usable = function ()
+            if talent.raise_abomination.enabled and (boss or active_enemies > 5) then return true end
+            if not talent.raise_abomination.enabled and boss then return true end
+            return false
+        end,
         handler = function ()
             if set_bonus.tier30_4pc > 0 then addStack( "master_of_death", nil, 20 ) end
 
-            if pvptalent.raise_abomination.enabled then
+            if talent.raise_abomination.enabled then
                 summonPet( "abomination" )
             else
                 applyBuff( "army_of_the_dead", 4 )
