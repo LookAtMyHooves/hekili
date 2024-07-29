@@ -2165,6 +2165,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         cycle = function () return buff.deadly_poison.up and "deadly_poison_dot" or buff.amplifying_poison.up and "amplifying_poison_dot" or nil end,
 
+        usable = function () return target.maxR < 10 end,
         handler = function ()
             gain( 1, "combo_points" )
             removeBuff( "hidden_blades" )
