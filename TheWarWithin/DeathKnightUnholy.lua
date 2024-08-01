@@ -1625,10 +1625,7 @@ me:RegisterAbilities( {
         startsCombat = true,
         notalent = "defile",
 
-        range = 8,
-        usable = function ()
-            return not moving
-        end,
+        usable = function () return not moving and target.maxR < 8 end,
         handler = function ()
             applyBuff( "death_and_decay" )
             if talent.grip_of_the_dead.enabled then applyDebuff( "target", "grip_of_the_dead" ) end
@@ -1800,10 +1797,7 @@ me:RegisterAbilities( {
         talent = "defile",
         startsCombat = true,
 
-        range = 8,
-        usable = function ()
-            return not moving
-        end,
+        usable = function () return not moving and target.maxR < 8 end,
         handler = function ()
             applyBuff( "death_and_decay" )
             applyDebuff( "target", "defile" )
