@@ -8,6 +8,8 @@ actions.precombat+=/immolation_aura
 ## actions+=/retarget_auto_attack,line_cd=1,target_if=min!target.is_boss,if=talent.burning_wound&talent.demon_blades&active_dot.burning_wound=(spell_targets>?3)
 actions+=/variable,name=fel_barrage,op=set,value=talent.fel_barrage&(cooldown.fel_barrage.remains<gcd.max*7&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in<gcd.max*7|raid_event.adds.in>90)&(cooldown.metamorphosis.remains|active_enemies>2)|buff.fel_barrage.up)&!(active_enemies=1&!raid_event.adds.exists)
 actions+=/disrupt
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/call_action_list,name=cooldown
 actions+=/fel_rush,if=buff.unbound_chaos.up&buff.unbound_chaos.remains<gcd.max*2
 ## actions+=/pick_up_fragment,mode=nearest,type=lesser,if=fury.deficit>=45&(!cooldown.eye_beam.ready|fury<30)
@@ -107,3 +109,6 @@ actions.fel_barrage+=/arcane_torrent,if=fury.deficit>40&buff.fel_barrage.up
 actions.fel_barrage+=/fel_rush,if=buff.unbound_chaos.up
 actions.fel_barrage+=/the_hunt,if=fury>40&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in>(1+set_bonus.tier31_2pc)*40)
 actions.fel_barrage+=/demons_bite
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

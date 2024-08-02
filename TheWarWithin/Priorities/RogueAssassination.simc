@@ -12,6 +12,8 @@ actions.precombat+=/slice_and_dice,precombat_seconds=1,if=refreshable
 actions+=/stealth
 # Interrupt on cooldown to allow simming interactions with that
 actions+=/kick
+# Defensives
+actions+=/call_action_list,name=defensives
 # Conditional to check if there is only one enemy
 actions+=/variable,name=single_target,value=spell_targets.fan_of_knives<2
 # Combined Energy Regen needed to saturate
@@ -136,3 +138,6 @@ actions.vanish+=/vanish,if=!talent.master_assassin&talent.indiscriminate_carnage
 actions.vanish+=/vanish,if=talent.master_assassin&talent.kingsbane&dot.kingsbane.remains<=3&dot.kingsbane.ticking&debuff.deathmark.remains<=3&dot.deathmark.ticking
 # Vanish fallback for Master Assassin
 actions.vanish+=/vanish,if=!talent.improved_garrote&talent.master_assassin&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.deathmark.up&(debuff.shiv.up|debuff.deathmark.remains<4)
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

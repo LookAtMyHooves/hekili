@@ -1,4 +1,6 @@
 actions+=/spear_hand_strike,if=target.debuff.casting.react
+# Defensives
+actions+=/call_action_list,name=defensives
 # Potion
 actions+=/potion,if=buff.storm_earth_and_fire.up&(!talent.invoke_xuen|pet.xuen_the_white_tiger.active)|boss&fight_remains<=30
 # Use Trinkets
@@ -76,3 +78,6 @@ actions.default_st+=/tiger_palm,cycle_targets=1,if=combo_strike&buff.ordered_ele
 actions.default_st+=/chi_burst
 actions.default_st+=/spinning_crane_kick,if=combo_strike&buff.ordered_elements.up&talent.hit_combo
 actions.default_st+=/blackout_kick,cycle_targets=1,if=buff.ordered_elements.up&!talent.hit_combo
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

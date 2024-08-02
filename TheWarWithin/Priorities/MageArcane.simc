@@ -11,6 +11,8 @@ actions.precombat+=/arcane_blast,if=!talent.evocation
 actions.precombat+=/evocation,if=talent.evocation
 
 actions+=/counterspell
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/potion,if=buff.siphon_storm.up|(!talent.evocation&cooldown.arcane_surge.ready)
 actions+=/lights_judgment,if=buff.arcane_surge.down&debuff.touch_of_the_magi.down&active_enemies>=2
 actions+=/berserking,if=prev_gcd.1.arcane_surge
@@ -81,3 +83,6 @@ actions.rotation_default+=/arcane_barrage,if=buff.arcane_surge.down&(mana.pct<70
 # Blast for filler if you're not in execute or you already have some charges from another effect
 actions.rotation_default+=/arcane_blast,if=!talent.splintering_sorcery|(buff.arcane_charge.stack>2&buff.nether_precision.down)
 actions.rotation_default+=/arcane_barrage
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

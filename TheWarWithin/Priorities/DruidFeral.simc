@@ -17,6 +17,8 @@ actions+=/cat_form,if=!buff.cat_form.up&!talent.fluid_form
 ## Line up <a href='https://www.wowhead.com/spell=10060/power-infusion'>Power Infusion</a> with Berserk.
 ## actions+=/invoke_external_buff,name=power_infusion,if=buff.bs_inc.up|!talent.berserk_heart_of_the_lion
 actions+=/call_action_list,name=variable
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/tigers_fury,if=energy.deficit>50|combo_points=5&!dot.rip.ticking
 actions+=/rake,cycle_targets=1,if=buff.shadowmeld.up|buff.prowl.up
 actions+=/natures_vigil,if=spell_targets.swipe_cat>0
@@ -124,3 +126,6 @@ actions.variable+=/variable,name=regrowth,op=reset
 # optional variable that forgoes shredding in AoE. Turned off by default
 actions.variable+=/variable,name=easy_swipe,op=reset
 actions.variable+=/variable,name=proccing_bt,op=set,value=variable.need_bt
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

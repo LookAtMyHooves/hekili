@@ -3,6 +3,8 @@ actions.precombat+=/blizzard,if=active_enemies>=2&talent.ice_caller&!talent.frac
 actions.precombat+=/frostbolt,if=active_enemies<=2
 
 actions+=/counterspell
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/call_action_list,name=cds
 actions+=/run_action_list,name=aoe,strict=1,if=active_enemies>=7&!set_bonus.tier30_2pc|active_enemies>=4&talent.ice_caller
 actions+=/run_action_list,name=cleave,strict=1,if=active_enemies>=2&active_enemies<=3
@@ -76,3 +78,6 @@ actions.st+=/ice_lance,if=buff.fingers_of_frost.up&!prev_gcd.1.glacial_spike|rem
 actions.st+=/ice_nova,if=active_enemies>=4
 actions.st+=/frostbolt
 actions.st+=/call_action_list,name=movement
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

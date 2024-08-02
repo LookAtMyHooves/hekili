@@ -10,6 +10,8 @@ actions.precombat+=/thunderstrike_ward
 actions+=/spiritwalkers_grace,moving=1,if=movement.distance>6
 # Interrupt of casts.
 actions+=/wind_shear
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/blood_fury,if=!talent.ascendance.enabled|buff.ascendance.up|cooldown.ascendance.remains>50
 actions+=/berserking,if=!talent.ascendance.enabled|buff.ascendance.up
 actions+=/fireblood,if=!talent.ascendance.enabled|buff.ascendance.up|cooldown.ascendance.remains>50
@@ -183,3 +185,6 @@ actions.single_target+=/flame_shock,moving=1,cycle_targets=1,if=refreshable
 actions.single_target+=/flame_shock,moving=1,if=movement.distance>6
 # Frost Shock is our movement filler.
 actions.single_target+=/frost_shock,moving=1
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

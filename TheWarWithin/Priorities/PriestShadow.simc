@@ -10,6 +10,8 @@ actions.precombat+=/shadow_crash,if=raid_event.adds.in>=25&spell_targets.shadow_
 actions.precombat+=/vampiric_touch,if=!talent.shadow_crash.enabled|raid_event.adds.in<25|spell_targets.shadow_crash>8|!boss|set_bonus.tier31_4pc&spell_targets.shadow_crash=1
 
 actions+=/silence
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/variable,name=holding_crash,op=set,value=raid_event.adds.in<15
 actions+=/variable,name=pool_for_cds,op=set,value=(cooldown.void_eruption.remains<=gcd.max*3&talent.void_eruption|cooldown.dark_ascension.up&talent.dark_ascension)|talent.void_torrent&talent.psychic_link&cooldown.void_torrent.remains<=4&(!raid_event.adds.exists&spell_targets.vampiric_touch>1|raid_event.adds.in<=5|raid_event.adds.remains>=6&!variable.holding_crash)&!buff.voidform.up
 actions+=/call_action_list,name=aoe,strict=1,if=active_enemies>2
@@ -151,3 +153,6 @@ actions.trinkets+=/use_item,name=aberrant_spellforge
 actions.trinkets+=/use_item,name=spymasters_web,if=buff.spymasters_report.stack=1&buff.power_infusion.up&!buff.spymasters_web.up|buff.power_infusion.up&(boss&fight_remains<120)|(boss&fight_remains<=20|buff.dark_ascension.up&boss&fight_remains<=60|buff.entropic_rift.up&talent.entropic_rift&boss&fight_remains<=30)&!buff.spymasters_web.up
 actions.trinkets+=/use_items,if=(buff.voidform.up|buff.power_infusion.up|buff.dark_ascension.up|(cooldown.void_eruption.remains>10&trinket.cooldown.duration<=60))|boss&fight_remains<20
 actions.trinkets+=/use_item,name=desperate_invokers_codex,if=equipped.desperate_invokers_codex
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

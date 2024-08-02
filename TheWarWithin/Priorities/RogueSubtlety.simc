@@ -8,6 +8,8 @@ actions.precombat+=/slice_and_dice,precombat_seconds=1
 actions+=/stealth
 # Interrupt on cooldown to allow simming interactions with that
 actions+=/kick
+# Defensives
+actions+=/call_action_list,name=defensives
 # Used to determine whether cooldowns wait for SnD based on targets.
 actions+=/variable,name=snd_condition,value=buff.slice_and_dice.up|spell_targets.shuriken_storm>=cp_max_spend
 # Check CDs at first
@@ -132,3 +134,6 @@ actions.stealthed+=/gloomblade,if=!buff.premeditation.up&buff.shadow_dance.remai
 actions.stealthed+=/shadowstrike,if=!used_for_danse&buff.shadow_blades.up
 actions.stealthed+=/shuriken_storm,if=!buff.premeditation.up&spell_targets>=4
 actions.stealthed+=/shadowstrike
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

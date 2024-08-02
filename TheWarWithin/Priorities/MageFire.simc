@@ -32,6 +32,8 @@ actions.precombat+=/flamestrike,if=active_enemies>=variable.hot_streak_flamestri
 actions.precombat+=/pyroblast
 
 actions+=/counterspell
+# Defensives
+actions+=/call_action_list,name=defensives
 ## actions+=/time_warp
 # The combustion_timing action list schedules the approximate time when Combustion should be used and stores the number of seconds until then in variable.time_to_combustion.
 actions+=/call_action_list,name=combustion_timing
@@ -156,3 +158,6 @@ actions.standard_rotation+=/arcane_explosion,if=active_enemies>=variable.arcane_
 # With enough targets, it is a gain to cast Flamestrike as filler instead of Fireball.
 actions.standard_rotation+=/flamestrike,if=active_enemies>=variable.hard_cast_flamestrike
 actions.standard_rotation+=/fireball
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

@@ -7,6 +7,8 @@ actions.precombat+=/stellar_flare
 
 # Executed every time the actor is available.
 actions+=/solar_beam
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/use_items
 actions+=/moonfire,cycle_targets=1,if=refreshable
 actions+=/sunfire,cycle_targets=1,if=refreshable
@@ -29,3 +31,6 @@ actions+=/warrior_of_elune
 actions+=/wild_mushroom
 actions+=/starfire,if=talent.lunar_calling|buff.eclipse_lunar.up&spell_targets.starfire>1
 actions+=/wrath
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

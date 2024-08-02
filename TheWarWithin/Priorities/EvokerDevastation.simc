@@ -29,6 +29,8 @@ actions+=/variable,name=next_dragonrage,value=cooldown.dragonrage.remains<?(cool
 ## actions+=/invoke_external_buff,name=power_infusion,if=buff.dragonrage.up&(buff.emerald_trance_stacking.stack>=3&set_bonus.tier31_2pc|!cooldown.fire_breath.up&!cooldown.shattering_star.up&(!set_bonus.tier31_2pc|!talent.event_horizon))
 # Rupt to make the raidleader happy
 actions+=/quell,use_off_gcd=1,if=target.debuff.casting.react
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/call_action_list,name=trinkets
 actions+=/run_action_list,name=aoe,if=active_enemies>=3
 actions+=/run_action_list,name=st

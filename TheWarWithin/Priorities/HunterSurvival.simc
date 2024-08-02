@@ -4,6 +4,8 @@ actions.precombat+=/use_item,name=algethar_puzzle_box
 
 actions+=/muzzle
 actions+=/tranquilizing_shot
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/call_action_list,name=cds
 actions+=/hunters_mark,if=active_dot.hunters_mark=0&target.time_to_pct_80>20
 actions+=/call_action_list,name=cleave,if=active_enemies>2
@@ -52,3 +54,6 @@ actions.st+=/kill_command,cycle_targets=1,if=focus+cast_regen<focus.max
 actions.st+=/wildfire_bomb,if=buff.tip_of_the_spear.stack>0
 actions.st+=/mongoose_bite
 actions.st+=/raptor_strike
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

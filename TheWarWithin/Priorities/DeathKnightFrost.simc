@@ -26,6 +26,8 @@ actions.precombat+=/variable,name=oblit_rune_pooling,default=4,op=reset
 actions.precombat+=/variable,name=breath_rime_rp_threshold,default=60,op=reset
 
 actions+=/mind_freeze
+# Defensives
+actions+=/call_action_list,name=defensives
 # Choose Action list to run
 actions+=/call_action_list,name=variables
 actions+=/call_action_list,name=trinkets
@@ -172,3 +174,7 @@ actions.variables+=/variable,name=pooling_runes,value=rune<variable.oblit_rune_p
 actions.variables+=/variable,name=pooling_runic_power,value=talent.breath_of_sindragosa&cooldown.breath_of_sindragosa.remains<variable.breath_pooling_time|talent.obliteration&runic_power<35&cooldown.pillar_of_frost.remains_expected<variable.oblit_pooling_time
 actions.variables+=/variable,name=ga_priority,value=(talent.shattered_frost&active_enemies>=2)|(!talent.shattered_frost&talent.shattering_blade&active_enemies>=4)|(!talent.shattered_frost&!talent.shattering_blade&active_enemies>=2)
 actions.variables+=/variable,name=breath_dying,value=runic_power<variable.breath_rp_cost*2&rune.time_to_2>runic_power%variable.breath_rp_cost
+
+# Defensives
+actions.defensives+=/death_strike,if=buff.dark_succor.up&(solo&health.pct<90|health.pct<25)
+actions.defensives+=/healthstone,if=health.pct<25
