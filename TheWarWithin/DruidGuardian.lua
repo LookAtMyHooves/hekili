@@ -1752,7 +1752,8 @@ spec:RegisterAbilities( {
         form = "bear_form",
 
         usable = function ()
-            if action.raze.spend > 0 and ( settings.maul_rage or 0 ) > 0 and rage.current - action.raze.spend < ( settings.maul_rage or 0 ) and target.maxR < 5 then return false, "not enough additional rage" end
+            if action.raze.spend > 0 and ( settings.maul_rage or 0 ) > 0 and rage.current - action.raze.spend < ( settings.maul_rage or 0 ) then return false, "not enough additional rage" end
+            if target.maxR > 5 then return false, "out of range" end
             return true
         end,
 
