@@ -686,6 +686,7 @@ spec:RegisterAuras( {
         duration = function () return mod_circle_dot( 15 ) * haste end,
         tick_time = function () return mod_circle_dot( 3 ) * haste end,
         max_stack = function () return 3 + talent.untamed_savagery.rank end,
+        usable = function () return target.maxR < 8 end,
         copy = "thrash"
     },
     -- Talent: Increased movement speed by $s1% while in Cat Form, reducing gradually over time.
@@ -1751,7 +1752,7 @@ spec:RegisterAbilities( {
         form = "bear_form",
 
         usable = function ()
-            if action.raze.spend > 0 and ( settings.maul_rage or 0 ) > 0 and rage.current - action.raze.spend < ( settings.maul_rage or 0 ) then return false, "not enough additional rage" end
+            if action.raze.spend > 0 and ( settings.maul_rage or 0 ) > 0 and rage.current - action.raze.spend < ( settings.maul_rage or 0 ) and target.maxR < 5 then return false, "not enough additional rage" end
             return true
         end,
 
@@ -2017,7 +2018,7 @@ spec:RegisterAbilities( {
         school = "physical",
 
         startsCombat = true,
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
         end,
 
@@ -2045,7 +2046,7 @@ spec:RegisterAbilities( {
 
         form = "bear_form",
         bind = "thrash",
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
             applyDebuff( "target", "thrash_bear", 15, debuff.thrash_bear.count + 1 )
             active_dot.thrash_bear = active_enemies
