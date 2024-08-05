@@ -136,4 +136,5 @@ actions.stealthed+=/shuriken_storm,if=!buff.premeditation.up&spell_targets>=4
 actions.stealthed+=/shadowstrike
 
 # Defensives
+actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
 actions.defensives+=/healthstone,if=health.pct<25

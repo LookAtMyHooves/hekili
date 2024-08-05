@@ -140,4 +140,5 @@ actions.vanish+=/vanish,if=talent.master_assassin&talent.kingsbane&dot.kingsbane
 actions.vanish+=/vanish,if=!talent.improved_garrote&talent.master_assassin&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.deathmark.up&(debuff.shiv.up|debuff.deathmark.remains<4)
 
 # Defensives
+actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
 actions.defensives+=/healthstone,if=health.pct<25
