@@ -98,7 +98,8 @@ spec:RegisterTalents( {
     trigger_finger             = { 102396, 459534, 2 }, -- You and your pet have 5.0% increased attack speed. This effect is increased by 100% if you do not have an active pet.
     unnatural_causes           = { 102387, 459527, 1 }, -- Your damage over time effects deal 10% increased damage. This effect is increased by 50% on targets below 20% health.
     wilderness_medicine        = { 102383, 343242, 1 }, -- Mend Pet heals for an additional 25% of your pet's health over its duration, and has a 25% chance to dispel a magic effect each time it heals your pet.
-    -- Pack Leader
+
+    -- Beast Mastery
     alpha_predator             = { 102259, 269737, 1 }, -- Kill Command now has 2 charges, and deals 15% increased damage.
     bloodseeker                = { 102270, 260248, 1 }, -- Kill Command causes the target to bleed for 4,434 damage over 8 sec. You and your pet gain 10% attack speed for every bleeding enemy within 12 yds.
     bloody_claws               = { 102268, 385737, 1 }, -- Each stack of Mongoose Fury increases the chance for Kill Command to reset by 2%. Kill Command extends the duration of Mongoose Fury by 1.5 sec.
@@ -138,6 +139,7 @@ spec:RegisterTalents( {
     vipers_venom               = { 102260, 268501, 1 }, -- Raptor Strike and Mongoose Bite apply Serpent Sting to your target. Serpent Sting Fire a poison-tipped arrow at an enemy, dealing 2,923 Nature damage instantly and an additional 23,397 damage over 12 sec.
     wildfire_bomb              = { 102264, 259495, 1 }, -- Hurl a bomb at the target, exploding for 8,508 Fire damage in a cone and coating enemies in wildfire, scorching them for 17,016 Fire damage over 6 sec. Deals reduced damage beyond 8 targets. Deals 40% increased damage to your primary target.
     wildfire_infusion          = { 102265, 460198, 1 }, -- Mongoose Bite and Raptor Strike have a 10% chance to reset Kill Command's cooldown. Kill Command reduces the cooldown of Wildfire Bomb by 0.5 sec.
+
     -- Pack Leader
     beast_of_opportunity       = { 94979, 445700, 1 }, -- Coordinated Assault calls on the pack, summoning a pet from your stable for 6 sec.
     cornered_prey              = { 94984, 445702, 1 }, -- Disengage increases the range of all your attacks by 5 yds for 5 sec.
@@ -151,8 +153,9 @@ spec:RegisterTalents( {
     pack_coordination          = { 94985, 445505, 1 }, -- Attacking with Vicious Hunt instructs your pet to strike with their Basic Attack along side your next Raptor Strike.
     scattered_prey             = { 94969, 445768, 1 }, -- Butchery increases the damage of your next Butchery by 25%.
     tireless_hunt              = { 94984, 445701, 1 }, -- Aspect of the Cheetah now increases movement speed by 15% for another 8 sec.
-    vicious_hunt               = { 94991, 445404, 1 }, -- Kill Command prepares you to viciously attack in coordination with your pet, dealing an additional 21,815 Physical damage with your next Kill Command.
+    vicious_hunt               = { 94991, 445404, 1, "pack_leader" }, -- Kill Command prepares you to viciously attack in coordination with your pet, dealing an additional 21,815 Physical damage with your next Kill Command.
     wild_attacks               = { 94962, 445708, 1 }, -- Every third pet Basic Attack is a guaranteed critical strike, with damage further increased by critical strike chance.
+
     -- Sentinel
     catch_out                  = { 94990, 451516, 1 }, -- When a target affected by Sentinel deals damage to you, they are rooted for 3 sec. May only occur every 1 min per target.
     crescent_steel             = { 94980, 451530, 1 }, -- Targets you damage below 20% health gain a stack of Sentinel every 3 sec.
@@ -163,7 +166,7 @@ spec:RegisterTalents( {
     lunar_storm                = { 94978, 450385, 1 }, -- Every 15 sec your next Wildfire Bomb summons a celestial owl that conjures a 10 yd radius Lunar Storm at the target's location for 8 sec. A random enemy affected by Sentinel within your Lunar Storm gets struck for 8,180 Arcane damage every 0.4 sec. Any target struck by this effect takes 10% increased damage from you and your pet for 8 sec.
     overwatch                  = { 94980, 450384, 1 }, -- All Sentinel debuffs implode when a target affected by more than 3 stacks of your Sentinel falls below 20% health.
     release_and_reload         = { 94958, 450376, 1 }, -- When you apply Sentinel on a target, you have a 15% chance to apply a second stack.
-    sentinel                   = { 94976, 450369, 1 }, -- Your attacks have a chance to apply Sentinel on the target, stacking up to 10 times. While Sentinel stacks are higher than 3, applying Sentinel has a chance to trigger an implosion, causing a stack to be consumed on the target every sec to deal 8,540 Arcane damage.
+    sentinel                   = { 94976, 450369, 1, "sentinel" }, -- Your attacks have a chance to apply Sentinel on the target, stacking up to 10 times. While Sentinel stacks are higher than 3, applying Sentinel has a chance to trigger an implosion, causing a stack to be consumed on the target every sec to deal 8,540 Arcane damage.
     sentinel_precision         = { 94981, 450375, 1 }, -- Raptor Strike, Mongoose Bite and Wildfire Bomb deal 10% increased damage.
     sentinel_watch             = { 94970, 451546, 1 }, -- Whenever a Sentinel deals damage, the cooldown of Coordinated Assault is reduced by 1 sec, up to 15 sec.
     sideline                   = { 94990, 450378, 1 }, -- When Sentinel starts dealing damage, the target is snared by 40% for 3 sec.
@@ -355,6 +358,11 @@ spec:RegisterAuras( {
     feign_death = {
         id = 5384,
         duration = 360,
+        max_stack = 1
+    },
+    furious_assault = {
+        id = 448814,
+        duration = 12,
         max_stack = 1
     },
     -- Talent: Rooted.
@@ -719,6 +727,14 @@ spec:RegisterHook( "reset_precast", function()
     end
 
     if now - action.resonating_arrow.lastCast < 6 then applyBuff( "resonating_arrow", 10 - ( now - action.resonating_arrow.lastCast ) ) end
+
+    if talent.mongoose_bite.enabled then
+        class.abilities.raptor_bite = class.abilities.mongoose_bite
+        class.abilities.mongoose_strike = class.abilities.mongoose_bite
+    else
+        class.abilities.raptor_bite = class.abilities.raptor_strike
+        class.abilities.mongoose_strike = class.abilities.raptor_strike
+    end
 end )
 
 spec:RegisterHook( "spend", function( amt, resource )
@@ -1112,14 +1128,18 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "physical",
 
-        spend = function() return 30 - ( buff.bestial_barrage.up and 10 or 0 ) end,
+        spend = function()
+            if buff.furious_assault.up then return 0 end
+            return 30 - ( buff.bestial_barrage.up and 10 or 0 )
+        end,
         spendType = "focus",
 
         talent = "mongoose_bite",
         startsCombat = true,
 
         handler = function ()
-            removeBuff( "bestial_barrage" )
+            if buff.furious_assault.up then removeBuff( "furious_assault" )
+            else removeBuff( "bestial_barrage" ) end
             -- removeBuff( "tip_of_the_spear" )
             removeDebuff( "target", "latent_poison" )
             removeDebuff( "target", "latent_poison_injection" )
@@ -1131,6 +1151,9 @@ spec:RegisterAbilities( {
                 buff.mongoose_fury.expires = r
             end
 
+            if talent.vipers_venom.enabled then applyDebuff( "target", "serpent_sting" ) end
+
+
             if azerite.wilderness_survival.enabled then
                 gainChargeTime( "wildfire_bomb", 1 )
             end
@@ -1141,7 +1164,7 @@ spec:RegisterAbilities( {
             if legendary.butchers_bone_fragments.enabled then addStack( "butchers_bone_fragments", nil, 1 ) end
         end,
 
-        copy = { 265888, "mongoose_bite_eagle" }
+        copy = { 265888, "mongoose_bite_eagle", "mongoose_strike" }
     },
 
     -- Talent: A vicious slash dealing $s1 Physical damage.
@@ -1152,7 +1175,10 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "physical",
 
-        spend = function() return 30 - ( buff.bestial_barrage.up and 10 or 0 ) end,
+        spend = function()
+            if buff.furious_assault.up then return 0 end
+            return 30 - ( buff.bestial_barrage.up and 10 or 0 )
+        end,
         spendType = "focus",
 
         talent = "raptor_strike",
@@ -1162,7 +1188,8 @@ spec:RegisterAbilities( {
         notalent = "mongoose_bite",
 
         handler = function ()
-            removeBuff( "bestial_barrage" )
+            if buff.furious_assault.up then removeBuff( "furious_assault" )
+            else removeBuff( "bestial_barrage" ) end
             -- removeBuff( "tip_of_the_spear" )
             removeDebuff( "target", "latent_poison" )
             removeDebuff( "target", "latent_poison_injection" )
@@ -1171,6 +1198,8 @@ spec:RegisterAbilities( {
                 applyDebuff( "target", "spearhead_damage" )
                 if talent.deadly_duo.enabled then addStack( "deadly_duo" ) end
             end
+
+            if talent.vipers_venom.enabled then applyDebuff( "target", "serpent_sting" ) end
 
             if azerite.wilderness_survival.enabled then
                 gainChargeTime( "wildfire_bomb", 1 )
@@ -1189,7 +1218,7 @@ spec:RegisterAbilities( {
             end
         end,
 
-        copy = { "raptor_strike_eagle", 265189 },
+        copy = { "raptor_strike_eagle", 265189, "raptor_bite" },
     },
 
     -- You give the signal, and your pet charges your target, bleeding them for $378957o1 damage over $378957d and increasing your chance to critically strike your target by $378957s2% for $378957d.
@@ -1311,4 +1340,4 @@ spec:RegisterStateExpr( "coordinated_assault_kill_shot", function()
 end )
 
 
-spec:RegisterPack( "Survival", 20240801, [[Hekili:TRrYYTTn0VLmzg7SslkzhzNk5dnxA80KdvzMEJKqKGsOMKGba0lz0WV9(aO4oifTCQx6KlXscV9D8qSmT(M1cpKaB91XJgF8OthzAm6uZjNyTqCBm2ArmY9s0k4drOq4FxKWUICfkqEWTbuKNeFonH5ch(YuN1crm)JhD0kIyDYsdxA4rCsysasqOrUmKVq(D3JSwSmHei(CK1sT8)4ZSwGseRPmGNKWpzTynXZdNboM7ATqc(7hD67hz(XuN)cZJXUIuN)ijsGzhYtD(cIDzQdhleKOvPxKErgctF)4PacFHerzWXKWuNKyPa8BWh44wuOkItae)2AaM)gb4(3GksISweq4cUYmI9rjbc4JFvzwrUsL2AryYp(rayEWrOLbypRF3saABviemu03b7b5hGSAZxtfnGEIe6YFzHlJacjbzT4vf6i3ieeyBu0TPoB2K6iqSvyHbHBVKYb151PohK6iz5vyBpQWyTst52Hkl18uNrki2INGeITfu7yxH9PWjNN6mEuPixfzPeECdjmhoxuqGD2xSLwQm7LDw0KRhxI7jDQDBLwCeoKG5zcXqPDagDfws(pmyYpl1zYajp8vG0tR6frmxuK0MXy4OMEWtRc5s0kBQVTGrCVKxhqrHKNhgPvYDP0ap61rqggL5rIGaypBeNldany4qejIxYpi5aXwJHS18ipTeDzIVp43JvY2ASTcndUakbOm9zXhfS(AsGNpHHH4RqivFTmUHB7ZY4kkqHJPX0SWX7kAN1aTEuuLJBCQZBsDw56bPb3uQ614w)PsVqg7haUodjSiGByMXwiZtP6847MHbKxZkbATvnDPud0rnRwoIFak6svvfiA7sC)PB7maOKU4BIdOCz2JQCvVPz3bY6NWUnhmmAvaUilttTLljqck0Ijef5vLF(u3eiO4TGlbbjSm8kCKYUOoil(W9winZoRwhxMPLNJEF1GwbCN1pvdXmxsaMdLPdOxZnsIR05GgTIs5aTauK0YC0(tmgkgknvjoWSwxQLjc31y2TnQBzwRrLYIRP)K5KAn8Qj2nG84QqwxMAvi0J3FvWIoFqNBBinlMQQdN3IA7pS7AE6QTKeNLZxwvqhuAZ)lk3wwGQoLkbOk(dItvCybuQNTmHP)YApF1quKlgcnqqso0kEaLeFwQLYIfkFzrT58tciRwl42)tI3QW2tuSJ6TpJSfBBUUDGtOVAwdYkJITeg1eZK9X01pOIMRM0f4RV00zxB(GtYyZZnJtPriMQ(RMgvfjmbq3mOSNDS6khqlOBYV4M2JKLnP((2WutBBb2SzvgYqdwIR9kgb7dLRDxxPuFZt01KkJilXixysAWdl7GUeFlnQA1mDNw0KsRZEyJgwBiYwoQsbqAlakhYl76PLRBVEKhCvaz9jO9pCZPpuXhOUjAZzyeQBm8Rr6)1i9Dpkdq7iy8ubietmThh723yXliY7FZsIHilZ7Xu9782c3JX6RzH5qDcCy7QALJu2FL9DXS(UAsx1l)zFbIDmQ)We)wH3z1th0W1MdF46yg2vg03EFv8KqGj2X4MtC0DzgjQDUvPktK3yPrntC7PvvFT4ezA0vaPLWKTjXPJNc2selsEbbRfQ92rcJPmH0nYsDoeUEXHPom83taRnKVZPHamOebnuM3co)1Oiin3i9I)Kebhn(JPoFIgb8rD8HD38gORG2le5jcaKVY8MxVlEuuUVbLBnyXaP3pvzEYJhp2B7YdHmF8Jhp2B7YdHm)HhpES32LhczE6Jhp2B7Y)TYC6fAQBZf3TY2DKQxoYxdjR9SGdS4X9GIDfUQgAQPpP2Ku7WyL9yc)FYGLEXNvAOKqNK9Gwuy6m1ZWbhRUAKlmeWjNihYH6tKtlNbf3OyQN3o)OY5CsVq35vNw5De)5DmKZ8r6rp)cLVtovZCnZTivLTicGN9kHv)L2Vky1tBkDVQ1ZaUzt9Na81h0PgCG2h978XJQYXMVhwMIbtrnaGurHvmIBFYTZhVBCH)2cVztQIx9hER6j1EOTk2BdqQL2WSnelPVUvj3e8YnUkXONfjTzZl6Uk3bDVnIs8ko6GEOu6fV8L5ja5Yij6k6LGD6gW7c3l1wkLz2Xy61yMnjYproL8tfnOU0xFJVpnLXI91(0u8AS04wXWfBs9PH4dfPk377mZjnL3SLEQKvOe2b12R7SXNSzZJVk0uK3zH)3vzVRZn7h9MlyTFO1Tf1UWGlnQUdyxCB20TPQvcC7TFkztJLME(8puRySQ7GSJCo5hQOPHg1wFsrmU(vVC(OYOGDTHVZnnMwXsmaWpRc49OdZg)gioqJMObhP(8IwZijB034NgUEnZudRBShWDygNnwdjQVfUD6i0jenx65(qKQR47D12z3Ctj9uB07TLR5BwXk(U3XwAiqTL3vqG2VAVguRTnV7gQ5pTFxMNAJw2HWUljQA(mxC)YLv4F3S1dpE)blpwPfp85Wk2Qj1j)5cYc719CdnPXExdqHErK1o9DfQE2fBBqN9UosPuCpt)3JWXgi3rMK6SM)3Yryz9V)]] )
+spec:RegisterPack( "Survival", 20240806, [[Hekili:T31EZTTns8plE6mkwnoYsYYXo9K1m5C816exNov(U(FIKIescN5RscAh3rd)SF7c(Me8HKLuS7PzssTfawSyX(43UaqDsVj3nzSMcJm52(D7pO75DFFNUNFY7h8HjJzpztMm2wr9EL5WpyQya)7ypNhOpOOJn8KULIgsaxlphvOXFWxEbJz7(thF8CkBH30oQwgh7sn80vyultvhLzm83vpEY4PEuD21MtMkIbgm4KjJv8ylSCG5KAC5KXlOAAKGUtCvNmg7(76E(7627N8L)DIRnrL5l)lEMmIZBC9L)vfN79LDjmg1CU)N9)CWao7D9pdgWVsnTCGMPg(YE2id8pGFWLuGcPh4jWaVBb0N)qbg7FalrQ5KX6uxMlxmqmzQ6eLhiWVDlx0smvMQt0M8pNmw1Hc0LQa)KLLUM1JMG0XYrJActUMKIRRINoRJdXqHA6cREvuKbu1MO4SGasA(c3HAh85JV627U(2RUXxE5sF5pD1)6J)7BUZx(JF9k4FU8UR)6T3C947MWabBPCYuVzZGzuhyCDIRRKTd1qrxAgXXsLYEQJNTVClFzE3yuBjRzsSfejol1XLbQg(Yd9L7LWT3t11LGDDdftGHvFcKhsmfN5eqebIeGBoPAUzQLXufqQqCkkkiFZw3YL(aWblSyiXgunXkJNh5l3LVYI3kEKQRnJ6qKW5VJ6cKLDLM5em1k68X0RZzbs7vDyFi3WQyJNlq77l)J(YZv16yO8TK1FMzdx(Nw6Y)aFzMcUVMwGg2ZaMPIMxnbtwfablnKtF)6TrHYIeAptxX8EWAwYL5qVNG09SsP7H1O3gOdGsIs078LBNvuu5UgqU(Dx1T5QuTpF9Ky4YkLeZZ5POUruMRZLzFOAk7svLigjmkicqYbSgXKyqjb8(GC28rSDVULs9zwQEWGFliHuCzsoK5etoT4nKvvVE)i9k3b7kiGkys1RgVLgehvk3z5uDRhDbxKjeZrXMz5Ks7Sh3zxuZt9yQliopLM8yNgKUtjcZC96009k7mLPNmmoXmUDxuuOOrz49x)LEUUheDiQhmhfZ)ecmt)lUzwr2OCV3hghSf3kDUxsX8Pipn4(whkiYSCJnRc1P0SyDwWd56kzWdzFrKZ5WXXOgWEVLKTkt68UHwAjSC6blkKqSJjfqWg8lsyi7Ga3sbWAu1CR2FQalGtczsUB0hOQulpxjKBICKcXUH9hvCZRHSHTUBnElZZhJ4bl288rioMk9WwQm5Gnm7GaRCRXPyPcMTbZKiDY7lndenaDPToyeGoyawYA2mFzk8xWNKdGIKcFMYuxlDpgb7MPfcOCUVmrhbIYS8LTHb62jHZuCuvmrRbhhGns83g7Irzo3PhSKU3nVhKm(c0PZxWCL(VEAZnqsL3hcmZQyiXIErC9mmabJnjVVHY9C(sX3qEVxb7Ok6aPaGns2C)JaNKkqKOgdeq67oS()2hV8l(Y3C1h)0v)(Ei(nom)QIKDpe)9q83dXFpe)xbq8raRvg4joERNlrcmPTT4rZIcmg9bzcZC5x)6nF6R)XTJxXWlImcW4kOLsIxkr9sO)O4OGjkOzPushsp(gntP2Q0TS0KqRNgeY6v5kuXuLaQpq0EeqBdIL(QCvIM289YQJw(ABbggbpeFle0kik8jPuGbKTehmyznrF5aRBHPHaq(LYeD60uHhFfjCsec2w8)Bemb0zhKMLeGRINrxkbsva6RirabHPd6me2cIIo3HsMb(PvxKmdfArqa5aAmLOOcPsbBWymSPKNSmt7HsuRvh)Tz4sYGGPW(ucdGstGYgU1emomzmnijz0NdeagYt79Pe58dNjpifwy9oeegRHqeYLK0n(YoKhOUugI3GHzydGpgFh(Bo(YgASJ1CdpZhBpiaOlpRCoh)i8xaDg8VJhWtwTJV8HF63UcgSgMYoaIaWbpfAxZrXqHrrxQqoSlaBkIt7uZmdpGitcQoZNwaKInpR(Vmw8KfpYFbOfMYpfs8F8ySHzq6)lWAgC8JlqGuF1Jb4Jbk)FiMwgbvqyg9BeToPiJlXuJpHWmJOya2og4RV8vaHvMXWFm9hdujKFNAXwei14ZeKSzNmYvNOeqbcDn0ld0RcSY8y2ehOzduyHKGqX6CGL9iuO8rlyy4UKPfSXbu9DbWoTmD7eKl9BV44ieuhrNDrXurg1VZ5TACIld7150u8oUbGsxqV9POvcYsbS7LE4omNr)fIdkrrTznqabJkyLfOCRzHQnps01pc9CY4fUb1nyCPk4aXe3EFmAR8lJH(bgypGtkO1WlduG1SV8jOIgkSXTsvpEzDq9klqP2G6gRf9LlDTvmokU(raX1vEYL9Ko8JWgUlEmMHkdqNybeuhGoIulM3SWoZarg(PoenRWDzMY9Kq6I13kqaIf9cAhRsfqcfxIo1KaSB2Qrm(6B)5BaP4DF83)z0Cjb5yhr5QTbkfbK1w1GsBIxqrfDPsCGhG78qulIJnSaaC5GngWMQ3ZT1kwskEiBS0abLH8WSH2az8CEXiDa3Hy5nZg3pmBSctyufWAxAEcIYJQCyFnHFAvf7mSyMJTejOki1BaBxdyU)Ux5NYr09sRYpBIk0ebkmOYeXCB7sQbXAw6KAl2u5fo5WAaUMXa39jJPuaAQQKIg4sxH75mxVBOGPPLUsaEBrfSsq3c0jBZ)d23d5)PrRKAr03ElTAR0iBTkuxgDTI1QRcq3rRUzEoCxOPtEQU4zbR82f1GmSmNBbyeLMcttwbEqrQIAhRGrkQnOIGdIqX3qO2nOSz16poy95Oq1KipGRrfnnioZ3W7pvWkRS2AvSjeAp6(90mR3I16JhqNIhdKJNnKYrVY3e34m3GSrQfwP2ELhCoFG1rCSpTsBDMVuLPDXiSwMOTqEZ2sjsBbf2mUoL1ezQcifReiGE5dd28XYIp54nvkM4DU71ysMDEXNLPfML5DN0dZzXKKjvOi7mxkFDPd2zGu6mW2cbSa7JehKbT055CfNdZXH3cMOCmXSz6e0emd6fY4Y8jkMkM4Bv5(KC2NKZ(KCwn4u)DmjNgaKaCRdZKPNlS3rCoPNuFB1AWaSpzM9jZ8sjzMgU0eMUEj5QxXjhu)9fiL6ytcTgUL3KU2GOWHAsngT4(SKwdMBFwsFNZsc2VFaWqJ9p(rybkjkoM4fizYy(tEIAyB5eDaqVj5sW(gmNG)0d0MarHRLb0vfpMLb6BIJq3CoEwpF(goS(t)jF5lTmHPJ38Bkec)nbhsrXgIelqhoS33AVvOO)NfSudtJyJSotFdKZXxIUCY5xRVFRq1Z2ku98nmvfU3GNF8QTXCIy2sGDyoURcl18l9b7G5OevH1sTFBrXsuScWmKJAzbsKNsFOekfbrlpXYdDRP0ta8W8KUceKVSML1v20RRycMPG05iQWIvxGWLyxKlWAEsloS7UL4L4oFdzrl01MQM7Q5zRFz8yHufkWJLEpRYlikzowBDTDbpxQh)T)CS2YLDbpxAuQT)CS2YLDbpxQT(2FowB5YUGNlbFWUyowB5Y2LNlbs6)NKxuWrRTAlZ9OV3DuCtJl87lA2DZSSUYMYWmVgP6SDbYUvj(2gL81C)piPpl6qDXJl2LHoyWxSS1mk(1BqqtUDIFcZV9IJtE0Y(Fwu7PFPW4vp(WcVx5LlZ(wLB3k1bgME4x0TLWxN8O(Dfp3rxZ(JWhfWfcEec4IpCGq3d(wCi9Nu8BTH0TUJxAWmM)9ZhSWGmAQVtyfDok4j5FrpKBZwE3HN0kuNjD1IAczdIkxbPh1F9iDqCWQ55dwBk3e2wm1)b(LqzJ89pqAwn73abPBjZ39aPBi3x1aO2mWCcFSHjgiG2cQ7g8ofXLTOh0y(UN8M(WruXRAA5YdI99uO9wLF(IjJlUPwvqjyH(dPEJdCEKA(G19W233aRkikLeYLHkPwpsCKOMZ8WAX)szfKL7Z(McFzYJXViWxMSxY727Lb)bE)tUnpd7DsE(n4j2X5vi2qRmVIWH9pD5YV)lH8SCTrupk1df8IEvp88pNVQ7TOhTxzJWL)iNAWH6VCz5IQcwOUfESD40K7n6n6I3h6hE)ZMBRCHg3)S52)S5wZNnxQSea0WWMB6BDYrzoc)aeHhw)1DPvfx(KH9AxykJDZ0uxufOq4npaprir88bLEptZNIbyPnQx)whEq5zlUCziO4ce9IUfxB1WzLpnTkBwgMftERsVAOf4Lm2IX4beVpnQBZTHh1RZzPIA0GU)HuDVI95H9)riMzH1HGrW3LdfMj(mXCnZ9rnFvnSNyBdmL3edHYKEXtDqfykQyK7kuwZ2XW(fiq2BAhNJkaJjwpwubRAv3kOKRuy7kWsbjNxf(HH9B3E5YdpScUsaAS2BaoTcTSS8CLQJvBFhRuu8XzvLlXrDBNSrL50TdxycE(vJguKvQYZ9Z1xWHhi(U2TCP4pVvX7F3OENkWki)fW7O4lgyy4MnWepqGF50yyY6qDuVwr6N5kgzRsV)EjkT5ADLdiurGNvHur4TR67YV00lgB3ZkwCmvQdeXZfdHWjTOdXYUt0Ig9kAq04Wi7WGJXRLVhbiJN8NtGTk2lFPecq8AUOBSAuGk3SjJYB2V88AL1t1WbRLXh)6U)2K7a)WK7)(Z3WqijYfKuOBui1irdnYpD1YR6M1q3H7FsLBRkq869jvMO6eC4knWaAtMcC8K(mc8gtJ6Ww8Din4MYB7MeHJ5MvZPwZJjUZI2hVs29X6JN6AbVl65jkIoRnIHysSpz4vHt3miHezLxebtdlqYA4gUCCmWwD9UObrF9DQs)4W(3Z31YMib3mzw3CZZnXupqOZ(DF21nnotJYVUjelfKY6))mwzj9Miz7m0PolLNPEEVsM21iH7mJFfTuACWQDAq4VJjDNz6FEbrFvL4D219Zi17IgrRxY3RKXyts)(zyMucrw1uWZm4IjHlwYv)CZ)YHrDYT9p9u(JbEY)7d]] )
