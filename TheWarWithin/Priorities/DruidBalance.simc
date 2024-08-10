@@ -31,6 +31,7 @@ actions+=/warrior_of_elune
 actions+=/wild_mushroom
 actions+=/starfire,if=talent.lunar_calling|buff.eclipse_lunar.up&spell_targets.starfire>1
 actions+=/wrath
-
+actions+=/moonfire,cycle_targets=1,if=refreshable&moving
+actions+=/sunfire,cycle_targets=1,if=moving
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25

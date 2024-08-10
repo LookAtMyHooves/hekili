@@ -2791,7 +2791,7 @@ spec:RegisterAbilities( {
         talent = "starfire",
 
         energize_amount = function() return action.starfire.spend * -1 end,
-
+        usable = function () return not moving end,
         handler = function ()
             if talent.fluid_form.enabled then
                 if buff.moonkin_form.down then shift( "moonkin_form" ) end
@@ -3257,7 +3257,7 @@ spec:RegisterAbilities( {
         end,
 
         energize_amount = function() return action.wrath.spend * -1 end,
-
+        usable = function () return not moving end,
         handler = function ()
             if talent.fluid_form.enabled then
                 if buff.moonkin_form.down then shift( "moonkin_form" ) end
@@ -3342,4 +3342,4 @@ end, state )
 } ) ]]
 
 
-spec:RegisterPack( "Balance", 20240723, [[Hekili:9Ev0UTTnu0VLIb0eJ1OyPKm3weNb0I9qdgYlQa7njrltzreksnsQKyad9TVlPSSjLPSRbA3lgYKhE45E1LxEusyY3tIxIu4KNIMgD70zr3eenD6S7IsIvRRXjX1O8NrRGhyOk43VGOiwUz81uoAPE9sEJqpuPsvl)81xVOdZvssvEWkIQSzraHF92LEvmP6RxxTmOuvr)ZccfpF7ccuVPsIx0qOQVXsw4xyjXOgvjxKeR5b2uYYL4o0yzEsSg9vtNDv0nFUn77L42S)bjGFazqyjXuIujnbnUa1qvWJpzscygAbfVm5lDeji1kchwWF9goVrHx2MHFblw3MPivaPknZOCfh4MiHhFbrOAgcabM3TujNIePlWOQefeg6DPFQgjoLOWvs7ngaDZaP0JVIZzfebKKbLPWcckjwGleyzPglm86CkovHeRWq8bHeq2TJqMS5856UX4sHP6OSa(58y8pSZhfCOckLxKYqQgnrozLzoqBeR1iX0g2qGF0giHLJeaFM)4a7t2WYXuSurq0ueLSIvHzQbWdNoi43hLVdQequyjbGAG0qoIsjSvbBb3M9(2Sfnffb4CkPgEPBQjce4keHbLn33MnRnBZMJtZEX(ksiiCX(4xlVH1V7L3LTz)ikuwdVe7F9eiHh01hTzZBZcBZMyWCP3aPP(hje7u)oIdYrsvA35iDOVDHbewkJZGbNyxF1TgtGgDSa94rPEFglmF4iHPHU(W0)KEI0xfivPDyo50rQznMWCytG9HPz31c)vmc6gjtH6HAqDdYxqWBiAydG9e5jvalYecrUKjBamg2g2c40SPtSJinNt)5C2l8NHgeLq1tnb4DyFXqNwam8RP6oIdb5C8Verl8I6tUDtaL7bv0uBuhCSBa4qhWe6Y0QgzPGZRgIC8s4tx)oEH5XQS9Fwk6ghjBQ9CKk0eSwGZ5vlqN(ssWCqTSKRAZeiYYoLQvnSJk4GXcm0FhKthB6)VYCGbXamWUCvnxPGWT7Q0LWjJa3R(EgoWauC49OEe(tNkYo4ErFTZDUx7W(W2PY7S3Vb3h6MrHCQ(uRgyNRM7M(rtXfdcEOK3yxHuvZfqsQqBT4IT2uUaYS4)Tb2rDwLRBPa2G4viJZK8seBfwg0(4Ft0DvcNcEF(kCOclmZFHVAlGsfFK56dyaZLHVn5)bId)vrC0ViIJ(5tC7JEka2Di88kbU1V6CkphOoVL82Q7BgHPPlQ)MU2mJHAyAD7cU2nFs8V1M9ZVHq7JD7Omyxg53NFTDZb)imnao7P6pF)bsX835l)m2YCG0(iKko7pGyh1Ac39je2JU7RhShS)te(GJz75H6qWYmUd7nN9kSdWZyDd837mLTFE7jS8VBpSh)62tp8QA73GoN)E)4MwVF2Mn(wIBMyFfYL(3a)3kppCY7V0Rv6JPOUn2Jf6nBgyQCIt2qxIBKOpfUzJFj(WbsS3TH3HhOXbMFNCCf27kulYXS3oeVXtQEb(nEEF0yBGF8pe6uFDOzu7P79EAp2oRMU11BDwESQtN5S9nowPM)xJ(Fxn2l3dkqmo4Z1FOBKXLsY)9]] )
+spec:RegisterPack( "Balance", 20240723, [[Hekili:9I13Vnkoq4)wwDsTn6APbs7LERA6jT7TpSvN2xYkDVrWbmbRcyoBt)Hue)TFJnHGTJH0CA37Lia)nF(BgpE84e6h(9WLjibo8BbtdUz6D(t9cMEJFWTHlfVvHdxwHIFcTbEOeva)(juoQmw993YPOeP9CAnt(PmHOI)XRVEDlMR4KIyVnerw9Apc96DME1ssXNVUiXltuK)hPKC8IDg4jEveUCDnjx81YW1of205Hlr1ImklCPKiywjjj4w4yEC4sj8RMo)QGzFSj67z4MO)gXGFaDqkdxMt4cUYRXPO6Cb843urbCjADooj8tTeXivccfm4lVIJRf4KMi8Zy2BnrcsbqQqYmkwqbUjC4XNrKCjdEGaJBnLtZrSvRXOIqb4hJnl)jofxYjpJ59MhJYZx1(YkPSBf)Q2fIKEdaUNj5UZUAoEfrGl46tha6glb0HVGsltjmGuqpcmJGcxYWPmmptIf(8BX54vceBdgIDq4ci72biJxF6C9BdXLaNlJGPWpNgJZ1JhPui9CfnfICIAjrgrL7mGwZEtIeNxxAd831bskJrmGp1lgW8NQJlgNJ5cccwiZjBklWLcB82zF9U5hG0muoyIhihioitiiLB82bUj6SMO11PPE44CsfSQRs48y4cePeYjVVjAEt02TJttVyFbXyekRpaiLNDABV8UOj69OqEfSk2T(4XHhKjinrlAI8BIMOWCHthPU694ITQFpXEXiyts7MuPRVZqps5QsAj8Xj6jyT2OC0zJ5OJ7LY5zi38HrCtfDDUP7bD4PVWqImD3CYX9uLnk30UkqVBQMDPWFbJGsD8vq(qfOoR4f48kISRa0tKJqbyKYfcmjJxdyuSzxd44SjdSdinJT)X0YNPpbviYGSNkcWRDHrFJAaL4xwjljAdYy)Fgkp1fQGPMLtaL7cLVoQd22zboWamjpzvrnpJrPf2ihof(45VdNyowMT79sb3yizvUNLuh68JJCyKsqf0Nb57UYFWGhMC4btJWJW4ewh9iSpraJYfzCbTepYr69ZzlEVQyr7(HBBNSkgoMwSgD8(rGgXQ4zuWCgIK0UUjxdH4VaktSgdh3bHPw2KVVrv(avcyGz5QkQqaEDBxljGS9md(pbLpak6BzzSLXzhdWWvB6p6W4y(dpvspX6w95ZQ9a95vftL1WKaB7GCoS7qUvReCEyfr1ziPOIYGGuQSlUZ31r45qKf)p1WmkJQuzbwOJtAbs1eyCgQCdM7184FrK1y99H2m)muIbZuJFURDAaLc6aJ15WaMl8FDY)deh8ZI4z)Kio4hpXnp6iby)MWtlf4g3QZi90sDot51v3xvcts3SUZ9BIu3DbgwwUGkV5u4YFPj6hFbHMhBNrU3(iYVU4A9IdUrOkaCYd1T)(ss6Ip4k(mKzgqAEecfN8D12tTKW93wtXvF5BDq23j7s5TXwK4e7(7HP)XUZ3U04qNf(sVx)CoDHvFYwOhBob7SUPKXq63msFaTBczeOo8Ip6dB3ZJ(IVXw3ZgU7)7NVDRltmJe9jxx4EcC3EZc)jNDHZ7KmMIANyh3fz7wRUZNyenK7ous0Lc3U1TeF4aj212MZpBPrRBrmzCf21ETuKdDpbB8QM7Lg4Ud(7dgAcCJ)bFJ8Rd7QxF4UM41)2(E2nZR31I(yzNgJP3a(qPAUxgDVwn0I7bji)hkJCwBlUVZQjDGDx9ZRVkNmy233R00(2AVx(Fhc(uS8Vcjq1jw4)(d]] )
