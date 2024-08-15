@@ -10,6 +10,8 @@ local class, state = Hekili.Class, Hekili.State
 local FindUnitDebuffByID = ns.FindUnitDebuffByID
 local UnitTokenFromGUID = _G.UnitTokenFromGUID
 
+local GetSpellInfo = C_Spell.GetSpellInfo
+
 local spec = Hekili:NewSpecialization( 265 )
 
 spec:RegisterResource( Enum.PowerType.SoulShards, {},
@@ -985,8 +987,9 @@ spec:RegisterHook( "reset_precast", function ()
     class.abilities.summon_pet = class.abilities.summon_felhunter
 
     if not SUMMON_DEMON_TEXT then
-        SUMMON_DEMON_TEXT = GetSpellInfo( 180284 )
-        class.abilityList.summon_pet = "|T136082:0|t |cff00ccff[" .. ( SUMMON_DEMON_TEXT or "Summon Demon" ) .. "]|r"
+        local summon_demon = GetSpellInfo( 180284 )
+        SUMMON_DEMON_TEXT = summon_demon and summon_demon.name or "Summon Demon"
+        class.abilityList.summon_pet = "|T136082:0|t |cff00ccff[" .. SUMMON_DEMON_TEXT .. "]|r"
     end
 end )
 
@@ -2329,6 +2332,21 @@ spec:RegisterAbilities( {
             applyDebuff( "target", "wither" )
         end,
     }
+} )
+
+spec:RegisterSetting( "default_pet", "summon_sayaad", {
+    name = "|T136082:0|t Preferred Demon",
+    desc = "Specify which demon should be summoned if you have no active pet.",
+    type = "select",
+    values = function()
+        return {
+            summon_sayaad = class.abilityList.summon_sayaad,
+            summon_imp = class.abilityList.summon_imp,
+            summon_felhunter = class.abilityList.summon_felhunter,
+            summon_voidwalker = class.abilityList.summon_voidwalker,
+        }
+    end,
+    width = "full"
 } )
 
 spec:RegisterSetting( "manage_ds_ticks", false, {

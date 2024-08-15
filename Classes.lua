@@ -6226,11 +6226,12 @@ function Hekili:SpecializationChanged()
     local currentID = GetSpecializationInfo( currentSpec )
 
     if currentID == nil then
-        Hekili.PendingSpecializationChange = true
+        self.PendingSpecializationChange = true
         return
     end
 
-    Hekili.PendingSpecializationChange = false
+    self.PendingSpecializationChange = false
+    self:ForceUpdate( "ACTIVE_PLAYER_SPECIALIZATION_CHANGED" )
 
     insert( self.SpecChangeHistory, {
         spec = currentID,
