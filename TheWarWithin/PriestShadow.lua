@@ -30,6 +30,7 @@ spec:RegisterResource( Enum.PowerType.Insanity, {
         aura = "mind_flay_insanity_dot",
         debuff = true,
 
+        usable = function () return not moving end,
         last = function ()
             local app = state.buff.casting.applied
             local t = state.query_time
@@ -1423,6 +1424,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         velocity = 15,
 
+        usable = function () return not moving end,
         handler = function ()
             removeBuff( "empty_mind" )
             removeBuff( "harvested_thoughts" )
@@ -1490,6 +1492,7 @@ spec:RegisterAbilities( {
         aura = function() return buff.mind_flay_insanity.up and "mind_flay_insanity" or "mind_flay" end,
         tick_time = function () return class.auras.mind_flay.tick_time end,
 
+        usable = function () return not moving end,
         start = function ()
             if buff.mind_flay_insanity.up then
                 removeStack( "mind_flay_insanity" )
@@ -1685,6 +1688,7 @@ spec:RegisterAbilities( {
         toggle = "cooldowns",
         indicator = function () return group and ( talent.twins_of_the_sun_priestess.enabled or legendary.twins_of_the_sun_priestess.enabled ) and "cycle" or nil end,
 
+        usable = function () return not moving end,
         handler = function ()
             applyBuff( "power_infusion" )
             stat.haste = stat.haste + 0.25
@@ -2107,6 +2111,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         cycle = function () return talent.misery.enabled and "shadow_word_pain" or "vampiric_touch" end,
 
+        usable = function () return not moving end,
         handler = function ()
             applyDebuff( "target", "vampiric_touch" )
 
@@ -2176,6 +2181,7 @@ spec:RegisterAbilities( {
         nobuff = function () return buff.dissonant_echoes.up and "dissonant_echoes" or "voidform" end,
         bind = "void_bolt",
 
+        usable = function () return not moving end,
         cooldown_ready = function ()
             return cooldown.void_eruption.remains == 0 and buff.voidform.down
         end,
