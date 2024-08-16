@@ -158,4 +158,9 @@ actions.trinkets+=/use_items,if=(buff.voidform.up|buff.power_infusion.up|buff.da
 actions.trinkets+=/use_item,name=desperate_invokers_codex,if=equipped.desperate_invokers_codex
 
 # Defensives
+actions.defensives+=/fade,if=aggro&!solo
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/dispersion,if=health.pct<20
+actions.defensives+=/psychic_horror,if=health.pct<20&aggro
+actions.defensives+=/vampiric_embrace,if=health.pct<50
+actions.defensives+=/power_word_shield,if=health.pct<80&aggro

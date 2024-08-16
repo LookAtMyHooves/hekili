@@ -1439,7 +1439,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         velocity = 15,
 
-        usable = function () return not moving end,
+        usable = function () return not moving or buff.shadowy_insight.up end,
         handler = function ()
             removeBuff( "empty_mind" )
             removeBuff( "harvested_thoughts" )
@@ -1571,6 +1571,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         nobuff = "mind_flay_insanity",
 
+        usable = function () return not moving end,
         handler = function ()
             if talent.mental_decay.enabled then
                 if debuff.shadow_word_pain.up then debuff.shadow_word_pain.expires = debuff.shadow_word_pain.expires + 2 end
@@ -1601,6 +1602,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         buff = "mind_spike_insanity",
 
+        usable = function () return not moving end,
         handler = function ()
             removeStack( "mind_spike_insanity" )
 
@@ -2126,7 +2128,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         cycle = function () return talent.misery.enabled and "shadow_word_pain" or "vampiric_touch" end,
 
-        usable = function () return not moving end,
+        usable = function () return not moving or buff.unfurling_darkness.up end,
         handler = function ()
             applyDebuff( "target", "vampiric_touch" )
 
@@ -2262,6 +2264,7 @@ spec:RegisterAbilities( {
         aura = "void_torrent",
         tick_time = function () return class.auras.void_torrent.tick_time end,
 
+        usable = function () return not moving end,
         breakchannel = function ()
             removeDebuff( "target", "void_torrent" )
         end,
