@@ -21,6 +21,8 @@ actions.precombat+=/shadow_bolt,if=soul_shard<5
 actions+=/axe_toss
 actions+=/spell_lock
 actions+=/devour_magic
+# Defensives
+actions+=/call_action_list,name=defensives
 ## Variables
 actions+=/variable,name=pet_expire,op=set,value=(buff.dreadstalkers.remains>?buff.vilefiend.remains)-gcd*0.5,if=buff.vilefiend.up&buff.dreadstalkers.up
 actions+=/variable,name=pet_expire,op=set,value=(buff.dreadstalkers.remains>?buff.grimoire_felguard.remains)-gcd*0.5,if=!talent.summon_vilefiend&talent.grimoire_felguard&buff.grimoire_felguard.up&buff.dreadstalkers.up
@@ -102,3 +104,11 @@ actions.tyrant+=/hand_of_guldan,if=soul_shard>2&(buff.vilefiend.up|!talent.summo
 actions.tyrant+=/demonbolt,cycle_targets=1,if=soul_shard<4&(buff.demonic_core.up)&(buff.vilefiend.up|!talent.summon_vilefiend&buff.dreadstalkers.up)
 actions.tyrant+=/power_siphon,if=buff.demonic_core.stack<3&variable.pet_expire>action.summon_demonic_tyrant.execute_time+gcd.max*3|variable.pet_expire=0
 actions.tyrant+=/shadow_bolt
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/unending_resolve,if=health.pct<25
+actions.defensives+=/mortal_coil,if=health.pct<50
+actions.defensives+=/dark_pact,if=health.pct<20
+actions.defensives+=/drain_life,if=health.pct<20&solo
+actions.defensives+=/health_funnel,if=health.pct>pet.health_pct&pet.health_pct<50

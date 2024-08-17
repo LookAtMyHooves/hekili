@@ -18,6 +18,8 @@ actions.precombat+=/cataclysm,if=raid_event.adds.in>15
 actions.precombat+=/incinerate
 
 actions+=/spell_lock
+# Defensives
+actions+=/call_action_list,name=defensives
 ## actions+=/variable,name=havoc_immo_time,op=reset
 ## actions+=/cycling_variable,name=havoc_immo_time,op=add,value=dot.immolate.remains*debuff.havoc.up
 actions+=/variable,name=infernal_active,op=set,value=pet.infernal.active|(cooldown.summon_infernal.duration-cooldown.summon_infernal.remains)<20
@@ -136,3 +138,6 @@ actions.ogcd+=/berserking,if=variable.infernal_active|!talent.summon_infernal|(b
 actions.ogcd+=/blood_fury,if=variable.infernal_active|!talent.summon_infernal|(boss&fight_remains<cooldown.summon_infernal.remains_expected+10+cooldown.blood_fury.duration&fight_remains>cooldown.blood_fury.duration)|boss&fight_remains<cooldown.summon_infernal.remains
 actions.ogcd+=/fireblood,if=variable.infernal_active|!talent.summon_infernal|(boss&fight_remains<cooldown.summon_infernal.remains_expected+10+cooldown.fireblood.duration&fight_remains>cooldown.fireblood.duration)|boss&fight_remains<cooldown.summon_infernal.remains_expected
 actions.ogcd+=/ancestral_call,if=variable.infernal_active|!talent.summon_infernal|(boss&fight_remains<(cooldown.summon_infernal.remains_expected+cooldown.berserking.duration)&(fight_remains>cooldown.berserking.duration))|boss&fight_remains<cooldown.summon_infernal.remains_expected
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25

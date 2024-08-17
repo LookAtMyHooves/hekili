@@ -19,6 +19,8 @@ actions.precombat+=/unstable_affliction,if=!talent.soul_swap
 actions.precombat+=/shadow_bolt
 
 actions+=/spell_lock
+# Defensives
+actions+=/call_action_list,name=defensives
 actions+=/variable,name=ps_up,op=set,value=active_dot.phantom_singularity>0|cooldown.phantom_singularity.true_remains>35|!talent.phantom_singularity
 actions+=/variable,name=vt_up,op=set,value=active_dot.vile_taint_dot>0|cooldown.vile_taint.true_remains>20|!talent.vile_taint
 actions+=/variable,name=vt_ps_up,op=set,value=active_dot.vile_taint_dot>0|cooldown.vile_taint.true_remains>20|active_dot.phantom_singularity>0|cooldown.phantom_singularity.true_remains>35|(!talent.vile_taint&!talent.phantom_singularity)
@@ -122,3 +124,6 @@ actions.ogcd+=/blood_fury,if=variable.cds_active
 ## actions.ogcd+=/invoke_external_buff,name=power_infusion,if=variable.cds_active&(trinket.1.is.nymues_unraveling_spindle&trinket.1.cooldown.remains|trinket.2.is.nymues_unraveling_spindle&trinket.2.cooldown.remains|!equipped.nymues_unraveling_spindle)
 actions.ogcd+=/fireblood,if=variable.cds_active
 actions.ogcd+=/ancestral_call,if=variable.cds_active
+
+# Defensives
+actions.defensives+=/healthstone,if=health.pct<25
