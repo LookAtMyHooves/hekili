@@ -16,8 +16,8 @@ actions+=/kick
 actions+=/call_action_list,name=defensives
 # Conditional to check if there is only one enemy
 actions+=/variable,name=single_target,value=spell_targets.fan_of_knives<2
-# Combined Energy Regen needed to saturate
-actions+=/variable,name=regen_saturated,value=energy.regen_combined>35
+# Combined Energy Regen needed to saturate (TODO: estimate poisoned_bleeds better)
+actions+=/variable,name=regen_saturated,value=energy.regen_combined>15
 # Check if we should be using our energy
 actions+=/variable,name=not_pooling,value=(dot.deathmark.ticking|dot.kingsbane.ticking|debuff.shiv.up)|(buff.envenom.up&buff.envenom.remains<=1)|energy.pct>=(40+30*talent.hand_of_fate-15*talent.vicious_venoms)|boss&fight_remains<=20
 # AoE Damage over time abilities Check what the maximum Scent of Blood stacks is currently
@@ -164,6 +164,9 @@ actions.vanish+=/vanish,if=!talent.master_assassin&talent.indiscriminate_carnage
 actions.vanish+=/vanish,if=!talent.improved_garrote&talent.master_assassin&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.deathmark.up&(debuff.shiv.up|debuff.deathmark.remains<4)
 # Vanish fallback for Improved Garrote during Deathmark if no add waves are expected
 actions.vanish+=/vanish,if=talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&raid_event.adds.in>30
+
 # Defensives
-actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
+actions.defensives+=/evasion,if=buff.crimson_vial.down&(solo&health.pct<50|health.pct<25)
+actions.defensives+=/kidney_shot,if=solo&health.pct<25&!boss&aggro

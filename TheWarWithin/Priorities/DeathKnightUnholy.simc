@@ -170,3 +170,5 @@ actions.variables+=/variable,name=spend_rp,op=setif,value=1,value_else=0,conditi
 # Defensives
 actions.defensives+=/death_strike,if=buff.dark_succor.up&(solo&health.pct<90|health.pct<25)
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/icebound_fortitude,if=buff.lichborne.up
+actions.defensives+=/lichborne,if=solo&health.pct<50|health.pct<25
