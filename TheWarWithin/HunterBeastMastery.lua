@@ -1501,6 +1501,7 @@ spec:RegisterAbilities( {
 
         talent = "bursting_shot",
         startsCombat = true,
+        usable = function () return target.maxR < 8 end,
     },
 
     -- Talent: You sound the call of the wild, summoning $s1 of your active pets for $d. During this time, a random pet from your stable will appear every $t2 sec to assault your target for $361582d.$?s378442[    While Call of the Wild is active, Barbed Shot has a $378442h% chance to gain a charge any time Focus is spent.][]$?s378739[    While Call of the Wild is active, Barbed Shot affects all of your summoned pets.][]
