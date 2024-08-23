@@ -52,3 +52,4 @@ actions.bear+=/ferocious_bite,if=dot.rip.ticking&combo_points>4&active_enemies<3
 actions.bear+=/starsurge,if=talent.starsurge.enabled&rage<20
 actions.bear+=/swipe_bear,if=(talent.lunar_insight.enabled&active_enemies>4)|!talent.lunar_insight.enabled|talent.lunar_insight.enabled&active_enemies<2
 actions.bear+=/moonfire,if=(talent.lunar_insight.enabled&active_enemies>1)&buff.bear_form.up
+actions.bear+=/moonfire
