@@ -108,5 +108,7 @@ actions.stealthed+=/gloomblade,if=buff.lingering_shadow.remains>=10&buff.shadow_
 actions.stealthed+=/shadowstrike
 
 # Defensives
-actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
+actions.defensives+=/evasion,if=buff.crimson_vial.down&(solo&health.pct<50|health.pct<25)
+actions.defensives+=/kidney_shot,if=solo&health.pct<25&!boss&aggro
