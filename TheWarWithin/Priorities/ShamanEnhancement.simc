@@ -2,12 +2,13 @@ actions.precombat+=/windfury_weapon
 actions.precombat+=/flametongue_weapon
 actions.precombat+=/skyfury
 actions.precombat+=/lightning_shield
+actions.precombat+=/earth_shield,if=!buff.earth_shield.up&talent.elemental_orbit
 actions.precombat+=/variable,name=trinket1_is_weird,value=trinket.1.is.algethar_puzzle_box|trinket.1.is.manic_grieftorch|trinket.1.is.elementium_pocket_anvil|trinket.1.is.beacon_to_the_beyond
 actions.precombat+=/variable,name=trinket2_is_weird,value=trinket.2.is.algethar_puzzle_box|trinket.2.is.manic_grieftorch|trinket.2.is.elementium_pocket_anvil|trinket.2.is.beacon_to_the_beyond
 actions.precombat+=/variable,name=min_talented_cd_remains,value=((cooldown.feral_spirit.remains%(4*talent.witch_doctors_ancestry.enabled))+1000*!talent.feral_spirit.enabled)>?(cooldown.doom_winds.remains+1000*!talent.doom_winds.enabled)>?(cooldown.ascendance.remains+1000*!talent.ascendance.enabled)
 actions.precombat+=/variable,name=target_nature_mod,value=(1+debuff.chaos_brand.up*debuff.chaos_brand.value)*(1+(debuff.hunters_mark.up*target.health.pct>=80)*debuff.hunters_mark.value)
-actions.precombat+=/variable,name=expected_lb_funnel,value=action.lightning_bolt.damage*(1+debuff.lightning_rod.up*variable.target_nature_mod*(1+buff.primordial_wave.up*active_dot.flame_shock*1.75)*0.10)
-actions.precombat+=/variable,name=expected_cl_funnel,value=action.chain_lightning.damage*(1+debuff.lightning_rod.up*variable.target_nature_mod*(active_enemies>?(3+2*talent.crashing_storms.enabled))*0.10)
+actions.precombat+=/variable,name=expected_lb_funnel,value=action.lightning_bolt.damage*(1+debuff.lightning_rod.up*variable.target_nature_mod*(1+buff.primordial_wave.up*active_dot.flame_shock*buff.primordial_wave.value)*debuff.lightning_rod.value)
+actions.precombat+=/variable,name=expected_cl_funnel,value=action.chain_lightning.damage*(1+debuff.lightning_rod.up*variable.target_nature_mod*(active_enemies>?(3+2*talent.crashing_storms.enabled))*debuff.lightning_rod.value)
 
 actions+=/bloodlust,line_cd=600
 actions+=/potion,if=(buff.ascendance.up|buff.feral_spirit.up|buff.doom_winds.up|(fight_remains%%300<=30)|(!talent.ascendance.enabled&!talent.feral_spirit.enabled&!talent.doom_winds.enabled))
@@ -75,7 +76,6 @@ actions.single+=/ice_strike
 actions.single+=/windstrike
 actions.single+=/stormstrike
 actions.single+=/sundering,if=raid_event.adds.in>=action.sundering.cooldown
-actions.single+=/bag_of_tricks
 actions.single+=/tempest,if=buff.maelstrom_weapon.stack>=5
 actions.single+=/lightning_bolt,if=talent.hailstorm.enabled&buff.maelstrom_weapon.stack>=5&buff.primordial_wave.down
 actions.single+=/frost_shock
@@ -165,3 +165,9 @@ actions.funnel+=/frost_shock,if=!talent.hailstorm.enabled
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/healing_surge,if=(buff.maelstrom_weapon.stack>=5|buff.natures_swiftness.up)&(health.pct<50&solo|health.pct<25)
+actions.defensives+=/natures_swiftness,if=health.pct<25
+actions.defensives+=/astral_shift,if=health.pct<25
+actions.defensives+=/ancestral_guidance,if=health.pct<50
+actions.defensives+=/stone_bulwark_totem,if=health.pct<50&solo
+actions.defensives+=/healing_stream_totem,if=health.pct<75&solo

@@ -190,6 +190,11 @@ spec:RegisterAuras( {
         -- Affected by:
         -- [x] airborne_irritant[200733] #1: { 'type': APPLY_AURA, 'subtype': ADD_PCT_MODIFIER, 'points': -40.0, 'target': TARGET_UNIT_CASTER, 'modifies': BUFF_DURATION, }
     },
+    darkest_night = {
+        id = 457280,
+        duration = 30,
+        max_stack = 1
+    },
     danse_macabre = {
         id = 393969,
         duration = function () return talent.subterfuge.enabled and 9 or 8 end,
@@ -200,6 +205,16 @@ spec:RegisterAuras( {
         duration = 8,
         max_stack = 1,
         copy = 341550 -- Conduit version.
+    },
+    exhilarating_execution = {
+        id = 428488,
+        duration = 10,
+        max_stack = 1
+    },
+    fade_to_nothing = {
+        id = 386237,
+        duration = 8,
+        max_stack = 1
     },
     finality_black_powder = {
         id = 385948,
@@ -1006,6 +1021,10 @@ spec:RegisterAbilities( {
             if buff.finality_eviscerate.up then removeBuff( "finality_eviscerate" )
             elseif talent.finality.enabled then applyBuff( "finality_eviscerate" ) end
 
+            if buff.darkest_night.up and combo_points.deficit == 0 then
+                applyDebuff( "target", "deathstalkers_mark", nil, debuff.deathstalkers_mark.stack + 3 )
+            end
+
             if set_bonus.tier29_2pc > 0 then applyBuff( "honed_blades", nil, effective_combo_points ) end
 
             removeBuff( "echoing_reprimand_" .. combo_points.current )
@@ -1266,6 +1285,10 @@ spec:RegisterAbilities( {
                 removeBuff( "premeditation" )
             end
 
+            if talent.deathstalkers_mark.enabled and stealthed.all then
+                applyDebuff( "target", "deathstalkers_mark", nil, 3 )
+            end
+
             if conduit.perforated_veins.enabled then
                 addStack( "perforated_veins" )
             end
@@ -1462,7 +1485,22 @@ spec:RegisterOptions( {
     package = "Subtlety",
 } )
 
+spec:RegisterSetting( "priority_rotation", false, {
+    name = "Subtlety Rogue is able to do funnel damage. Head over to |cFFFFD100Toggles|r to learn how to turn the feature on and off. " ..
+    "If funnel is enabled, the default priority will recommend building combo points with |T1375677:0|t Shuriken Storm and spending on single-target finishers in order to do priority damage.\n\n",
+    desc = "",
+    type = "description",
+    fontSize = "medium",
+    width = "full"
+})
 
+--[[
+spec:RegisterStateExpr( "priority_rotation", function ()
+    local prio = settings.priority_rotation
+    if prio == nil then return true end
+    return prio
+end )
+--]]
 
 spec:RegisterSetting( "mfd_points", 3, {
     name = "|T236340:0|t Marked for Death Combo Points",
@@ -1475,18 +1513,6 @@ spec:RegisterSetting( "mfd_points", 3, {
 } )
 
 
-spec:RegisterSetting( "priority_rotation", false, {
-    name = "Use Priority Rotation (Funnel Damage)",
-    desc = "If checked, the default priority will recommend building combo points with |T1375677:0|t Shuriken Storm and spending on single-target finishers.",
-    type = "toggle",
-    width = "full"
-})
-
-spec:RegisterStateExpr( "priority_rotation", function ()
-    local prio = settings.priority_rotation
-    if prio == nil then return true end
-    return prio
-end )
 
 spec:RegisterSetting( "rupture_duration", 12, {
     name = strformat( "%s Duration", Hekili:GetSpellLinkWithTexture( 1943 ) ),

@@ -2451,7 +2451,6 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "physical",
 
-        talent = "moonkin_form",
         startsCombat = false,
 
         noform = "moonkin_form",
@@ -2839,7 +2838,7 @@ spec:RegisterAbilities( {
         gcd = "spell",
 
         spend = function ()
-            if not state.spec.balance then return ( talent.starlight.conduit.enabled and 0.003 or 0.006 ) end
+            if not state.spec.balance then return ( talent.starlight_conduit.enabled and 0.003 or 0.006 ) end
             if buff.oneths_clear_vision.up or buff.starweavers_weft.up then return 0 end
             return ( 40 - ( buff.incarnation.up and talent.elunes_guidance.enabled and 8 or 0 ) - ( buff.touch_the_cosmos.up and 5 or 0 ) ) * ( 1 - 0.05 * buff.rattled_stars.stack ) * ( 1 - 0.1 * buff.timeworn_dreambinder.stack )
         end,
@@ -3346,4 +3345,4 @@ end, state )
 } ) ]]
 
 
-spec:RegisterPack( "Balance", 20240815, [[Hekili:9IvBVTTnq4Flfdinglrjs2UPPiodOD7dnyiFXfyFtw0YuweHsuJKkVayOF77iLLfjnLD8W6qacSjFU7EUJ3D8OJdJ)r88vijo(XORJMC9NdNgaF42jtJNlFRchpVcL(eAn8Hsub8)VIOOYu96VrzOvk5fSAUAPCPSs8LRUAzlMlfKI0G1ezE9Yac7QTIE5CsX3UQyvqUSG(BzekE2wbcKVkJNVSMqLFVmEPxIn(245OAzoJhpxPiWQKvRWTWXI045k4xE9nxgn(lnj)ih3K8xio8pGhKY45uIqk0EnodxkipJvF7rDGaxIwsXRI)kyJujHbWZXiQmxizL4wdWjvT7879YphwvI5euh(GQuztYDnjrtJLWFkJHQPsFwYsP)XR40AjEvtc(zm)TMejPa8aPYnakXahHiGp(mIqvAiONPcgfXxSeJkad(y0HSIj17epfrPlA)YcvmQnsTO9u3iwb6ESs39MLbSZ0waIjMiQf4fq4Pq4aA6aH8cgRmJWXMHvooJJf5kSWYVLsXlKi(AmCucbuqzFAaLjQpDDDZq6sIPQyCg8VttJF2mEKXGQLfSmi2kR5UHUBTGwZFtHetRlDbgETjsszkIdku)fBCHM4sXuSqsqWznLSUSaxkDX7M607NFaYeruqKaGpqGqLZqkxhSfCtYznjlRZYcWPusfCSRZjd44cePuOliUPjzZMdRMEY(cIZjmEFeqrVXdsVZBsEpmuubhJDhqbc4dQmKMKznjHnjJ0yo3RJux9ECXw2VtXbPiOoQTow56BfmGuUOe6Qaw0mdRvgTJo5qo6H9sLDgYnV)aUPwDDUP)n94PVWrqlpd3C0X9uTmA30TnqVBQTUI4VGrq3qXciFOcyNt8cCETICBb0RipHcqO2g02ktudy0AZTjWX1MkWoa1SQ)tzLpZEcArKdzpveqVUDgdTAcuIFzHQNOdOiR6)CenZlQq7(jaZ9HkYe1ELDoGT6))cHUArrTiNZyfUihof(45VdNyEOmB)1srtTOSo3ZHQdDbYrUnstOc2Za9936pAWBt2)MPdOhOlDfhNYkwI6NIyhhr8NuNwQmk15HRVzHf8NNGks4wi3JRXhlin5yagUwUVXS1TO73Z38y7twdAyF7RPD1HhvhcfW25fVbYsvjYLqafkV0ZbskQyCyUSm1yuFC7izFSjHJ)7AWIqENGPAFbZxYkq6PWsZrLRXIGMh(tIQdwyemu53GcymxV)h9LhdQuYgyVohgWCE4RJ(FqXJ)zP4j)KuC0)9kU5bpja7QNoTuGP(zNv6Pd78MYBYUVRjMsDJ7UvTjr)sfyB9noPQb(IunbyQNm1vwic25f)6SRC7d08GxugDa8JqxAFYB1v5EbjB2h855djMfKMh(LMKt(zq7uTsH7EiKwx9p2XeK7ZDUq9qNzR8IT9joMRS7jnMl2DtXfwTVNfQIhM3yyQ56twcZO1jiNZJoS2Y8rgMBy8McRq3(pHWCB3PhmthSktpB45OV7MnB8jIDKOpD7C)gW)GcZchD25ENU)qmQ1WEMQFZgN5Chzfnu1lAk6JHB24NI3Vhf7gaY7YoC0zE8rhMHDdQQi5qtC7IxpMSsa)ZcFx0qgWp(7dTYV2F(yZT7gh2CTDt)ANxVDy3dLDATN5OSdLQ5)y0)z1qhU7LG8VOnYzTdl(o7M0b2F)WG((EQGz)p5Ls0(FrR72(Rzf)p]] )
+spec:RegisterPack( "Balance", 20240829, [[Hekili:9I1BVnUnp8plhgqBdwRBTB612dnDa3T9IlyRVjhWENJvCKJfQTLNKC)dqG(Spk54yjf5KMHN7bfOir6hj)rkskQehg)J4zlrcC8trxfn(Q7IUpikCC4nHXZeVxJJNvJsFgTc(qfQe()xrfOQu96VxqrlvYZPnm1s5crn)lxE5IwmxWjLPbRiI8Mfbe6LBe9IzKYVDz5YGCrzXVLrkWt2iqG4nr8SfnKcX3RIx4LyJVpEgQrKtzXZukcSkz5sClCmpnEMc(fxD3fHHFrM8xi2ZYeAMmrKJLj)nPyPCQCAlMBVi6AaZp07GyQTf5KQ4zfeUGRJm4mCfN8cw9TN0blCfArbEz8xbEKkiuaEogviY5cAfULemsD7o)EV8ZGvfygb1HpOovitEqMeDtSa(tzmutHWNLSu6F8goTrGxktWVGzVdUgPeVXbbkrbhHWHp(cIuO0qqpt50ceB(cmQem4tr7ZkMuVt8uurX82VmxfJAJuZBZmmIvGUVwP7EZsb2zAlaXytenC8Ci8uYDaDZaH8skTkJWWMHvgoJH55kSWYVNwGNlqSvy4OecOGY(8akJ3C8662H0LaxOIXzW)oonENz8iJcvuZPzqSv0WCdD3BbTH9UcjUOPYfy4vMijvPigOq9xSXfAIlfxG5cccoRliRQkXvcx8UPo9(5NGmrubisaWhiqOYzivRc2awMCImzrtwwaoTGudh76CYagUerQ46cIBLjRxVF10t2xrmgHY6Jak6D9G07mzYhHH8A4yS7akGdFqLHitMitcLjJ0yoZRJ0u)rCXw2VvXbPiOoQTow56BemGunVc6Qaw0mdRvgTJoEFo6(9sLDgYnFCpUPwDDUP)n94PVYqqlpd3C0H9uTmA30TnqVBQTUI4VIrq3q(CiFOgyNt8cCETICBb0RipHcqO2g02kJ3ay0AZTjWH1MkWoa1SQ)tPvVqFgArKdzp1eqVUDgdTAcuHFDUQNOdOiR6)CurMxuH29taM7dvKjQDk7CaB1))v4A35Ln8CgLw6IC4u4dN)oCI5(YS9xlfDJfL15EouDOlqoWTrAcvsFbOV)w)rdEBYU3mTh9aDPRz4uA5cu)ueB5imjK60sLrPopC9nlSG)8murc3c5ECD9HcsJpeGHRL7BmBDl6U98np2(S1Gg23(AAxD4r1HqbCZmLW1EQe5kiGcLx65ajL1ugmxwMAmQt3ms2PYeg(FAalc5DCQQ9fmdkTePNclnhvTcZdKt)tIQdwyemu53GcymtV)P(YJbvkOdSxNddyol8Tr)FqXx)ZsXJ)jP4O)3Ry5upjaBRNoUuGB8ZoR0th25nL3KDFxtmL6UU7wvzI(LkW26BCsvd8fPAcqvpRQRSGhS1l(1jx62hqo1lkJoa(rOlTp6T6QCpNKn5t(88HeZcIC6Vito6NbTv1kfU9HqAD1)yhtqUp35C1dDMS0l22N4yUY2N0yUy3nfNB1(EsOkEyEJHPMBoAjmJwhHCop6WAlZhzyUHXBkScD7(ecZTDNEWmDWQm9KHNJ(HBxV2Ni2rI(0TZ8Ba)dkmjC0jN5D6(9XOwd7zQ(1RDMZDKv0qvVOPOpgUETFk(4ouSBaiVl7WrN5XhTFg2nOQIKdnXTlE9yYkb8pl8drdza)4Fm0k)A35Jn3UBCyZ12o9RDE9MHD3x2P1EMJYouQM)Jr)NvdD4UtcY)H2iN0oS4hSBshy)9dd677PcM9)Kxkr7)fTEyZVMv8)(d]] )

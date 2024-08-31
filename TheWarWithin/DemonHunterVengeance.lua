@@ -788,6 +788,8 @@ spec:RegisterHook( "reset_precast", function ()
         addStack( "soul_fragments", nil, fragments.real )
     end
 
+    if IsActiveSpell( 442294 ) then applyBuff( "reavers_glaive" ) end
+
     fiery_brand_dot_primary_expires = nil
     fury_spent = nil
 end )
@@ -1703,6 +1705,7 @@ spec:RegisterAbilities( {
         spendType = function() return talent.furious_throws.enabled and "fury" or nil end,
 
         startsCombat = true,
+        nobuff = "reavers_glaive",
 
         handler = function ()
             if talent.serrated_glaive.enabled or conduit.serrated_glaive.enabled then applyDebuff( "target", "exposed_wound" ) end

@@ -901,8 +901,8 @@ spec:RegisterHook( "reset_precast", function ()
         end
     end
 
-    if talent.holy_bulwark.enabled then
-        if IsActiveSpell( 432478 ) then applyBuff( "sacred_weapon_ready" )
+    if talent.holy_armaments.enabled then
+        if IsActiveSpell( 432472 ) then applyBuff( "sacred_weapon_ready" )
         else applyBuff( "holy_bulwark_ready" ) end
     end
 
@@ -1545,14 +1545,14 @@ spec:RegisterAbilities( {
 
     -- [432496] While wielding a Holy Bulwark, gain an absorb shield for ${$s2/10}.1% of your max health and an additional ${$s4/10}.1% every $t2 sec. Lasts $d.
     holy_armaments = {
-        id = 432459,
+        id = function() return buff.holy_bulwark_ready.up and 432459 or 432472 end,
+        known = function() return talent.holy_armaments.enabled end,
         cast = 0.0,
         cooldown = 60,
         charges = 2,
         recharge = 60,
         gcd = "spell",
 
-        talent = "holy_armaments",
         startsCombat = false,
         buff = function()
             if buff.holy_bulwark_ready.up then return "holy_bulwark_ready" end
@@ -1575,7 +1575,7 @@ spec:RegisterAbilities( {
             end
         end,
 
-        copy = { 432472, "holy_bulwark", "sacred_weapon" }
+        copy = { "holy_bulwark", 432459, "sacred_weapon", 432472 }
     },
 
     -- Judges the target, dealing 2,824 Holy damage, and causing them to take 20% increased damage from your next Holy Power ability. Generates 1 Holy Power.
