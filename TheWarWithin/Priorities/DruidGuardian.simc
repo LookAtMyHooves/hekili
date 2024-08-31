@@ -3,12 +3,13 @@ actions.precombat+=/variable,name=if_build,value=1,value_else=0,if=talent.thorns
 actions.precombat+=/variable,name=ripweaving,value=1,value_else=0,if=talent.primal_fury.enabled&talent.fluid_form.enabled&talent.wildpower_surge.enabled
 actions.precombat+=/heart_of_the_wild,if=talent.heart_of_the_wild.enabled&!talent.rip.enabled
 actions.precombat+=/bear_form
-
+actions+=/travel_form,if=buff.travel_form.up
 actions+=/skull_bash
 actions+=/use_item,slot=trinket1
 actions+=/use_item,slot=trinket2
 actions+=/potion,if=(buff.berserk_bear.up|buff.incarnation_guardian_of_ursoc.up)
 actions+=/run_action_list,name=bear
+actions.bear+=/bear_form,if=buff.bear_form.down
 actions.bear+=/frenzied_regeneration,if=health.pct<65
 actions.bear+=/regrowth,if=health.pct<70&buff.dream_of_cenarius.up
 actions.bear+=/maul,if=buff.ravage.up&active_enemies>1
