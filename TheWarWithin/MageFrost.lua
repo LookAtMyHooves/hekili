@@ -285,6 +285,7 @@ spec:RegisterAuras( {
         duration = 4,
         type = "Magic",
         max_stack = 1
+    
     },
     fingers_of_frost = {
         id = 44544,
@@ -1475,7 +1476,7 @@ spec:RegisterAbilities( {
 
 
         usable = function ()
-            if moving and settings.prevent_hardcasts and action.shifting_power.cast_time > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
+            if moving and settings.prevent_hardcasts and action.shifting_power.cast_time > buff.ice_floes.remains and target.maxR >18 then return false, "prevent_hardcasts during movement and ice_floes is down" end
             return true
         end,
 
