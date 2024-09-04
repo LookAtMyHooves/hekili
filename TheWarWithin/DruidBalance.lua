@@ -494,6 +494,11 @@ spec:RegisterAuras( {
         mechanic = "taunt",
         max_stack = 1
     },
+    harmony_of_the_grove = {
+        id = 428735,
+        duration = 10,
+        max_stack = 1
+    },
     -- Talent: Abilities not associated with your specialization are substantially empowered.
     -- https://wowhead.com/beta/spell=319454
     heart_of_the_wild = {
@@ -868,6 +873,16 @@ spec:RegisterAuras( {
         id = 252216,
         duration = 5,
         type = "Magic",
+        max_stack = 1
+    },
+    touch_the_cosmos_starfall = {
+        id = 450361,
+        duration = 15,
+        max_stack = 1
+    },
+    touch_the_cosmos_starsurge = {
+        id = 450360,
+        duration = 15,
         max_stack = 1
     },
     -- Immune to Polymorph effects.  Movement speed increased.
@@ -2087,6 +2102,7 @@ spec:RegisterAbilities( {
 
         handler = function ()
             summonPet( "treants", 10 )
+            if talent.harmony_of_the_grove.enabled then applyBuff( "harmony_of_the_grove" ) end
         end,
     },
 
@@ -2734,7 +2750,7 @@ spec:RegisterAbilities( {
         school = "astral",
 
         spend = function ()
-            if buff.oneths_perception.up or buff.starweavers_warp.up then return 0 end
+            if buff.oneths_perception.up or buff.starweavers_warp.up or buff.touch_the_cosmos_starfall.up then return 0 end
             return ( 50 - ( buff.incarnation.up and talent.elunes_guidance.enabled and 10 or 0 ) - ( buff.touch_the_cosmos.up and 5 or 0 ) ) * ( 1 - 0.05 * buff.rattled_stars.stack ) * ( 1 - 0.1 * buff.timeworn_dreambinder.stack )
         end,
         spendType = "astral_power",
@@ -2746,7 +2762,7 @@ spec:RegisterAbilities( {
 
         handler = function ()
             if buff.starweavers_warp.up then removeBuff( "starweavers_warp" )
-            else removeBuff( "touch_the_cosmos" ) end
+            else removeBuff( "touch_the_cosmos_starfall" ) end
 
             if talent.rattle_the_stars.enabled then addStack( "rattled_stars" ) end
             if talent.starlord.enabled then
@@ -2839,7 +2855,7 @@ spec:RegisterAbilities( {
 
         spend = function ()
             if not state.spec.balance then return ( talent.starlight_conduit.enabled and 0.003 or 0.006 ) end
-            if buff.oneths_clear_vision.up or buff.starweavers_weft.up then return 0 end
+            if buff.oneths_clear_vision.up or buff.starweavers_weft.up or buff.touch_the_cosmos_starsurge.up then return 0 end
             return ( 40 - ( buff.incarnation.up and talent.elunes_guidance.enabled and 8 or 0 ) - ( buff.touch_the_cosmos.up and 5 or 0 ) ) * ( 1 - 0.05 * buff.rattled_stars.stack ) * ( 1 - 0.1 * buff.timeworn_dreambinder.stack )
         end,
         spendType = function ()
@@ -2859,7 +2875,7 @@ spec:RegisterAbilities( {
             if not state.spec.balance then return end
 
             if buff.starweavers_weft.up then removeBuff( "starweavers_weft" )
-            else removeBuff( "touch_the_cosmos" ) end
+            else removeBuff( "touch_the_cosmos_starsurge" ) end
 
             if talent.rattle_the_stars.enabled then addStack( "rattled_stars" ) end
             if talent.starlord.enabled then
@@ -3345,4 +3361,4 @@ end, state )
 } ) ]]
 
 
-spec:RegisterPack( "Balance", 20240829, [[Hekili:9I1BVnUnp8plhgqBdwRBTB612dnDa3T9IlyRVjhWENJvCKJfQTLNKC)dqG(Spk54yjf5KMHN7bfOir6hj)rkskQehg)J4zlrcC8trxfn(Q7IUpikCC4nHXZeVxJJNvJsFgTc(qfQe()xrfOQu96VxqrlvYZPnm1s5crn)lxE5IwmxWjLPbRiI8Mfbe6LBe9IzKYVDz5YGCrzXVLrkWt2iqG4nr8SfnKcX3RIx4LyJVpEgQrKtzXZukcSkz5sClCmpnEMc(fxD3fHHFrM8xi2ZYeAMmrKJLj)nPyPCQCAlMBVi6AaZp07GyQTf5KQ4zfeUGRJm4mCfN8cw9TN0blCfArbEz8xbEKkiuaEogviY5cAfULemsD7o)EV8ZGvfygb1HpOovitEqMeDtSa(tzmutHWNLSu6F8goTrGxktWVGzVdUgPeVXbbkrbhHWHp(cIuO0qqpt50ceB(cmQem4tr7ZkMuVt8uurX82VmxfJAJuZBZmmIvGUVwP7EZsb2zAlaXytenC8Ci8uYDaDZaH8skTkJWWMHvgoJH55kSWYVNwGNlqSvy4OecOGY(8akJ3C8662H0LaxOIXzW)oonENz8iJcvuZPzqSv0WCdD3BbTH9UcjUOPYfy4vMijvPigOq9xSXfAIlfxG5cccoRliRQkXvcx8UPo9(5NGmrubisaWhiqOYzivRc2awMCImzrtwwaoTGudh76CYagUerQ46cIBLjRxVF10t2xrmgHY6Jak6D9G07mzYhHH8A4yS7akGdFqLHitMitcLjJ0yoZRJ0u)rCXw2VvXbPiOoQTow56BemGunVc6Qaw0mdRvgTJoEFo6(9sLDgYnFCpUPwDDUP)n94PVYqqlpd3C0H9uTmA30TnqVBQTUI4VIrq3q(CiFOgyNt8cCETICBb0RipHcqO2g02kJ3ay0AZTjWH1MkWoa1SQ)tPvVqFgArKdzp1eqVUDgdTAcuHFDUQNOdOiR6)CurMxuH29taM7dvKjQDk7CaB1))v4A35Ln8CgLw6IC4u4dN)oCI5(YS9xlfDJfL15EouDOlqoWTrAcvsFbOV)w)rdEBYU3mTh9aDPRz4uA5cu)ueB5imjK60sLrPopC9nlSG)8murc3c5ECD9HcsJpeGHRL7BmBDl6U98np2(S1Gg23(AAxD4r1HqbCZmLW1EQe5kiGcLx65ajL1ugmxwMAmQt3ms2PYeg(FAalc5DCQQ9fmdkTePNclnhvTcZdKt)tIQdwyemu53GcymtV)P(YJbvkOdSxNddyol8Tr)FqXx)ZsXJ)jP4O)3Ry5upjaBRNoUuGB8ZoR0th25nL3KDFxtmL6UU7wvzI(LkW26BCsvd8fPAcqvpRQRSGhS1l(1jx62hqo1lkJoa(rOlTp6T6QCpNKn5t(88HeZcIC6Vito6NbTv1kfU9HqAD1)yhtqUp35C1dDMS0l22N4yUY2N0yUy3nfNB1(EsOkEyEJHPMBoAjmJwhHCop6WAlZhzyUHXBkScD7(ecZTDNEWmDWQm9KHNJ(HBxV2Ni2rI(0TZ8Ba)dkmjC0jN5D6(9XOwd7zQ(1RDMZDKv0qvVOPOpgUETFk(4ouSBaiVl7WrN5XhTFg2nOQIKdnXTlE9yYkb8pl8drdza)4Fm0k)A35Jn3UBCyZ12o9RDE9MHD3x2P1EMJYouQM)Jr)NvdD4UtcY)H2iN0oS4hSBshy)9dd677PcM9)Kxkr7)fTEyZVMv8)(d]] )
+spec:RegisterPack( "Balance", 20240904, [[Hekili:TZ16VnUns8)wcouVwjRDSKJt2Ti2fO9(sdURFjf4(MLPLPJfISOp9yZMdg6V9JK6bFOHuY5b622fOO7UsKdNz4Wz(ndh5LUl)9L3VbLHx(BEt8UAYNNC1y3pn7QRMU8(SNpGxE)buWJOhO)Ly0E6))NrrO4a(ZFoIG2WMFkjpH9ODzzhs)XlVCD5ygLgUpy8dHz7YxpoKCz1uhDF4(F5Y9BgVlBF0pTnmcpVAcJZ(A2Y7xNhgL9RXlxdZyUlVhLNTJKS8EgHORA4Mn4YHJtdwEpB4JM85rtC)XIvSHuSk)aJsf3vCx5l)0ix2l)3OKhlwr2wSkBhUy1)jmAJym3mYBkDm)o)nOe2RZ2fgV8(OW0SuUAdVfLhLr)R)gxnIcYcjXm1rekXFngTF594y06i8ML)8YmQGWgL4j3toqhmotmZVGsczVL93IYP)X1fRUSyv6bCuK)oukvgwDbLBrr44SXXOS8eCQFT2RIYYdHKSomZFDcg9iormGZlwTHKnEpHeVnmHQ3ddEmm(b(lgwSAD(2TAtnnJAguSAb)9E3uSAe9p4JNpyQiNsjcEC(HIvo8)J(QRMWfj)slNdO00WVG9rPhykJPAkd2Mxs4HsfX)eVfhZgDQq5eGOkHY)HpBpOCNOI4BetGs7R0ODZoZHN3Z0IjP(pHPgm0fK(pcrmJoQueG8dJd4YWGAbtmJe8bssMKMW7ZfRoESy12Wh2LrF9EuyCAXQBPVzs9XfTvKYBZ04nZ8GzAxlp5PyF6S3Zf6RFveEEXQPsu(arScKTB9FiydZkNUm30RLPHWlMZy5Y1S28ECmXpyJFPnQj50DMGBwt1F4eMjkJd(0jFmIZz4GOWduXjkpgL0OhuEf)Kl9vYMTvVJTWF(TyHfY4pbU6vVhGfQvpmwXDYjZlN14vGZi(SZtunQWRWa(H7sNnzOKhWzL7etL0upHsscjjuBcFmLmnh4lN7zs7XvmT2oVMOWPFjhZoyLW9gfqpW4NfUNoxhf1qm1qRulXvbUNSkyyxQagVQPawWD0nGlCV3QGNsqz76q(5Cox(p9WjC(VkCbJ)zEuzb1Ei1hLeGOYsL3TlQKv4Xwg4PCSYm4AckZN)0sBuDx8cxfDAigqirBipf32FIWDsFmOnR1zoMUPhRLqDQVXZLr9qnGYiFZv7CglaCAUw83bMcm7iyJT5jpRYdMdPaf(Ou5zHdgAIjA8cSdLSNeZ5ckYj)hsiFr7yWoCcXplbJh)igFaNOm06bzNwSvRzRzljP0mSY2tzpAgFHzJxSSCTtQFWoskoUetIeucCeMIxbrXtef(q8E6(KwOUjCfR5qQFxXcQyPhFqjL27GkuDWd1ZRwLiRItWBPOB3XgBT)xH)BkRGIZsRfo281pG1TiEl31EVu(uzm45GiCDCHkWqU6yrAqAMBtEmqmD8fnelJgrI6GBl9)zvfX1pmsoMf(WpJ4VjeZXQ3iZJAgsECygFB(gU)ETWEngCU83s)ltgF9moSE7oDBq)3gibJAUvSaNe57xNqpegsdSrbVN984eu8J8bmSo9IQrsdjYgz6E6EQCMmM3A80rijuBcZOdKNehH2qTP2RBfzpaYuTttnrqqBEUwvu5uOAfdiXzjKiZRzFI89YPvjFjfmr9SbxXPJRsO4ekdjOiI4Jm0lCkOJmXifkbZjzOxcbKteZOhAJqZLn3KWa2POEMXiIuUmMdGRTmZFrld9FYwf9q01ZLsT4hXzUG6ik9y(qRgd1d4C(XXsFHvpDCMx52QF9MDJfNr6usgfqPadzATtat5gdyG6o7fKPxR0dbygkmS0ic9WTqJXuR6bO1uRE9wT61sT6cQwTXJEF7QT84ARBKRsLO2bkfPIA9Eibhq2Vg1UYw7rjpw7T5PWOnq13soKofDJp1dJEDW0pz3DIlcO(aq3uC5jgPewKk0kIu2us4BtsE4MsDVsA3Y7gqvvQB2wP(xQ7tqLcIrq0MnwiOK15ouQ)HesaxQLEEJp)n5jCHVkKHyeHPJ1leMnUu)mw3C5qfVtWmQxNmQxBgTgAHNDo2CjQSIEwirjy6dEQmy2NKnQldXPAn)5UgqRA1i4hH1QcgVA7t4iJUQvBwfCO2zzwuU6tXVqC39auPd3D218HxHuJJSA8g82WGkyMnoSKkemhBjogN8q4)J(G9KCMJVQITqstnaT7fb6(KfMrq1d7sUFEN3grfw80Dp(n)ML5DkJfI)7z0C6z0yUmp9oHMQrHrjrp7NEirVCzYxBeJ5OovFeRWB2lLjpNiRzxyUKkWLnT6FqJM7VMWCTASmyM96)9I18AQcMEjo(UE91vem9Q8aHgWCbTnFJr8nGBukqaizKaRavqBRLnPpCOIxYMB1PoRthLTh9lERpIyj3dEDrAomIjXyLDM2OO6WDAFVMijXCHfXuC1JgFzVUvOUL0MAX06wI0UVwgJ)eg9focBuYb1lgnJKhSJFYjGqJuL6ZLtQ6GFjPkQv6d5RN5Y20E9WBZ6X6LMt1XTwq(t5RO5k40SIrKKn13Tv5nAQBOwxgjqzYCKxaRa6KSsmZranrSB5z8al8k50hqI)c5rmxbMEiKs4u9CrusNjg)eV056dsjLMDOOTqJQSaRIWXuwhAukjR0YJJ2GvQGaRcd(7Zt3LqiTALMx6Dl2yQbEM02HAy3iL1p0s6Fz8AacKdMGJBHP(ctaWxycYEfaZjaimdi73trglFbj2UnrZ(lQDyPFGIYuteoUHpUv5Y6m9bj8f2GpgwYDE7e(wHeAonz2Osuj92hXQlRUT8PAL4h46B2twBOwZAqAPxXrfOnaLD8QjY3lXBemjwTmDS7jYAkmTfWRmOK6OpNAmTuez(UtJLLuJkuMZIj3RMZP4niZz71312oOCVr14d3ku93a2TBilm78VIdYZWs4XSHMR1eCER0kIGwwrC)3n1IikTDO(Vxq1mhd89bmQ5GzW783AzNxbnoui7HTZnP)r2DuA(wZz)qhbnvYX7rFLpHPfs3YmRoCCdsGOfM2rmhY7SoYZEPTY80V(IYsUPYySSG)UJesBNquMsVcBP047WOOSDPzegkvJnNSGtkh)4dbLMrEZ4lgD5ywZS5v3h7UCyWXSoPB5982lpCpRZIPBBKKIvFOQTY)aReN)3CQkGIzjLWCdGYZi7rzSheSdf)aoDCXD)RqwQFE)yXQFHgZfNWF9hQukATioLMzeJVTwPrh1q3V60fTvAqCnkd235Dqxc1aJx0eQfBymLwx)dsn((f255lSTWNdvWPZhYpPb0M7lg6DZiVZl9ijASDhNZVAsTCE9LFdYBnAw3jWBzkNr02Yap)OVLX)SjExi80)0r4RmtyMvmanZKYdPf5UbMCan6MgLT0kCTwKp)EPmmqy1l5qJYW3aslVegSLBFthAK38vH03LaQ)Q0weBTG1FulZm9LP6g11BuOM1WuNe1IYxBGY69ktlkdmGkkxChqiWMoq50ccA4OoW9COREn3uj66adRHLMnrBT6rBPOVMM2qfnbcGcx6v9KyTAidaQcnM3vY3dc3Qnraim0yu4BtM2EM1XEg1XMjw3kb4X8Us(Eq4U1XWJrnkHbhGkDdG2XfW(IPd3hic(0CC0fsuPUsyWWSw9JWOQmTCwC9OHkLq(h8CgaLP5cOKaVqlBXAnXlE1V8vT6nAhlaDEvGgmq33amdT8v8MdzWWki3yfA0gQNl6jvvBhJpaKQvRE1qNYVxa)EVO7F(YGX7TprdqNBPNiOidYR(9JaFoR11N0sQFxPUTCSEH60kcB4K2RGWf39R89jg5MvxjWIv8FTaOVM1w1e2p2b1vykDCdk3lMFPENvxCh4OK6PA4ru7z)JSEJDUChm)rEZ5o)SkPbaY7G63zbI6XJYDlDF4b12ZTIlM8cMj5WC0MnveOne4bwqAE8Of0IVwwzyBOIdSGitWlaiMCo3dMDQ7i5pgUDU9UFcC68QFEYVQUgSSfT22qbpMPPPmKMbXEvZpngYpvvxlHjPsd3NcbcwKT3WIRvC3)OyLOYVYSpZLG83)tPySbCS1F1fLJrDZNPMvVl3bLSc8Vbfl8(8XJkv6)wVjqRvABcBFIL)4p8rPwxBUB30y(ufIi(nBqFQvtyXCVjhpc(TVOtA3zMnxQUQKktfWw744rGlvj)qN0SE9nt7Ag8NSCRnMxfXNaNMZzLqndub1F70kXb43HaNbdptVnALuXAI1T63wvtlM50ftZzWg)Fam9XJkm9cVbN92Y0AnfNfow6Y(L3i7(NbHlSmo5FceKxAD5Jz7dUPA4gBxWotaBgysJSy(nwOMmZP0RpACgBmdgc00UdG8HQOUbGsO47ycBP093C8i4IneA1Qm4n0Kku7hRrehm02SpESR2BzH3mNJhn07VokAcjGt)nvduZ4Fu5dyOm8HCDmoR2RbWTxmyyxm0TEDOqu4PknChSKYmKrW0LOyPKmJkF1IBUqXBiD)Y9IHSV(KZHoPtXBO6XFOR7OQbc(9LmAO35QzwvvFev9GMYKjh17cTl8XGHM93mvYKr(ll3HALutrOBSWQtVtBESvtXVllCatIeCTiqL6wRatR2y5rI7gyhIG)y5xbEPTGAGo3Uja9pno)5UWi44FoV1z94QW8Q5MC2CxAECjW34dD7XW0M7kfYv7vtDgablvBp0DwpbZPG6tBPmGFvr69Sk9EcPx)sNmVSE)blGsjjnMAEDc(rTxp4xE1FPW1yntKgx1ppPNwrQFvLi)Bo1gOw7VErtQKStlIs1BKle(a5S2BkITJz4)0GpTycDuTTtMq7JiuNcFhaRS24V5GyR0cqjYbNxM5u)V9MgynktPTdcbMKHWlc8hMYCxNk1IETnSXvgt7x5Gc7tkRTwPgMvFs6Vzfw0InRRmd4J7it)U5Y6waUPWta9vCLXOTEkgIS8gNfMULDiTn6w3D09IFfFdn3oDGjmMaea(JidEonsd8KU1RLNssRpRd9Hu)9iO)8MoYVT)7QEsVRJGTEV83hMTZuW2QWgKMSGbpjiJBlndkwKg(GlGarSacUbnk8eTWWnxxMJ2QQSvoeWcAXKbG2v0ZsNP(c2rsA8Fi20505tRmA3FsvW4WmcbKVeaeRDClks(HQi(HYOTmSXvtCQh9lp2J7mRQcvU7kBdvD7QHjfvhuQCNlM7PrQ6dNmk9Ib5cLVJjTNuL7l5Gg3aVkwWwCJfYF7mGL(hAGoVkPQXh2FPKQ3HaEn09nn(CBUfAp4wW9afug6URhQJvQp(ZDohctw9oWWQpFNZNYkxglFXbAoN0TTANK1z98kGt1Vfx7OrtZKH4bceLfXd(IqhlUWt2XCXxpdJwIpoMB9MX)q3dyF)zE8VqML))d]] )
