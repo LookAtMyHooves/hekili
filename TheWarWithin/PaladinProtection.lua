@@ -1257,6 +1257,7 @@ spec:RegisterAbilities( {
             applyDebuff( "target", "consecration_dot" )
             last_consecration = query_time
         end,
+        usable = function() return not moving end,
     },
 
     -- Increases mounted speed by 20% for all party and raid members within 40 yards.
