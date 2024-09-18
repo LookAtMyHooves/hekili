@@ -1636,6 +1636,7 @@ spec:RegisterAbilities( {
             end
             removeStack( "clearcasting" )
         end,
+        usable = function() return target.maxR < 8 end,
     },
 
     -- Shapeshift into Cat Form, increasing auto-attack damage by $s4%, movement speed by $113636s1%, granting protection from Polymorph effects, and reducing falling damage.    The act of shapeshifting frees you from movement impairing effects.
@@ -2662,7 +2663,7 @@ spec:RegisterAbilities( {
             end
             removeStack( "clearcasting" )
         end,
-
+        usable = function() return target.maxR < 8 end,
         copy = { 213764, "swipe" },
         bind = { "swipe_cat", "swipe_bear", "swipe", "brutal_slash" }
     },
@@ -2744,7 +2745,7 @@ spec:RegisterAbilities( {
                 check_bloodtalons()
             end
         end,
-
+        usable = function() return target.maxR < 8 end,
         copy = { "thrash", 106832 },
         bind = { "thrash_cat", "thrash_bear", "thrash" }
     },
