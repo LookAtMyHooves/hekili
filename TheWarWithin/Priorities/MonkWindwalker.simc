@@ -45,6 +45,7 @@ actions.normal_opener+=/rising_sun_kick,cycle_targets=1,if=talent.ordered_elemen
 
 # >=5 Targets
 actions.default_aoe+=/tiger_palm,cycle_targets=1,if=(energy>55&talent.inner_peace|energy>60&!talent.inner_peace)&combo_strike&chi.max-chi>=2&buff.teachings_of_the_monastery.stack<buff.teachings_of_the_monastery.max_stack&(talent.energy_burst&!buff.bok_proc.up)&!buff.ordered_elements.up|(talent.energy_burst&!buff.bok_proc.up)&!buff.ordered_elements.up&!cooldown.fists_of_fury.remains&chi<3|(prev.strike_of_the_windlord|cooldown.strike_of_the_windlord.remains)&cooldown.celestial_conduit.remains<2&buff.ordered_elements.up&chi<5&combo_strike
+actions.default_aoe+=/fortifying_brew,if=offensive_brew
 actions.default_aoe+=/touch_of_death
 actions.default_aoe+=/spinning_crane_kick,cycle_targets=1,if=buff.dance_of_chiji.stack=2&combo_strike
 actions.default_aoe+=/spinning_crane_kick,cycle_targets=1,if=combo_strike&buff.chi_energy.stack>29&cooldown.fists_of_fury.remains<5
@@ -83,6 +84,7 @@ actions.default_aoe+=/tiger_palm,if=!combo_strike&chi<3&!cooldown.fists_of_fury.
 actions.default_cleave+=/rising_sun_kick,cycle_targets=1,if=buff.pressure_point.up&active_enemies<4&cooldown.fists_of_fury.remains>4
 actions.default_cleave+=/spinning_crane_kick,cycle_targets=1,if=combo_strike&buff.dance_of_chiji.stack=2&active_enemies>3
 actions.default_cleave+=/tiger_palm,cycle_targets=1,if=(energy>55&talent.inner_peace|energy>60&!talent.inner_peace)&combo_strike&chi.max-chi>=2&buff.teachings_of_the_monastery.stack<buff.teachings_of_the_monastery.max_stack&(talent.energy_burst&!buff.bok_proc.up|!talent.energy_burst)&!buff.ordered_elements.up|(talent.energy_burst&!buff.bok_proc.up|!talent.energy_burst)&!buff.ordered_elements.up&!cooldown.fists_of_fury.remains&chi<3|(prev.strike_of_the_windlord|cooldown.strike_of_the_windlord.remains)&cooldown.celestial_conduit.remains<2&buff.ordered_elements.up&chi<5&combo_strike|(!buff.heart_of_the_jade_serpent_cdr.up|!buff.heart_of_the_jade_serpent_cdr_celestial.up)&combo_strike&chi.deficit>=2&!buff.ordered_elements.up
+actions.default_cleave+=/fortifying_brew,if=offensive_brew
 actions.default_cleave+=/touch_of_death
 actions.default_cleave+=/celestial_conduit,cycle_targets=1,if=buff.storm_earth_and_fire.up&cooldown.strike_of_the_windlord.remains&(talent.xuens_bond|!talent.xuens_bond&buff.invokers_delight.up)|boss&fight_remains<15
 actions.default_cleave+=/rising_sun_kick,cycle_targets=1,if=!pet.xuen_the_white_tiger.active&prev.tiger_palm&time<5|buff.heart_of_the_jade_serpent_cdr_celestial.up&buff.pressure_point.up
@@ -123,6 +125,7 @@ actions.default_cleave+=/tiger_palm,if=!combo_strike&chi<3&!cooldown.fists_of_fu
 # 1 target
 actions.default_st+=/rising_sun_kick,if=buff.pressure_point.up|buff.ordered_elements.remains<=gcd.max*3&buff.storm_earth_and_fire.up
 actions.default_st+=/tiger_palm,cycle_targets=1,if=(energy>55&talent.inner_peace|energy>60&!talent.inner_peace)&combo_strike&chi.max-chi>=2&buff.teachings_of_the_monastery.stack<buff.teachings_of_the_monastery.max_stack&(talent.energy_burst&!buff.bok_proc.up|!talent.energy_burst)&!buff.ordered_elements.up|(talent.energy_burst&!buff.bok_proc.up|!talent.energy_burst)&!buff.ordered_elements.up&!cooldown.fists_of_fury.remains&chi<3|(prev.strike_of_the_windlord|cooldown.strike_of_the_windlord.remains)&cooldown.celestial_conduit.remains<2&buff.ordered_elements.up&chi<5&combo_strike|(!buff.heart_of_the_jade_serpent_cdr.up|!buff.heart_of_the_jade_serpent_cdr_celestial.up)&combo_strike&chi.deficit>=2&!buff.ordered_elements.up
+actions.default_st+=/fortifying_brew,if=offensive_brew
 actions.default_st+=/touch_of_death
 actions.default_st+=/celestial_conduit,if=buff.storm_earth_and_fire.up&(!talent.ordered_elements|buff.ordered_elements.up)&cooldown.strike_of_the_windlord.remains&(talent.xuens_bond|!talent.xuens_bond&buff.invokers_delight.up)|boss&fight_remains<15
 actions.default_st+=/rising_sun_kick,cycle_targets=1,if=!pet.xuen_the_white_tiger.active&prev.tiger_palm&time<5|buff.storm_earth_and_fire.up&talent.ordered_elements
@@ -163,3 +166,4 @@ actions.default_st+=/tiger_palm,if=prev.tiger_palm&chi<3&!cooldown.fists_of_fury
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/vivify,if=solo&health.pct<80&buff.vivacious_vivification.up|health.pct<25&buff.vivacious_vivification.up
