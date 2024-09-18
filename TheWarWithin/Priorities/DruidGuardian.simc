@@ -2,8 +2,9 @@ actions.precombat+=/mark_of_the_wild
 actions.precombat+=/variable,name=if_build,value=1,value_else=0,if=talent.thorns_of_iron.enabled&talent.reinforced_fur.enabled
 actions.precombat+=/variable,name=ripweaving,value=1,value_else=0,if=talent.primal_fury.enabled&talent.fluid_form.enabled&talent.wildpower_surge.enabled
 actions.precombat+=/heart_of_the_wild,if=talent.heart_of_the_wild.enabled&!talent.rip.enabled
-actions.precombat+=/bear_form
+actions.precombat+=/bear_form,if=buff.any_form.down
 actions+=/travel_form,if=buff.travel_form.up
+
 actions+=/skull_bash
 actions+=/soothe
 actions+=/use_item,slot=trinket1

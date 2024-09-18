@@ -118,15 +118,14 @@ actions.colossus_aoe+=/whirlwind
 actions.slayer_st+=/rend,if=dot.rend.remains<=gcd
 actions.slayer_st+=/thunderous_roar
 actions.slayer_st+=/champions_spear
-actions.slayer_st+=/avatar
+actions.slayer_st+=/avatar,if=cooldown.colossus_smash.remains<=5|debuff.colossus_smash.up
 actions.slayer_st+=/colossus_smash
 actions.slayer_st+=/warbreaker
-actions.slayer_st+=/execute,if=debuff.marked_for_execution.stack=3
-actions.slayer_st+=/bladestorm
+actions.slayer_st+=/execute,if=debuff.marked_for_execution.stack=3|buff.juggernaut.remains<=gcd*3|buff.sudden_death.stack=2
+actions.slayer_st+=/bladestorm,if=cooldown.colossus_smash.remains>=gcd*4|buff.colossus_smash.remains>=gcd*4
 actions.slayer_st+=/overpower,if=buff.opportunist.up
 actions.slayer_st+=/mortal_strike
 actions.slayer_st+=/skullsplitter
-actions.slayer_st+=/execute
 actions.slayer_st+=/overpower
 actions.slayer_st+=/rend,if=dot.rend.remains<=gcd*5
 actions.slayer_st+=/cleave,if=buff.martial_prowess.down
@@ -137,13 +136,13 @@ actions.slayer_execute+=/sweeping_strikes,if=active_enemies=2
 actions.slayer_execute+=/rend,if=dot.rend.remains<=gcd&!talent.bloodletting
 actions.slayer_execute+=/thunderous_roar
 actions.slayer_execute+=/champions_spear
-actions.slayer_execute+=/avatar
+actions.slayer_execute+=/avatar,if=cooldown.colossus_smash.remains<=5|debuff.colossus_smash.up
 actions.slayer_execute+=/warbreaker
 actions.slayer_execute+=/colossus_smash
 actions.slayer_execute+=/execute,if=buff.juggernaut.remains<=gcd
 actions.slayer_execute+=/bladestorm,if=debuff.executioners_precision.stack=2&debuff.colossus_smash.remains>4|debuff.executioners_precision.stack=2&cooldown.colossus_smash.remains>15|!talent.executioners_precision
-actions.slayer_execute+=/mortal_strike,if=debuff.executioners_precision.stack=2&(buff.lethal_blows.stack=2|!set_bonus.tww1_4pc)
 actions.slayer_execute+=/skullsplitter,if=rage<85
+actions.slayer_execute+=/mortal_strike,if=dot.rend.remains<2|(debuff.executioners_precision.stack=2&buff.lethal_blows.stack=2)
 actions.slayer_execute+=/overpower,if=buff.opportunist.up&rage<80&buff.martial_prowess.stack<2
 actions.slayer_execute+=/execute
 actions.slayer_execute+=/overpower
@@ -198,15 +197,15 @@ actions.slayer_aoe+=/slam
 actions.slayer_aoe+=/storm_bolt,if=buff.bladestorm.up
 
 # Trinkets
-## actions.trinkets+=/do_treacherous_transmitter_task,use_off_gcd=1
-actions.trinkets+=/use_item,use_off_gcd=1,name=treacherous_transmitter,if=(variable.adds_remain|variable.st_planning)&cooldown.avatar.remains<3
+## actions.trinkets+=/do_treacherous_transmitter_task
+actions.trinkets+=/use_item,name=treacherous_transmitter,if=(variable.adds_remain|variable.st_planning)&cooldown.avatar.remains<3
 # Trinkets The trinket with the highest estimated value, will be used first and paired with Avatar.
-actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket1,if=variable.trinket_1_buffs&!variable.trinket_1_manual&(!buff.avatar.up&trinket.1.cast_time>0|!trinket.1.cast_time>0)&buff.avatar.up&(variable.trinket_2_exclude|!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)|trinket.1.proc.any_dps.duration>=fight_remains&boss
-actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket2,if=variable.trinket_2_buffs&!variable.trinket_2_manual&(!buff.avatar.up&trinket.2.cast_time>0|!trinket.2.cast_time>0)&buff.avatar.up&(variable.trinket_1_exclude|!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)|trinket.2.proc.any_dps.duration>=fight_remains&boss
+actions.trinkets+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&!variable.trinket_1_manual&(!buff.avatar.up&trinket.1.cast_time>0|!trinket.1.cast_time>0)&buff.avatar.up&(variable.trinket_2_exclude|!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)|trinket.1.proc.any_dps.duration>=fight_remains&boss
+actions.trinkets+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&!variable.trinket_2_manual&(!buff.avatar.up&trinket.2.cast_time>0|!trinket.2.cast_time>0)&buff.avatar.up&(variable.trinket_1_exclude|!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)|trinket.2.proc.any_dps.duration>=fight_remains&boss
 # If only one on use trinket provides a buff, use the other on cooldown. Or if neither trinket provides a buff, use both on cooldown.
-actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket1,if=!variable.trinket_1_buffs&!variable.trinket_1_manual&(!variable.trinket_1_buffs&(trinket.2.cooldown.remains|!variable.trinket_2_buffs)|(trinket.1.cast_time>0&!buff.avatar.up|!trinket.1.cast_time>0)|cooldown.avatar.remains_expected>20)
-actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trinket_2_buffs&!variable.trinket_2_manual&(!variable.trinket_2_buffs&(trinket.1.cooldown.remains|!variable.trinket_1_buffs)|(trinket.2.cast_time>0&!buff.avatar.up|!trinket.2.cast_time>0)|cooldown.avatar.remains_expected>20)
-actions.trinkets+=/use_item,use_off_gcd=1,slot=main_hand,if=!equipped.fyralath_the_dreamrender&(!variable.trinket_1_buffs|trinket.1.cooldown.remains)&(!variable.trinket_2_buffs|trinket.2.cooldown.remains)
+actions.trinkets+=/use_item,slot=trinket1,if=!variable.trinket_1_buffs&(trinket.1.cast_time>0&!buff.avatar.up|!trinket.1.cast_time>0)&!variable.trinket_1_manual&(!variable.trinket_1_buffs&(trinket.2.cooldown.remains|!variable.trinket_2_buffs)|(trinket.1.cast_time>0&!buff.avatar.up|!trinket.1.cast_time>0)|cooldown.avatar.remains_expected>20)
+actions.trinkets+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs&(trinket.2.cast_time>0&!buff.avatar.up|!trinket.2.cast_time>0)&!variable.trinket_2_manual&(!variable.trinket_2_buffs&(trinket.1.cooldown.remains|!variable.trinket_1_buffs)|(trinket.2.cast_time>0&!buff.avatar.up|!trinket.2.cast_time>0)|cooldown.avatar.remains_expected>20)
+actions.trinkets+=/use_item,slot=main_hand,if=!equipped.fyralath_the_dreamrender&(!variable.trinket_1_buffs|trinket.1.cooldown.remains)&(!variable.trinket_2_buffs|trinket.2.cooldown.remains)
 
 # Variables
 actions.variables+=/variable,name=st_planning,value=active_enemies=1&(raid_event.adds.in>15|!raid_event.adds.exists)

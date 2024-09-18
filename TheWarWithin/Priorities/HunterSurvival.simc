@@ -7,6 +7,7 @@ actions+=/tranquilizing_shot
 # Defensives
 actions+=/call_action_list,name=defensives
 actions+=/hunters_mark,if=(settings.mark_any|target.is_boss)&active_dot.hunters_mark=0&target.time_to_pct_80>20
+actions+=/mend_pet,if=pet.health_pct<pet_healing
 actions+=/call_action_list,name=cds
 actions+=/call_action_list,name=plst,strict=1,if=active_enemies<3&talent.vicious_hunt
 actions+=/call_action_list,name=plcleave,strict=1,if=active_enemies>2&talent.vicious_hunt
@@ -93,7 +94,7 @@ actions.sentcleave+=/explosive_shot,if=buff.bombardier.remains
 actions.sentcleave+=/wildfire_bomb,if=buff.tip_of_the_spear.stack>0&cooldown.wildfire_bomb.charges_fractional>1.7|cooldown.wildfire_bomb.charges_fractional>1.9|cooldown.coordinated_assault.remains<2*gcd
 actions.sentcleave+=/coordinated_assault,if=!talent.bombardier|talent.bombardier&cooldown.wildfire_bomb.charges_fractional<1
 actions.sentcleave+=/flanking_strike,if=buff.tip_of_the_spear.stack=2|buff.tip_of_the_spear.stack=1
-actions.sentcleave+=/explosive_shot,if=(buff.tip_of_the_spear.stack>0|buff.bombardier.remains)&((cooldown.coordinated_assault.remains>20&(cooldown.coordinated_assault.remains<80|buff.coordinated_assault.remains))|(cooldown.coordinated_assault.remains>12&cooldown.coordinated_assault.remains<20))|cooldown.coordinated_assault.remains<2
+actions.sentcleave+=/explosive_shot,if=(buff.tip_of_the_spear.stack>0|buff.bombardier.remains)&((cooldown.coordinated_assault.remains>20&(cooldown.coordinated_assault.remains<80|cooldown.coordinated_assault.remains=action.coordinated_assault.cooldown|buff.coordinated_assault.remains))|(cooldown.coordinated_assault.remains>12&cooldown.coordinated_assault.remains<20))|cooldown.coordinated_assault.remains<2
 actions.sentcleave+=/fury_of_the_eagle,if=buff.tip_of_the_spear.stack>0
 actions.sentcleave+=/kill_shot,if=buff.sic_em.remains&active_enemies<4
 actions.sentcleave+=/kill_command,cycle_targets=1,if=focus+cast_regen<focus.max
