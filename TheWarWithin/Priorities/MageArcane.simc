@@ -104,3 +104,6 @@ actions.sunfury+=/arcane_barrage
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/ice_block,if=health.pct<25
+actions.defensives+=/mirror_image,if=health.pct<50
+actions.defensives+=/prismatic_barrier,if=health.pct<80
