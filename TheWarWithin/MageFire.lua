@@ -1854,6 +1854,8 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
+        usable = function () return not moving and target.maxR < 18 end,
+
         cdr = function ()
             return - action.shifting_power.execute_time / action.shifting_power.tick_time * ( -3 + conduit.discipline_of_the_grove.time_value )
         end,

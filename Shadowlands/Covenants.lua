@@ -1021,6 +1021,8 @@ elseif baseClass == "MAGE" then
 
             toggle = "essences",
 
+            usable = function () return not moving and target.maxR < 18 end,
+
             -- -action.shifting_power.execute_time%action.shifting_power.new_tick_time*(dbc.effect.815503.base_value%1000+conduit.discipline_of_the_grove.time_value)
             cdr = function ()
                 return - action.shifting_power.execute_time / action.shifting_power.tick_time * ( -3 + conduit.discipline_of_the_grove.time_value )
