@@ -25,7 +25,7 @@ actions.st+=/tiger_palm
 actions.aoe+=/thunder_focus_tea,if=active_enemies<=3
 actions.aoe+=/vivify,if=buff.zen_pulse.up
 actions.aoe+=/rising_sun_kick,if=active_enemies<=3|settings.aoe_rsk
-actions.aoe+=/blackout_kick,if=!talent.teachings_of_the_monastery|buff.teachings_of_the_monastery.up&active_enemies<=3
+actions.aoe+=/blackout_kick,if=!talent.teachings_of_the_monastery|buff.teachings_of_the_monastery.up>3&active_enemies<=3
 actions.aoe+=/chi_burst
 actions.aoe+=/spinning_crane_kick
 
@@ -36,5 +36,5 @@ actions.crane+=/jadefire_stomp,if=talent.ancient_teachings&buff.ancient_teaching
 actions.crane+=/enveloping_mist,if=buff.invoke_chiji.stack>1
 actions.crane+=/rising_sun_kick
 actions.crane+=/spinning_crane_kick,if=active_enemies>3|active_enemies>1&!talent.ancient_concordance&!talent.awakened_jadefire
-actions.crane+=/blackout_kick
+actions.crane+=/blackout_kick,if=!talent.teachings_of_the_monastery|buff.teachings_of_the_monastery.up>3
 actions.crane+=/tiger_palm
