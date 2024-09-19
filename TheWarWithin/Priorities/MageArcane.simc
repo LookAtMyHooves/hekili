@@ -2,7 +2,7 @@ actions.precombat+=/arcane_intellect
 actions.precombat+=/variable,name=aoe_target_count,op=reset,default=2
 actions.precombat+=/variable,name=aoe_target_count,op=set,value=9,if=!talent.arcing_cleave
 #Hacky way to keep the CD opener rotation intact
-actions.precombat+=/variable,name=opener,op=set,value=(cooldown.touch_of_the_magi.up)&(cooldown.arcane_surge.up|action.arcane_surge.time_since<5|cooldown.arcane_surge.remains>15)&(cooldown.evocation.up|action.evocation.time_since<5|cooldown.evocation.remains>15)&(boss|active_enemies>=5)
+actions.precombat+=/variable,name=opener,op=set,value=(cooldown.touch_of_the_magi.up)&(cooldown.arcane_surge.up|action.arcane_surge.time_since<5|cooldown.arcane_surge.remains>15)&(cooldown.evocation.up|action.evocation.time_since<5|cooldown.evocation.remains>15)
 actions.precombat+=/variable,name=alt_rotation,op=set,if=talent.high_voltage,value=1
 # Variable indicates use of a trinket that boosts stats during burst
 actions.precombat+=/variable,name=steroid_trinket_equipped,op=set,value=equipped.gladiators_badge|equipped.signet_of_the_priory|equipped.high_speakers_accretion|equipped.spymasters_web|equipped.treacherous_transmitter|equipped.imperfect_ascendancy_serum
@@ -49,7 +49,7 @@ actions.cd_opener+=/touch_of_the_magi,use_off_gcd=1,if=(prev_gcd.1.arcane_barrag
 actions.cd_opener+=/arcane_blast,if=buff.presence_of_mind.up
 # Use Orb for charges if you have High Voltage, then evocation, then Missiles for Nether Precision, then Arcane Surge
 actions.cd_opener+=/arcane_orb,if=talent.high_voltage&buff.arcane_charge.stack<4,line_cd=10
-actions.cd_opener+=/evocation,if=cooldown.arcane_surge.remains<(gcd.max*3)&cooldown.touch_of_the_magi.remains<(gcd.max*5)
+actions.cd_opener+=/evocation,if=cooldown.arcane_surge.remains<(gcd.max*3)&cooldown.touch_of_the_magi.remains<(gcd.max*5)&(boss|active_enemies>=5)
 actions.cd_opener+=/arcane_missiles,if=prev_gcd.1.evocation|prev_gcd.1.arcane_orb,interrupt_if=tick_time>gcd.remains&buff.aether_attunement.down,interrupt_immediate=1,interrupt_global=1,chain=1
 actions.cd_opener+=/arcane_surge,if=cooldown.touch_of_the_magi.remains<(action.arcane_surge.execute_time+(gcd.max*(buff.arcane_charge.stack=4)))
 
