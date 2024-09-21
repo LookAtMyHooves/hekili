@@ -105,9 +105,9 @@ actions.sunfury+=/arcane_barrage
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
 actions.defensives+=/ice_block,if=health.pct<25&aggro
-actions.defensives+=/mirror_image,if=health.pct<50&aggro
+actions.defensives+=/greater_invisibility,if=health.pct<25&aggro&solo&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&(buff.mirror_image.down&cooldown.mirror_image.remains>gcd.max|!talent.mirror_image)&(buff.mass_barrier.down&cooldown.mass_barrier.remains>gcd.max&group|!talent.mass_barrier)
 actions.defensives+=/ice_cold,if=health.pct<50
-actions.defensives+=/mass_barrier,if=health.pct<50&group
+actions.defensives+=/mirror_image,if=health.pct<50&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&aggro
+actions.defensives+=/mass_barrier,if=health.pct<50&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&group
 actions.defensives+=/remove_curse,if=health.pct<50
-actions.defensives+=/blast_wave,if=target.distance<8&debuff.freezing_cold.down&health.pct<50&!boss&aggro&solo
-actions.defensives+=/prismatic_barrier,if=health.pct<80&aggro&solo
+actions.defensives+=/prismatic_barrier,if=health.pct<80&buff.prismatic_barrier.down&aggro&solo
