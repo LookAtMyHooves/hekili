@@ -84,7 +84,7 @@ actions.spellslinger+=/arcane_barrage
 
 # For Sunfury, Shifting Power only when you're not under the effect of any cooldowns
 #16 second time_since is a bandaid until proper handler for arcane soul is made
-actions.sunfury+=/shifting_power,if=((buff.arcane_surge.down&buff.siphon_storm.down&debuff.touch_of_the_magi.down&cooldown.evocation.remains>15&cooldown.touch_of_the_magi.remains>10)&fight_remains>10)&(buff.arcane_soul.down)
+actions.sunfury+=/shifting_power,if=((buff.arcane_surge.down&buff.siphon_storm.down&debuff.touch_of_the_magi.down&(cooldown.evocation.remains>15|!(boss|active_enemies>=5))&cooldown.touch_of_the_magi.remains>10)&fight_remains>10)&(buff.arcane_soul.down)
 actions.sunfury+=/cancel_buff,name=presence_of_mind,use_off_gcd=1,if=settings.cancel_pom&((debuff.magis_spark_arcane_blast.up)|((prev_gcd.1.arcane_blast&buff.presence_of_mind.stack=1)|active_enemies<4))
 actions.sunfury+=/presence_of_mind,if=debuff.touch_of_the_magi.remains<=gcd.max&buff.nether_precision.up&active_enemies<4
 ## actions.sunfury+=/wait,sec=0.05,if=buff.presence_of_mind.up&prev_gcd.1.arcane_blast,line_cd=15
