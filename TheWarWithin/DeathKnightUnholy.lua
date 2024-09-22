@@ -1353,6 +1353,7 @@ me:RegisterAbilities( {
                 applyDebuff( "target", "necrotic_wound" )
             else
                 summonPet( "apoc_ghoul", 15 )
+                if set_bonus.tww1_4pc > 0 then addStack( "unholy_commander" ) end
             end
 
             if debuff.festering_wound.stack > 4 then
@@ -1400,6 +1401,7 @@ me:RegisterAbilities( {
         end,
         handler = function ()
             if set_bonus.tier30_4pc > 0 then addStack( "master_of_death", nil, 20 ) end
+            if set_bonus.tww1_4pc > 0 then addStack( "unholy_commander" ) end
 
             if talent.raise_abomination.enabled then
                 summonPet( "abomination" )
@@ -2064,6 +2066,7 @@ me:RegisterAbilities( {
         handler = function ()
             summonPet( "ghoul", talent.raise_dead_2.enabled and 3600 or 30 )
             if talent.all_will_serve.enabled then summonPet( "skeleton", talent.raise_dead_2.enabled and 3600 or 30 ) end
+            if set_bonus.tww1_4pc > 0 then addStack( "unholy_commander" ) end
         end,
 
         copy = { 46584, 46585 }
@@ -2237,6 +2240,7 @@ me:RegisterAbilities( {
         handler = function ()
             summonPet( "gargoyle", 25 )
             gain( 50, "runic_power" )
+            if set_bonus.tww1_4pc > 0 then addStack( "unholy_commander" ) end
         end,
 
         copy = { 49206, 207349 }

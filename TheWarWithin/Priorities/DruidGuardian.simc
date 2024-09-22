@@ -12,6 +12,7 @@ actions+=/use_item,slot=trinket2
 actions+=/potion,if=(buff.berserk_bear.up|buff.incarnation_guardian_of_ursoc.up)
 actions+=/call_action_list,name=mitigation
 actions+=/run_action_list,name=bear
+
 actions.bear+=/bear_form,if=buff.bear_form.down
 actions.bear+=/frenzied_regeneration,if=health.pct<65
 actions.bear+=/regrowth,if=health.pct<70&buff.dream_of_cenarius.up
