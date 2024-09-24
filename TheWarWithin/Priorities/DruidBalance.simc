@@ -12,6 +12,7 @@ actions.precombat+=/starfire,if=!talent.stellar_flare&hero_tree.elunes_chosen
 actions.precombat+=/stellar_flare
 
 actions+=/solar_beam
+actions+=/soothe
 # Defensives
 actions+=/call_action_list,name=defensives
 actions+=/variable,name=passive_asp,value=6%spell_haste+talent.natures_balance+talent.orbit_breaker*dot.moonfire.ticking*(buff.orbit_breaker.stack>(27-2*buff.solstice.up))*24
@@ -81,3 +82,4 @@ actions.st+=/wrath
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/renewal,if=health.pct<50
