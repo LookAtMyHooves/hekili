@@ -2794,6 +2794,40 @@ all:RegisterAbilities( {
         end,
     },
 
+    demonic_healthstone = {
+        name = function () return ( GetItemInfo( 224464 ) ) or "Demonic Healthstone" end,
+        listName = function ()
+            local _, link, _, _, _, _, _, _, _, tex = GetItemInfo( 224464 )
+            if link and tex then return "|T" .. tex .. ":0|t " .. link end
+            return "|cff00ccff[Healthstone]|r"
+        end,
+        cast = 0,
+        cooldown = function () return time > 0 and 3600 or 60 end,
+        gcd = "off",
+
+        item = 224464,
+        bagItem = true,
+
+        startsCombat = false,
+        texture = 538744,
+
+        usable = function ()
+            if GetItemCount( 224464 ) == 0 then return false, "requires demonic healthstone in bags"
+            elseif not IsUsableItem( 224464 ) then return false, "demonic healthstone on CD"
+            elseif health.current >= health.max then return false, "must be damaged" end
+            return true
+        end,
+
+        readyTime = function ()
+            local start, duration = GetItemCooldown( 224464 )
+            return max( 0, start + duration - query_time )
+        end,
+
+        handler = function ()
+            gain( 0.35 * health.max, "health" )
+        end,
+    },
+
     weyrnstone = {
         name = function () return ( GetItemInfo( 205146 ) ) or "Weyrnstone" end,
         listName = function ()

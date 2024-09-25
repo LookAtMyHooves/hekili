@@ -160,9 +160,10 @@ actions.variables+=/variable,name=diabolic_ritual_remains,value=buff.diabolic_ri
 actions.variables+=/variable,name=demonic_art_up,value=buff.demonic_art_pit_lord.up|buff.demonic_art_overlord.up|buff.demonic_art_mother_of_chaos.up,if=talent.diabolic_ritual,default=0,op=set
 
 # Defensives
-actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/healthstone,if=health.pct<25|health.pct<50&solo
+actions.defensives+=/demonic_healthstone,if=health.pct<25|health.pct<50&solo
 actions.defensives+=/unending_resolve,if=health.pct<25
 actions.defensives+=/mortal_coil,if=health.pct<50
-actions.defensives+=/dark_pact,if=health.pct<20
-actions.defensives+=/drain_life,if=health.pct<20&solo
+actions.defensives+=/dark_pact,if=health.pct<25
+actions.defensives+=/drain_life,if=health.pct<25&solo
 actions.defensives+=/health_funnel,if=health.pct>pet.health_pct&pet.health_pct<50
