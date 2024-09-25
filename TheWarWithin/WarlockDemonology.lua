@@ -1160,6 +1160,15 @@ spec:RegisterAuras( {
         duration = 20.0,
         max_stack = 1,
     },
+    -- Transferring health.
+    -- https://wowhead.com/beta/spell=755
+    health_funnel = {
+        id = 755,
+        duration = 5,
+        tick_time = 1,
+        type = "Magic",
+        max_stack = 1
+    },
     --[[ Talent: Damage done increased by $s2%.
     -- https://wowhead.com/beta/spell=387458
     -- TODO: May use this aura to identify Wild Imps who became Imp Gang Bosses.
@@ -1247,6 +1256,11 @@ spec:RegisterAuras( {
         id = 334581,
         duration = 20,
         max_stack = 2
+    },
+    ruination = {
+        id = 433885,
+        duration = 20,
+        max_stack = 1
     },
     -- Covenant: Suffering $w2 Arcane damage every $t2 sec.
     -- https://wowhead.com/beta/spell=312321
@@ -1925,6 +1939,24 @@ spec:RegisterAbilities( {
         bind = "ruination"
     },
 
+    -- Sacrifices 25% of your maximum health to heal your summoned Demon for twice as much over 4.0 sec.
+    health_funnel = {
+        id = 755,
+        cast = 5,
+        channeled = true,
+        breakable = true,
+        cooldown = 0,
+        gcd = "spell",
+        school = "shadow",
+
+        startsCombat = false,
+
+        usable = function () return pet.active and pet.alive and pet.health_pct < 100 and not moving, "requires pet" end,
+        start = function ()
+            applyBuff( "health_funnel" )
+        end,
+    },
+
     -- Calls down a demonic meteor full of Wild Imps which burst forth to attack the target. Deals up to 2,188 Shadowflame damage on impact to all enemies within 8 yds of the target and summons up to 3 Wild Imps, based on Soul Shards consumed.
     ruination = {
         id = 434635,
@@ -1937,8 +1969,10 @@ spec:RegisterAbilities( {
         startsCombat = true,
         buff = "ruination",
 
+        usable = function () return not moving end,
         handler = function ()
             removeBuff( "blazing_meteor" )
+            removeBuff( "ruination" )
 
             insert( guldan_v, query_time + 0.6 )
             insert( guldan_v, query_time + 0.8 )
@@ -2074,6 +2108,7 @@ spec:RegisterAbilities( {
         texture = 841220,
         buff = "infernal_bolt",
 
+        usable = function () return not moving end,
         handler = function ()
             removeBuff( "infernal_bolt" )
             gain( 3, "soul_shards" )
@@ -2120,7 +2155,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
-        usable = function () return not moving and boss end,
+        usable = function () return not moving and (boss or active_enemies > 5) end,
         handler = function ()
             summonPet( "demonic_tyrant", 15 )
             summon_demon( "demonic_tyrant", 15 )
@@ -2152,7 +2187,7 @@ spec:RegisterAbilities( {
         bind = "summon_pet",
         nomounted = true,
 
-        usable = function () return not pet.exists, "cannot have an existing pet" end,
+        usable = function () return not pet.exists and not moving, "cannot have an existing pet" end,
         handler = function ()
             removeBuff( "fel_domination" )
             summonPet( "felguard", 3600 )
