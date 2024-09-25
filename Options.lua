@@ -156,8 +156,8 @@ local oneTimeFixes = {
             havoc.date = 20240727
             havoc.version = 20240727
         end
-    end,
-  }
+    end
+}
 
 
 function Hekili:RunOneTimeFixes()
@@ -3982,7 +3982,13 @@ do
 
         for line in apl:gmatch( "\n([^\n^$]*)") do
             local newComment = line:match( "^# (.+)" )
-            if newComment then comment = newComment end
+            if newComment then
+                if comment then
+                    comment = comment .. ' ' .. newComment
+                else
+                    comment = newComment
+                end
+            end
 
             local list, action = line:match( "^actions%.(%S-)%+?=/?([^\n^$]*)" )
 
@@ -3995,7 +4001,20 @@ do
                 end
 
                 if comment then
-                    action = action .. ',description=' .. comment:gsub( ",", ";" )
+                    -- Comments can have the form 'Caption::Description'.
+                    -- Any whitespace around the '::' is truncated.
+                    local caption, description= comment:match( "(.+)::(.*)" )
+                    if caption and description then
+                        -- Truncate whitespace and change commas to semicolons.
+                        caption = caption:gsub( "%s+$", "" ):gsub( ",", ";" )
+                        description = description:gsub( "^%s+", "" ):gsub( ",", ";" )
+                        -- Replace "[<texture-id>]" in the caption with the escape sequence for the texture.
+                        caption = caption:gsub( "%[(%d+)%]", "|T%1:0|t" )
+                        action = action .. ',caption=' .. caption .. ',description=' .. description
+                    else
+                        -- Change commas to semicolons.
+                        action = action .. ',description=' .. comment:gsub( ",", ";" )
+                    end
                     comment = nil
                 end
 
@@ -4169,6 +4188,10 @@ do
         if option == "package" then self:UpdateUseItems(); self:ForceUpdate( "SPEC_PACKAGE_CHANGED" )
         elseif option == "enabled" then ns.StartConfiguration() end
 
+        if WeakAuras and WeakAuras.ScanEvents then
+            WeakAuras.ScanEvents( "HEKILI_SPEC_OPTION_CHANGED", option, val )
+        end
+
         Hekili:UpdateDamageDetectionForCLEU()
     end
 
@@ -4177,7 +4200,7 @@ do
         local n = #info
         local spec, option = info[1], info[n]
 
-        spec = specIDByName[ spec ]
+        if type( spec ) == 'string' then spec = specIDByName[ spec ] end
         if not spec then return end
 
         self.DB.profile.specs[ spec ] = self.DB.profile.specs[ spec ] or {}
@@ -5326,6 +5349,20 @@ do
                                     end,
                                     order = 1.1,
                                     width = 0.15,
+                                },
+
+                                potion = {
+                                    type = "select",
+                                    name = "Potion",
+                                    desc = "Unless otherwise specified in the priority, the selected potion will be recommended.",
+                                    order = 1.2,
+                                    width = 3,
+                                    values = class.potionList,
+                                    get = function()
+                                        local p = self.DB.profile.specs[ id ].potion or class.specs[ id ].options.potion or "default"
+                                        if not class.potionList[ p ] then p = "default" end
+                                        return p
+                                    end,
                                 },
 
                                 blankLine1 = {
@@ -7391,7 +7428,7 @@ do
                                                     end,
                                                 },
 
-                                                --[[ potion = {
+                                                potion = {
                                                     type = "select",
                                                     name = "Potion",
                                                     order = 3.2,
@@ -7402,7 +7439,7 @@ do
                                                         return e.action ~= "potion"
                                                     end,
                                                     width = 1.5,
-                                                }, ]]
+                                                },
 
                                                 sec = {
                                                     type = "input",
@@ -10760,6 +10797,9 @@ do
                     setting.info.set( info, to )
 
                     Hekili:ForceUpdate( "CLI_TOGGLE" )
+                    if WeakAuras and WeakAuras.ScanEvents then
+                        WeakAuras.ScanEvents( "HEKILI_SPEC_OPTION_CHANGED", args[2], to )
+                    end
                     return
 
                 elseif setting.info.type == "range" then
@@ -10784,6 +10824,9 @@ do
                     Hekili:Print( format( "%s set to |cFF00B4FF%.2f|r.", settingName, to ) )
                     prefs[ setting.name ] = to
                     Hekili:ForceUpdate( "CLI_NUMBER" )
+                    if WeakAuras and WeakAuras.ScanEvents then
+                        WeakAuras.ScanEvents( "HEKILI_SPEC_OPTION_CHANGED", args[2], to )
+                    end
                     return
 
                 end
@@ -11583,6 +11626,10 @@ do
                         if key == 'criteria' or key == 'target_if' or key == 'value' or key == 'value_else' or key == 'sec' or key == 'wait' then
                             value = Sanitize( 'c', value, line, warnings )
                             value = SpaceOut( value )
+                        end
+
+                        if key == 'caption' then
+                            value = value:gsub( "||", "|" ):gsub( ";", "," )
                         end
 
                         if key == 'description' then

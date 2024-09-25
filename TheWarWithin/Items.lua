@@ -166,9 +166,10 @@ all:RegisterAbilities( {
 
         auras = {
             oppressive_orators_influence = {
-                id = 443540,
+                id = 451011,
                 duration = 30,
-                max_stack = 10
+                max_stack = 10,
+                copy = 443540
             },
             oppressive_oration = {
                 id = 443552,
@@ -420,7 +421,7 @@ all:RegisterAbilities( {
         cooldown = 90,
         gcd = "off",
 
-        item = 219307,
+        item = 219915,
 
         proc = "damage",
 
@@ -915,6 +916,13 @@ all:RegisterAuras( {
     ascendance_mastery = {
         id = 458525,
         duration = 15,
+        max_stack = 1
+    },
+
+    -- Refracting Aggression Module
+    refracting_resistance = {
+        id = 451568,
+        duration = 30,
         max_stack = 1
     },
 
