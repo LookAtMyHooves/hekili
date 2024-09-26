@@ -81,5 +81,6 @@ actions.st+=/starfire,if=talent.lunar_calling
 actions.st+=/wrath
 
 # Defensives
+actions.defensives+=/regrowth,if=health.pct<80&buff.blooming_infusion.up
 actions.defensives+=/healthstone,if=health.pct<25
 actions.defensives+=/renewal,if=health.pct<50
