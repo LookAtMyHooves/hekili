@@ -108,3 +108,8 @@ actions.sentcleave+=/raptor_bite
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/exhilaration,if=health.pct<25|pet.health_pct<25
+actions.defensives+=/survival_of_the_fittest,if=down&health.pct<40|pet.health_pct<25
+actions.defensives+=/revive_pet,if=pet.dead&!mounted
+actions.defensives+=/summon_pet,if=!pet.exists&!pet.dead&!mounted
+actions.defensives+=/mend_pet,if=pet.alive&pet.exists&pet.health_pct<pet_healing
