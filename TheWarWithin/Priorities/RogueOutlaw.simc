@@ -119,5 +119,7 @@ actions.stealth_cds+=/vanish,if=!talent.underhanded_upper_hand&!talent.crackshot
 actions.stealth_cds+=/shadowmeld,if=variable.finish_condition&!cooldown.vanish.ready
 
 # Defensives
-actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
+actions.defensives+=/evasion,if=buff.crimson_vial.down&(solo&health.pct<50|health.pct<25)
+actions.defensives+=/kidney_shot,if=solo&health.pct<25&!boss&aggro

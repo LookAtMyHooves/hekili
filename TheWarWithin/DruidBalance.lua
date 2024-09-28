@@ -2810,7 +2810,7 @@ spec:RegisterAbilities( {
         talent = "starfire",
 
         energize_amount = function() return action.starfire.spend * -1 end,
-        usable = function () return not moving end,
+        usable = function () return not moving or buff.blooming_infusion.up or buff.warrior_of_elune.up or buff.owlkin_frenzy.up end,
         handler = function ()
             if talent.fluid_form.enabled then
                 if buff.moonkin_form.down then shift( "moonkin_form" ) end
@@ -3276,7 +3276,7 @@ spec:RegisterAbilities( {
         end,
 
         energize_amount = function() return action.wrath.spend * -1 end,
-        usable = function () return not moving end,
+        usable = function () return not moving or buff.blooming_infusion.up end,
         handler = function ()
             if talent.fluid_form.enabled then
                 if buff.moonkin_form.down then shift( "moonkin_form" ) end
