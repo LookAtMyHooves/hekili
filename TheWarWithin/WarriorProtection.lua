@@ -1768,6 +1768,7 @@ spec:RegisterAbilities( {
         texture = 136105,
         bind = "thunder_blast",
 
+        usable = function () return talent.crackling_thunder.enabled and target.maxR < 12 or target.maxR < 8 end,
         handler = function ()
             applyDebuff( "target", "thunder_clap" )
             active_dot.thunder_clap = max( active_dot.thunder_clap, active_enemies )

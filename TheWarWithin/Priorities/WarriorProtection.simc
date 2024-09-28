@@ -32,7 +32,6 @@ actions+=/shield_charge
 actions+=/shield_block,if=buff.shield_block.remains<=10
 actions+=/run_action_list,name=aoe,strict=1,if=spell_targets.thunder_clap>=3
 actions+=/call_action_list,name=generic
-# actions+=/call_action_list,name=aggro,if=settings.aggro_management&!aggro
 
 actions.aoe+=/thunder_blast,if=dot.rend.remains<=1
 actions.aoe+=/thunder_clap,if=dot.rend.remains<=1
