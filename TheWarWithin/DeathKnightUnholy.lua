@@ -1427,7 +1427,7 @@ me:RegisterAbilities( {
         toggle = "interrupts",
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt,
+        readyTime = state.timeToInterrupt( gcd.max ),
 
         handler = function ()
             applyDebuff( "target", "asphyxiate" )

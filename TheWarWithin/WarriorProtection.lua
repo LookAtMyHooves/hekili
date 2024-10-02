@@ -1274,7 +1274,7 @@ spec:RegisterAbilities( {
 
         toggle = "interrupts",
         debuff = function () return "casting" end,
-        readyTime = function () return timeToInterrupt() end,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         usable = function () return not target.is_boss and target.maxR < 8 end,
         handler = function ()
@@ -1660,7 +1660,7 @@ spec:RegisterAbilities( {
 
         toggle = "interrupts",
         debuff = function () return settings.shockwave_interrupt and "casting" or nil end,
-        readyTime = function () return settings.shockwave_interrupt and timeToInterrupt() or nil end,
+        readyTime = function () return settings.shockwave_interrupt and state.timeToInterrupt( gcd.max ) or nil end,
 
         usable = function () return not target.is_boss and target.maxR < 10 end,
 
@@ -1733,7 +1733,7 @@ spec:RegisterAbilities( {
 
         toggle = "interrupts",
         debuff = function () return "casting" end,
-        readyTime = function () return timeToInterrupt() end,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         handler = function ()
             applyDebuff( "target", "storm_bolt" )

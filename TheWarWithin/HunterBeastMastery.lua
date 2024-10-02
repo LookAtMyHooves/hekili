@@ -1962,7 +1962,7 @@ spec:RegisterAbilities( {
         toggle = "interrupts",
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt,
+        readyTime = state.timeToInterrupt( gcd.max ),
 
         usable = function () return not boss end,
         handler = function ()
