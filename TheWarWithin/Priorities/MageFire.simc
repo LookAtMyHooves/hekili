@@ -171,3 +171,10 @@ actions.standard_rotation+=/fireball
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/ice_block,if=health.pct<25&aggro
+actions.defensives+=/greater_invisibility,if=health.pct<25&aggro&solo
+actions.defensives+=/ice_cold,if=health.pct<50
+actions.defensives+=/mirror_image,if=health.pct<50&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&aggro
+actions.defensives+=/mass_barrier,if=health.pct<50&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&group
+actions.defensives+=/remove_curse,if=health.pct<50
+actions.defensives+=/blazing_barrier,if=health.pct<80&buff.blazing_barrier.down&aggro&solo
