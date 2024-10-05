@@ -1657,7 +1657,7 @@ spec:RegisterAbilities( {
         interrupt = true,
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt,
+        readyTime = state.timeToInterrupt( gcd.max ),
 
         usable = function () return pet.exists, "requires felguard" end,
         handler = function ()
@@ -1721,7 +1721,7 @@ spec:RegisterAbilities( {
         interrupt = true,
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt,
+        readyTime = state.timeToInterrupt( gcd.max ),
 
         handler = function ()
             interrupt()

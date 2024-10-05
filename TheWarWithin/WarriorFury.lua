@@ -1709,7 +1709,7 @@ spec:RegisterAbilities( {
 
         toggle = "interrupts",
         debuff = function () return settings.shockwave_interrupt and "casting" or nil end,
-        readyTime = function () return settings.shockwave_interrupt and timeToInterrupt() or nil end,
+        readyTime = function () return settings.shockwave_interrupt and state.timeToInterrupt( gcd.max ) or nil end,
 
         usable = function () return not target.is_boss end,
 
