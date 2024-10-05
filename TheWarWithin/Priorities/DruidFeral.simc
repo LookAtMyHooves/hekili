@@ -141,3 +141,4 @@ actions.variable+=/variable,name=moonfire_snapshotted,value=buff.tigers_fury.up,
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/frenzied_regeneration,if=health.pct<60
