@@ -1107,6 +1107,9 @@ local IsSpellOverlayed = IsSpellOverlayed
 local C_Spell, C_UnitAuras = C_Spell, C_UnitAuras
 local tostringall = tostringall
 
+local ld_stacks = 0
+local free_hol_triggered = 0
+
 spec:RegisterHook( "reset_precast", function ()
     if buff.divine_resonance.up then
         state:QueueAuraEvent( "divine_toll", class.abilities.judgment.handler, buff.divine_resonance.expires, "AURA_PERIODIC" )
@@ -1129,17 +1132,54 @@ spec:RegisterHook( "reset_precast", function ()
         if ld then
             local ldInfo = "Light's Deliverance: "
             for k, v in pairs( ld ) do
-                ldInfo = ldInfo "\n  ".. k .. " = " .. tostring( v )
+                if type( v ) == "table" then
+                    local subTable = "\n  " .. k .. " = { "
+                    for i, val in ipairs( v ) do
+                        subTable = subTable .. tostring( val ) .. ( i < #v and ", " or " }" )
+                    end
+                    ldInfo = ldInfo .. subTable
+                else
+                    ldInfo = ldInfo .. "\n  ".. k .. " = " .. tostring( v )
+                end
             end
             Hekili:Debug( ldInfo )
         end
     end
 
-    if IsActiveSpell( 427453 ) then applyBuff( "hammer_of_light_ready", 12 - ( query_time - action.wake_of_ashes.lastCast ) ) end
+    if IsSpellKnownOrOverridesKnown( 427453 ) then
+        if talent.lights_deliverance.enabled then
+            -- We need to track when it ticks over from 59/60 stacks.
+            local stacks = buff.lights_deliverance.stack
 
-    if buff.hammer_of_light_ready.down and buff.lights_deliverance.stack_pct == 100 and cooldown.wake_of_ashes.remains > 0 then
-        removeBuff( "lights_deliverance" )
-        applyBuff( "hammer_of_light_free" )
+            if stacks < ld_stacks then
+                free_hol_triggered = now
+            end
+            ld_stacks = stacks
+
+            if free_hol_triggered + 12 < now then free_hol_triggered = 0 end -- Reset.
+
+            if free_hol_triggered > 0 and action.hammer_of_light.lastCast > action.wake_of_ashes.lastCast then
+                local hol_remains = free_hol_triggered + 12 - query_time
+                hol_remains = hol_remains > 0 and hol_remains or ( 2 * gcd.max )
+
+                applyBuff( "hammer_of_light_free", max( 2 * gcd.max, hol_remains ) )
+                if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light active; applied hammer_of_light_free: %.2f : %.2f : %.2f : %d", buff.hammer_of_light_free.remains, free_hol_triggered, query_time, ld_stacks ) end
+            else
+                if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light active; hammer_of_light_free ruled out: %.2f : %.2f : %d", free_hol_triggered, query_time, ld_stacks ) end
+            end
+        end
+
+        if not buff.hammer_of_light_free.up then
+            local hol_remains = action.wake_of_ashes.lastCast + 12 - query_time
+            hol_remains = hol_remains > 0 and hol_remains or ( 2 * gcd.max )
+            applyBuff( "hammer_of_light_ready", hol_remains )
+            if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light not active; applied hammer_of_light_ready: %.2f", buff.hammer_of_light_ready.remains ) end
+        end
+
+        if buff.hammer_of_light_ready.down and buff.hammer_of_light_free.down then
+            if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light appears active [ %.2f ] but I don't know why; applying hammer_of_light_ready." ) end
+            applyBuff( "hammer_of_light_ready", 2 * gcd.max )
+        end
     end
 
     if time > 0 and talent.crusading_strikes.enabled then
@@ -1802,9 +1842,13 @@ spec:RegisterAbilities( {
 
             if buff.hammer_of_light_free.up then
                 removeBuff( "hammer_of_light_free" )
-            elseif buff.hammer_of_light_ready.up and buff.lights_deliverance.stack_pct == 100 then
-                removeBuff( "lights_deliverance" )
-                applyBuff( "hammer_of_light_free" )
+            else
+                removeBuff( "hammer_of_light_ready" )
+
+                if buff.lights_deliverance.stack_pct == 100 then
+                    removeBuff( "lights_deliverance" )
+                    applyBuff( "hammer_of_light_free" )
+                end
             end
         end,
 
