@@ -516,6 +516,7 @@ all:RegisterAbilities( {
         proc = "primary",
         self_buff = "ascension",
 
+        usable = function () return not moving end,
         handler = function()
             applyBuff( "ascension" )
         end,

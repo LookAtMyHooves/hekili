@@ -28,12 +28,15 @@ actions.precombat+=/variable,name=combustion_on_use,value=equipped.gladiators_ba
 # How long before Combustion should trinkets that trigger a shared category cooldown on other trinkets not be used?
 actions.precombat+=/variable,name=on_use_cutoff,value=20,if=variable.combustion_on_use
 actions.precombat+=/mirror_image
-actions.precombat+=/flamestrike,if=active_enemies>=variable.hot_streak_flamestrike
-actions.precombat+=/pyroblast
+# actions.precombat+=/flamestrike,if=active_enemies>=variable.hot_streak_flamestrike
+# actions.precombat+=/pyroblast
 
 actions+=/counterspell
+actions+=/supernova,if=!talent.unerring_proficiency
+actions+=/dragons_breath,if=!talent.alexstraszas_fury
 # Defensives
 actions+=/call_action_list,name=defensives
+actions+=/spellsteal
 ## actions+=/time_warp
 actions+=/phoenix_flames,if=time<0.5
 # The combustion_timing action list schedules the approximate time when Combustion should be used and stores the number of seconds until then in variable.time_to_combustion.
@@ -171,10 +174,10 @@ actions.standard_rotation+=/fireball
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
-actions.defensives+=/ice_block,if=health.pct<25&aggro
+actions.defensives+=/ice_block,if=health.pct<25
 actions.defensives+=/greater_invisibility,if=health.pct<25&aggro&solo
-actions.defensives+=/ice_cold,if=health.pct<50
-actions.defensives+=/mirror_image,if=health.pct<50&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&aggro
-actions.defensives+=/mass_barrier,if=health.pct<50&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&group
-actions.defensives+=/remove_curse,if=health.pct<50
-actions.defensives+=/blazing_barrier,if=health.pct<80&buff.blazing_barrier.down&aggro&solo
+actions.defensives+=/ice_cold,if=health.pct<65
+actions.defensives+=/mirror_image,if=health.pct<65&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)
+actions.defensives+=/mass_barrier,if=health.pct<65&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&group
+actions.defensives+=/remove_curse,if=health.pct<65
+actions.defensives+=/blazing_barrier,if=health.pct<80&buff.blazing_barrier.down

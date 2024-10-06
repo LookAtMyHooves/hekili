@@ -8285,11 +8285,55 @@ do
                             order = 5
                         },
 
+                        cdLineBreak4 = {
+                            type = "description",
+                            name = "",
+                            width = "full",
+                            order = 6.1,
+                        },
+
+                        cdIndent4 = {
+                            type = "description",
+                            name = "",
+                            width = 1,
+                            order = 6.2
+                        },
+
+                        during_boss = {
+                            type = "toggle",
+                            name = format( "Active During %s Boss Fights", NewFeature ),
+                            desc = format( "If checked, when a %s Boss Fight is active, the |cFFFFD100Major Cooldowns|r toggle will be treated as enabled, even if unchecked.", NewFeature ),
+                            width = 2,
+                            order = 7
+                        },
+
+                        cdLineBreak5 = {
+                            type = "description",
+                            name = "",
+                            width = "full",
+                            order = 8.1,
+                        },
+
+                        cdIndent5 = {
+                            type = "description",
+                            name = "",
+                            width = 1,
+                            order = 8.2
+                        },
+
+                        during_trash = {
+                            type = "toggle",
+                            name = format( "Active During %s 5+ Elite Trash", NewFeature ),
+                            desc = format( "If checked, when %s 5+ Mobs are active of which the current target is elite, the |cFFFFD100Major Cooldowns|r toggle will be treated as enabled, even if unchecked.", NewFeature ),
+                            width = 2,
+                            order = 9
+                        },
+
                         essences = {
                             type = "group",
                             name = "",
                             inline = true,
-                            order = 6,
+                            order = 10,
                             args = {
                                 key = {
                                     type = "keybinding",
@@ -8362,7 +8406,7 @@ do
                             type = "group",
                             name = "",
                             inline = true,
-                            order = 7,
+                            order = 11,
                             args = {
                                 key = {
                                     type = "keybinding",
@@ -8383,7 +8427,7 @@ do
                             type = "group",
                             name = "",
                             inline = true,
-                            order = 8,
+                            order = 10,
                             args = {
                                 key = {
                                     type = "keybinding",
