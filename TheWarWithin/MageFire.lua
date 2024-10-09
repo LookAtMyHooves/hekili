@@ -1360,7 +1360,7 @@ spec:RegisterAbilities( {
         velocity = 45,
 
         usable = function ()
-            if moving and settings.prevent_hardcasts and action.fireball.cast_time > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
+            if moving and settings.prevent_hardcasts and action.fireball.cast > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
             return true
         end,
 
@@ -1452,7 +1452,7 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
-        usable = function () return not moving or action.flamestrike.cast_time > buff.ice_floes.remains or buff.hot_streak.up or buff.firestorm.up or buff.hyperthermia.up end,
+        usable = function () return not moving or action.flamestrike.cast > buff.ice_floes.remains or buff.hot_streak.up or buff.firestorm.up or buff.hyperthermia.up end,
         handler = function ()
             removeStack( "sparking_cinders" )
             if buff.majesty_of_the_phoenix.up then removeBuff( "majesty_of_the_phoenix" ) end
@@ -1779,7 +1779,7 @@ spec:RegisterAbilities( {
 
         usable = function ()
             if action.pyroblast.cast > 0 then
-                if moving and settings.prevent_hardcasts and action.fireball.cast_time > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
+                if moving and settings.prevent_hardcasts and action.fireball.cast > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
                 if combat == 0 and not boss and not settings.pyroblast_pull then return false, "opener pyroblast disabled and/or target is not a boss" end
             end
             return true
@@ -2068,7 +2068,7 @@ spec:RegisterSetting( "prevent_hardcasts", false, {
 } )
 
 spec:RegisterStateExpr( "fireball_hardcast_prevented", function()
-    return settings.prevent_hardcasts and moving and action.fireball.cast_time > 0 and buff.ice_floes.down
+    return settings.prevent_hardcasts and moving and action.fireball.cast > 0 and buff.ice_floes.down
 end )
 
 spec:RegisterSetting( "check_explosion_range", true, {

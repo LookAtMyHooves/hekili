@@ -1368,7 +1368,7 @@ spec:RegisterAbilities( {
             end
 
             if pvptalent.turbo_fists.enabled then
-                applyDebuff( "target", "heavyhanded_strikes", action.fists_of_fury.cast_time + 2 )
+                applyDebuff( "target", "heavyhanded_strikes", action.fists_of_fury.cast + 2 )
             end
 
             if legendary.pressure_release.enabled then

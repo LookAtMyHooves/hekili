@@ -4,13 +4,18 @@ actions.precombat+=/skyfury
 actions.precombat+=/lightning_shield
 actions.precombat+=/thunderstrike_ward
 actions.precombat+=/stormkeeper
-actions.precombat+=/earth_shield,if=!buff.earth_shield.up&talent.elemental_orbit
+actions.precombat+=/earth_shield,if=!buff.earth_shield.up&talent.elemental_orbit.enabled
 actions.precombat+=/variable,name=mael_cap,value=100+50*talent.swelling_maelstrom.rank+25*talent.primordial_capacity.rank,op=set
 actions.precombat+=/variable,name=spymaster_in_1st,value=trinket.1.is.spymasters_web
 actions.precombat+=/variable,name=spymaster_in_2nd,value=trinket.2.is.spymasters_web
 
 # Interrupt of casts.
 actions+=/wind_shear
+actions+=/purge
+actions+=/flametongue_weapon,if=buff.flametongue_weapon.down&talent.improved_flametongue_weapon.enabled
+actions+=/skyfury,if=buff.skyfury.down
+actions+=/lightning_shield,if=buff.lightning_shield.down
+actions+=/thunderstrike_ward,if=buff.thunderstrike_ward.down
 # Defensives
 actions+=/call_action_list,name=defensives
 # Enable more movement.
@@ -22,7 +27,6 @@ actions+=/ancestral_call,if=!talent.ascendance.enabled|buff.ascendance.up|cooldo
 actions+=/use_item,slot=trinket1,if=!variable.spymaster_in_1st|(boss&fight_remains<45|time<fight_remains&buff.spymasters_report.stack=40)&cooldown.stormkeeper.remains<5|boss&fight_remains<22
 actions+=/use_item,slot=trinket2,if=!variable.spymaster_in_2nd|(boss&fight_remains<45|time<fight_remains&buff.spymasters_report.stack=40)&cooldown.stormkeeper.remains<5|boss&fight_remains<22
 actions+=/use_item,slot=main_hand
-actions+=/lightning_shield,if=buff.lightning_shield.down
 actions+=/natures_swiftness
 ### Use Power Infusion on Cooldown.
 ## actions+=/invoke_external_buff,name=power_infusion
@@ -173,3 +177,11 @@ actions.single_target+=/frost_shock,moving=1
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/gift_of_the_naaru,if=health.pct<50
+actions.defensives+=/healing_surge,if=(buff.maelstrom_weapon.stack>=5|buff.natures_swiftness.up)&(health.pct<50&solo|health.pct<25)
+actions.defensives+=/natures_swiftness,if=health.pct<25
+actions.defensives+=/astral_shift,if=health.pct<50
+actions.defensives+=/ancestral_guidance,if=health.pct<50
+actions.defensives+=/stone_bulwark_totem,if=health.pct<50&solo|health.pct<50
+actions.defensives+=/healing_stream_totem,if=health.pct<75&solo|health.pct<50
+actions.defensives+=/earth_shield,if=!buff.earth_shield.up&talent.elemental_orbit.enabled&health.pct<90
