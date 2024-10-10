@@ -178,10 +178,8 @@ actions.single_target+=/frost_shock,moving=1
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
 actions.defensives+=/gift_of_the_naaru,if=health.pct<50
-actions.defensives+=/healing_surge,if=(buff.maelstrom_weapon.stack>=5|buff.natures_swiftness.up)&(health.pct<50&solo|health.pct<25)
-actions.defensives+=/natures_swiftness,if=health.pct<25
 actions.defensives+=/astral_shift,if=health.pct<50
-actions.defensives+=/ancestral_guidance,if=health.pct<50
-actions.defensives+=/stone_bulwark_totem,if=health.pct<50&solo|health.pct<50
-actions.defensives+=/healing_stream_totem,if=health.pct<75&solo|health.pct<50
+actions.defensives+=/ancestral_guidance,if=health.pct<50,if=!buff.gift_of_the_naaru.up
+actions.defensives+=/stone_bulwark_totem,if=health.pct<50,moving=0
+actions.defensives+=/healing_stream_totem,if=health.pct<75,moving=0
 actions.defensives+=/earth_shield,if=!buff.earth_shield.up&talent.elemental_orbit.enabled&health.pct<90
