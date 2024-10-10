@@ -1545,8 +1545,11 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.chain_heal.cast < buff.spiritwalkers_grace.remains )
-                or action.chain_heal.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.chains_of_devastation_ch.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.maelstrom_weapon.stack >= 5
         end,
         handler = function ()
             removeBuff( "chains_of_devastation_ch" )
@@ -1591,8 +1594,16 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.chain_lightning.cast < buff.spiritwalkers_grace.remains )
-                or action.chain_lightning.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.chains_of_devastation_cl.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.stormkeeper.up
+                or ( talent.unrelenting_calamity.enabled and 1.75 or 2 )
+                * ( 1 - 0.03 * min( 10, buff.wind_gust.stacks ) )
+                * ( 1 - 0.2 * min( 5, buff.maelstrom_weapon.stack ) )
+                * ( buff.storm_frenzy.up and 0.6 or 1 )
+                * ( 1 - 0.25 * buff.volcanic_surge.stack ) == 0
         end,
         handler = function ()
             removeBuff( "chains_of_devastation_cl" )
@@ -1942,8 +1953,10 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.elemental_blast.cast < buff.spiritwalkers_grace.remains )
-                or action.elemental_blast.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.maelstrom_weapon.stack >= 5
         end,
         handler = function ()
             removeBuff( "master_of_the_elements" )
@@ -2284,8 +2297,7 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.hex.cast < buff.spiritwalkers_grace.remains )
-                or action.hex.cast <= 0
+                or buff.spiritwalkers_grace.up
         end,
         handler = function ()
             applyDebuff( "target", "hex" )
@@ -2316,8 +2328,7 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.icefury.cast < buff.spiritwalkers_grace.remains )
-                or action.icefury.cast <= 0
+                or buff.spiritwalkers_grace.up
         end,
         handler = function ()
             removeBuff( "icefury" )
@@ -2354,8 +2365,11 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.lava_beam.cast < buff.spiritwalkers_grace.remains )
-                or action.lava_beam.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.stormkeeper.up
+                or buff.arc_discharge.up
         end,
         handler = function ()
             gain( ( buff.stormkeeper.up and 3 or 2 ) * min( ( level > 42 and 5 or 3 ) + ( buff.surge_of_power.up and 1 or 0 ), true_active_enemies ), "maelstrom" )
@@ -2404,8 +2418,10 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.lava_burst.cast < buff.spiritwalkers_grace.remains )
-                or action.lava_burst.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.lava_surge.up
         end,
         handler = function ()
             removeBuff( "windspeakers_lava_resurgence" )
@@ -2487,8 +2503,15 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.lightning_bolt.cast < buff.spiritwalkers_grace.remains )
-                or action.lightning_bolt.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.stormkeeper.up
+                or ( talent.unrelenting_calamity.enabled and 1.75 or 2 )
+                    * ( 1 - 0.03 * min( 10, buff.wind_gust.stacks ) )
+                    * ( 1 - 0.2 * min( 5, buff.maelstrom_weapon.stack ) )
+                    * ( buff.storm_frenzy.up and 0.6 or 1 )
+                    * ( 1 - 0.25 * buff.volcanic_surge.stack ) == 0
         end,
         handler = function ()
             removeBuff( "tempest" )
@@ -2564,8 +2587,15 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.tempest.cast < buff.spiritwalkers_grace.remains )
-                or action.tempest.cast <= 0
+                or buff.spiritwalkers_grace.up
+                or buff.ancestral_swiftness.up
+                or buff.natures_swiftness.up
+                or buff.stormkeeper.up
+                or ( talent.unrelenting_calamity.enabled and 1.75 or 2 )
+                    * ( 1 - 0.03 * min( 10, buff.wind_gust.stacks ) )
+                    * ( 1 - 0.2 * min( 5, buff.maelstrom_weapon.stack ) )
+                    * ( buff.storm_frenzy.up and 0.6 or 1 )
+                    * ( 1 - 0.25 * buff.volcanic_surge.stack ) == 0
         end,
         handler = function ()
             removeBuff( "tempest" )
@@ -2920,8 +2950,7 @@ spec:RegisterAbilities( {
 
         usable = function ()
             return not moving
-                or ( buff.spiritwalkers_grace.up and ability.stormkeeper.cast < buff.spiritwalkers_grace.remains )
-                or action.stormkeeper.cast <= 0
+                or buff.spiritwalkers_grace.up
         end,
         handler = function ()
             applyBuff( "stormkeeper", nil, 2 )
