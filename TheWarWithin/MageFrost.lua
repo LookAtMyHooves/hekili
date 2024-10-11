@@ -941,7 +941,7 @@ spec:RegisterAbilities( {
         velocity = 20,
 
         usable = function ()
-            if not buff.freezing_rain.up and moving and settings.prevent_hardcasts and action.blizzard.cast_time > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
+            if not buff.freezing_rain.up and moving and settings.prevent_hardcasts and action.blizzard.cast > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
             return true
         end,
 
@@ -1117,14 +1117,14 @@ spec:RegisterAbilities( {
         velocity = 35,
 
         usable = function ()
-            if moving and settings.prevent_hardcasts and action.frostbolt.cast_time > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
+            if moving and settings.prevent_hardcasts and action.frostbolt.cast > buff.ice_floes.remains then return false, "prevent_hardcasts during movement and ice_floes is down" end
             return true
         end,
 
         handler = function ()
             addStack( "icicles" )
 
-            if action.frostbolt.cast_time > 0 then removeStack( "ice_floes" ) end
+            if action.frostbolt.cast > 0 then removeStack( "ice_floes" ) end
 
             if buff.frostfire_empowerment.up then
                 applyBuff( "frost_mastery", nil, 6 )

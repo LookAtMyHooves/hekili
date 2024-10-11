@@ -1673,7 +1673,7 @@ spec:RegisterAbilities( {
         interrupt = true,
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt( gcd.max ),
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         usable = function () return pet.exists, "requires felguard" end,
         handler = function ()
@@ -1737,7 +1737,7 @@ spec:RegisterAbilities( {
         interrupt = true,
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt( gcd.max ),
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         handler = function ()
             interrupt()
@@ -1887,7 +1887,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
-        usable = function () return boss or active_enemies > 5 end,
+        usable = function () return target.is_boss or active_enemies > 5 end,
         handler = function ()
             summon_demon( "grimoire_felguard", 17 )
             applyBuff( "grimoire_felguard" )
@@ -2195,7 +2195,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
-        usable = function () return not moving and (boss or active_enemies > 5) end,
+        usable = function () return not moving and ( target.is_boss or active_enemies > 5 ) end,
         handler = function ()
             summonPet( "demonic_tyrant", 15 )
             summon_demon( "demonic_tyrant", 15 )

@@ -1286,7 +1286,7 @@ spec:RegisterAbilities( {
         toggle = "interrupts",
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt( gcd.max ),
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         handler = function ()
             interrupt()
