@@ -1352,14 +1352,14 @@ spec:RegisterAbilities( {
     ancestral_swiftness = {
         id = 443454,
         cast = 0,
-        cooldown = 45,
+        cooldown = 30,
         gcd = "off",
         school = "nature",
 
         startsCombat = false,
         talent = "ancestral_swiftness",
         nobuff = "ancestral_swiftness",
-        toggle = "cooldowns",
+        -- toggle = "cooldowns",
 
         handler = function ()
             if talent.natures_swiftness.enabled then
@@ -2757,7 +2757,7 @@ spec:RegisterAbilities( {
         notalent = "ancestral_swiftness",
         startsCombat = false,
 
-        toggle = "cooldowns",
+        -- toggle = "cooldowns",
         nobuff = "natures_swiftness",
 
         handler = function ()
