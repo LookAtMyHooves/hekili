@@ -39,7 +39,7 @@ actions.aoe+=/storm_elemental,if=!buff.storm_elemental.up
 actions.aoe+=/stormkeeper,if=!buff.stormkeeper.up
 # {Fire} Reset LMT CD as early as possible [Hekili] based on true cooldown remaining
 actions.aoe+=/totemic_recall,if=cooldown.liquid_magma_totem.true_remains>15&(active_dot.flame_shock<(spell_targets.chain_lightning>?6)-2|talent.fire_elemental.enabled)
-actions.aoe+=/liquid_magma_totem,if=totem.liquid_magma_totem.down
+actions.aoe+=/liquid_magma_totem,moving=0,if=totem.liquid_magma_totem.down
 # Spread Flame Shock via Primordial Wave using Surge of Power if possible.
 actions.aoe+=/primordial_wave,cycle_targets=1,if=buff.surge_of_power.up|!talent.surge_of_power.enabled|maelstrom<60-5*talent.eye_of_the_storm.enabled
 actions.aoe+=/ancestral_swiftness
@@ -102,7 +102,7 @@ actions.single_target+=/stormkeeper,if=!buff.ascendance.up&!buff.stormkeeper.up
 # {Fire} Reset LMT CD as early as possible [Hekili] based on true cooldown remaining
 actions.single_target+=/totemic_recall,if=cooldown.liquid_magma_totem.true_remains>15&spell_targets.chain_lightning>1&talent.fire_elemental.enabled
 # Use LMT outside Ascendance in fire builds and on 2 targets for lightning.
-actions.single_target+=/liquid_magma_totem,if=!totem.liquid_magma_totem.active&!buff.ascendance.up&(talent.fire_elemental.enabled|spell_targets.chain_lightning>1)
+actions.single_target+=/liquid_magma_totem,moving=0,if=!totem.liquid_magma_totem.active&!buff.ascendance.up&(talent.fire_elemental.enabled|spell_targets.chain_lightning>1)
 # Use Primordial Wave as much as possible. Buff with Surge of power on 2 targets if not playing LMT.
 actions.single_target+=/primordial_wave,cycle_targets=1,if=spell_targets.chain_lightning=1|buff.surge_of_power.up|!talent.surge_of_power.enabled|maelstrom<60-5*talent.eye_of_the_storm.enabled|talent.liquid_magma_totem.enabled
 # Use Ancestral Swiftness as much as possible. Use on EB instead of LvB where possible.
