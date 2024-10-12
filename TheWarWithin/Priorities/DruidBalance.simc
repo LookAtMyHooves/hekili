@@ -84,5 +84,6 @@ actions.st+=/wrath
 
 # Defensives
 actions.defensives+=/regrowth,if=health.pct<80&buff.blooming_infusion.up
+actions.defensives+=/frenzied_regeneration,if=health.pct<60&buff.bear_form.up
 actions.defensives+=/healthstone,if=health.pct<25
 actions.defensives+=/renewal,if=health.pct<50
