@@ -14,6 +14,8 @@ actions+=/bloodlust,line_cd=600
 actions+=/potion,if=(buff.ascendance.up|buff.feral_spirit.up|buff.doom_winds.up|(fight_remains%%300<=30)|(!talent.ascendance.enabled&!talent.feral_spirit.enabled&!talent.doom_winds.enabled))
 # Interrupt of casts.
 actions+=/wind_shear
+actions+=/thunderstorm
+actions+=/capacitor_totem
 actions+=/purge
 # Defensives
 actions+=/call_action_list,name=defensives
@@ -180,5 +182,5 @@ actions.defensives+=/healing_surge,if=(buff.maelstrom_weapon.stack>=5|buff.natur
 actions.defensives+=/natures_swiftness,if=health.pct<25
 actions.defensives+=/astral_shift,if=health.pct<50
 actions.defensives+=/ancestral_guidance,if=health.pct<50
-actions.defensives+=/stone_bulwark_totem,if=health.pct<50&solo
-actions.defensives+=/healing_stream_totem,if=health.pct<75&solo
+actions.defensives+=/stone_bulwark_totem,if=health.pct<50
+actions.defensives+=/healing_stream_totem,moving=0,if=health.pct<75
