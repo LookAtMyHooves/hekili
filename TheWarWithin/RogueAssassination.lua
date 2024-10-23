@@ -1,5 +1,5 @@
 -- RogueAssassination.lua
--- November 2022
+-- October 2024
 
 if UnitClassBase( "player" ) ~= "ROGUE" then return end
 
@@ -8,14 +8,31 @@ local Hekili = _G[ addon ]
 local class, state = Hekili.Class, Hekili.State
 local PTR = ns.PTR
 
-local format, wipe = string.format, table.wipe
+local format, wipe, max = string.format, table.wipe, math.max
 local UA_GetPlayerAuraBySpellID = C_UnitAuras.GetPlayerAuraBySpellID
 
 local orderedPairs = ns.orderedPairs
 
 local spec = Hekili:NewSpecialization( 259 )
 
-spec:RegisterResource( Enum.PowerType.ComboPoints )
+spec:RegisterResource( Enum.PowerType.ComboPoints, nil, nil, {
+    percent = function( t )
+        return max( 0, 100 * state.effective_combo_points / state.combo_points.max )
+    end,
+
+    deficit = function( t )
+        return max( 0, state.combo_points.max - state.effective_combo_points )
+    end,
+
+    deficit_percent = function( t )
+        return 100 * max( 0, state.combo_points.max - state.effective_combo_points ) / state.combo_points.max
+    end,
+
+    deficit_pct = function( t )
+        return 100 * max( 0, state.combo_points.max - state.effective_combo_points ) / state.combo_points.max
+    end
+} )
+
 spec:RegisterResource( Enum.PowerType.Energy, {
     garrote_vim = {
         aura = "garrote",
@@ -96,18 +113,19 @@ spec:RegisterTalents( {
     alacrity               = {  90751, 193539, 2 }, -- Your finishing moves have a 5% chance per combo point to grant 1% Haste for 15 sec, stacking up to 5 times.
     atrophic_poison        = {  90763, 381637, 1 }, -- Coats your weapons with a Non-Lethal Poison that lasts for 1 |4hour:hrs;. Each strike has a 21% chance of poisoning the enemy, reducing their damage by 3.6% for 10 sec.
     blackjack              = {  90686, 379005, 1 }, -- Enemies have 30% reduced damage and healing for 6 sec after Blind or Sap's effect on them ends.
-    blind                  = {  90684,   2094, 1 }, -- Blinds all enemies near the target, causing them to wander disoriented for 18 sec. Damage will interrupt the effect. Limit 1.
+    blind                  = {  90684,   2094, 1 }, -- Blinds the target, causing it to wander disoriented for 1 min. Damage will interrupt the effect. Limit 1.
     cheat_death            = {  90742,  31230, 1 }, -- Fatal attacks instead reduce you to 7% of your maximum health. For 3 sec afterward, you take 85% reduced damage. Cannot trigger more often than once per 6 min.
     cloak_of_shadows       = {  90697,  31224, 1 }, -- Provides a moment of magic immunity, instantly removing all harmful spell effects. The cloak lingers, causing you to resist harmful spells for 5 sec.
     cold_blood             = {  90748, 382245, 1 }, -- Increases the critical strike chance of your next damaging ability by 100%.
     deadened_nerves        = {  90743, 231719, 1 }, -- Physical damage taken reduced by 5%.
     deadly_precision       = {  90760, 381542, 1 }, -- Increases the critical strike chance of your attacks that generate combo points by 5%.
     deeper_stratagem       = {  90750, 193531, 1 }, -- Gain 1 additional max combo point. Your finishing moves that consume more than 5 combo points have increased effects, and your finishing moves deal 5% increased damage.
-    echoing_reprimand      = {  90639, 385616, 1 }, -- Deal 58,333 Physical damage to an enemy, extracting their anima to Animacharge a combo point for 45 sec. Damaging finishing moves that consume the same number of combo points as your Animacharge function as if they consumed 7 combo points. Awards 2 combo points.
+    echoing_reprimand      = {  90638, 470669, 1 }, -- After consuming a supercharged combo point, your next Mutilate also strikes the target with an Echoing Reprimand dealing 20,557 Physical damage.
     elusiveness            = {  90742,  79008, 1 }, -- Evasion also reduces damage taken by 20%, and Feint also reduces non-area-of-effect damage taken by 20%.
     evasion                = {  90764,   5277, 1 }, -- Increases your dodge chance by 100% for 10 sec.
     featherfoot            = {  94563, 423683, 1 }, -- Sprint increases movement speed by an additional 30% and has 4 sec increased duration.
     fleet_footed           = {  90762, 378813, 1 }, -- Movement speed increased by 15%.
+    forced_induction       = {  90638, 470668, 1 }, -- Increase the bonus granted when a damaging finishing move consumes a supercharged combo point by 1.
     gouge                  = {  90741,   1776, 1 }, -- Gouges the eyes of an enemy target, incapacitating for 4 sec. Damage will interrupt the effect. Must be in front of your target. Awards 1 combo point.
     graceful_guile         = {  94562, 423647, 1 }, -- Feint has 1 additional charge.
     improved_ambush        = {  90692, 381620, 1 }, -- Ambush generates 1 additional combo point.
@@ -119,19 +137,18 @@ spec:RegisterTalents( {
     master_poisoner        = {  90636, 378436, 1 }, -- Increases the non-damaging effects of your weapon poisons by 20%.
     nimble_fingers         = {  90745, 378427, 1 }, -- Energy cost of Feint and Crimson Vial reduced by 10.
     numbing_poison         = {  90763,   5761, 1 }, -- Coats your weapons with a Non-Lethal Poison that lasts for 1 |4hour:hrs;. Each strike has a 21% chance of poisoning the enemy, clouding their mind and slowing their attack and casting speed by 18% for 10 sec.
-    recuperator            = {  90640, 378996, 1 }, -- Slice and Dice heals you for up to 1% of your maximum health per 2 sec.
-    resounding_clarity     = {  90638, 381622, 1 }, -- Echoing Reprimand Animacharges 2 additional combo points.
-    reverberation          = {  90638, 394332, 1 }, -- Echoing Reprimand's damage is increased by 100%.
+    recuperator            = {  90640, 378996, 1 }, -- Slice and Dice heals you for up to 1% of your maximum health per 3 sec.
     rushed_setup           = {  90754, 378803, 1 }, -- The Energy costs of Kidney Shot, Cheap Shot, Sap, and Distract are reduced by 20%.
     shadowheart            = { 101714, 455131, 1 }, -- Leech increased by 2% while Stealthed.
     shadowrunner           = {  90687, 378807, 1 }, -- While Stealth or Shadow Dance is active, you move 20% faster.
-    shadowstep             = {  90695,  36554, 1 }, -- Step through the shadows to appear behind your target and gain 70% increased movement speed for 2 sec. If you already know Shadowstep, instead gain 1 additional charge of Shadowstep.
-    shiv                   = {  90740,   5938, 1 }, -- Attack with your poisoned blades, dealing 21,050 Physical damage, dispelling all enrage effects and applying a concentrated form of your active Non-Lethal poison. Your Nature and Bleed damage done to the target is increased by 30% for 8 sec. Awards 1 combo point.
-    soothing_darkness      = {  90691, 393970, 1 }, -- You are healed for 15% of your maximum health over 6 sec after gaining Vanish or Shadow Dance.
+    shiv                   = {  90740,   5938, 1 }, -- Attack with your poisoned blades, dealing 66,434 Physical damage, dispelling all enrage effects and applying a concentrated form of your active Non-Lethal poison. Your Nature and Bleed damage done to the target is increased by 30% for 8 sec. Awards 1 combo point.
+    soothing_darkness      = {  90691, 393970, 1 }, -- You are healed for 30% of your maximum health over 6 sec after activating Vanish.
     stillshroud            = {  94561, 423662, 1 }, -- Shroud of Concealment has 50% reduced cooldown.
-    subterfuge             = {  90688, 108208, 2 }, -- Abilities and combat benefits requiring Stealth remain active for 3 sec after Stealth breaks.
+    subterfuge             = {  90688, 108208, 2 }, -- Abilities requiring Stealth can be used for 3 sec after Stealth breaks. Combat benefits requiring Stealth persist for an additional 3 sec after Stealth breaks.
+    supercharger           = {  90639, 470347, 2 }, -- Shiv supercharges 1 combo point. Damaging finishing moves consume a supercharged combo point to function as if they spent 2 additional combo points.
     superior_mixture       = {  94567, 423701, 1 }, -- Crippling Poison reduces movement speed by an additional 10%.
-    thistle_tea            = {  90756, 381623, 1 }, -- Restore 100 Energy. Mastery increased by 13.6% for 6 sec.
+    thistle_tea            = {  90756, 381623, 1 }, -- Restore 100 Energy. Mastery increased by 13.6% for 6 sec. When your Energy is reduced below 30, drink a Thistle Tea.
+    thrill_seeking         = {  90695, 394931, 1 }, -- Shadowstep has 1 additional charge.
     tight_spender          = {  90692, 381621, 1 }, -- Energy cost of finishing moves reduced by 6%.
     tricks_of_the_trade    = {  90686,  57934, 1 }, -- Redirects all threat you cause to the targeted party or raid member, beginning with your next damaging attack within the next 30 sec and lasting 6 sec.
     unbreakable_stride     = {  90747, 400804, 1 }, -- Reduces the duration of movement slowing effects 30%.
@@ -140,77 +157,77 @@ spec:RegisterTalents( {
     without_a_trace        = { 101713, 382513, 1 }, -- Vanish has 1 additional charge.
 
     -- Assassination
-    amplifying_poison      = {  90621, 381664, 1 }, -- Coats your weapons with a Lethal Poison that lasts for 1 |4hour:hrs;. Each strike has a 21% chance to poison the enemy, dealing 1,995 Nature damage and applying Amplifying Poison for 12 sec. Envenom can consume 10 stacks of Amplifying Poison to deal 35% increased damage. Max 20 stacks.
+    amplifying_poison      = {  90621, 381664, 1 }, -- Coats your weapons with a Lethal Poison that lasts for 1 |4hour:hrs;. Each strike has a 21% chance to poison the enemy, dealing 2,339 Nature damage and applying Amplifying Poison for 12 sec. Envenom can consume 10 stacks of Amplifying Poison to deal 35% increased damage. Max 20 stacks.
     arterial_precision     = {  90784, 400783, 1 }, -- Shiv strikes 4 additional nearby enemies and increases your Bleed damage done to affected targets by 30% for 8 sec.
     blindside              = {  90786, 328085, 1 }, -- Ambush and Mutilate have a 15% chance to make your next Ambush free and usable without Stealth. Chance increased to 30% if the target is under 35% health.
     bloody_mess            = {  90625, 381626, 1 }, -- Garrote and Rupture damage increased by 15%.
-    caustic_spatter        = {  94556, 421975, 1 }, -- Using Mutilate on a target afflicted by your Rupture and Deadly Poison applies Caustic Spatter for 10 sec. Limit 1. Caustic Spatter causes 45% of your Poison damage dealt to splash onto other nearby enemies, reduced beyond 5 targets.
-    crimson_tempest        = {  90632, 121411, 1 }, -- Finishing move that slashes all enemies within 10 yards, causing victims to bleed. Lasts longer per combo point. Deals extra damage when multiple enemies are afflicted, increasing by 20% per target, up to 100%. Deals reduced damage beyond 5 targets. 1 point : 84,793 over 6 sec 2 points: 105,991 over 8 sec 3 points: 127,190 over 10 sec 4 points: 148,388 over 12 sec 5 points: 169,586 over 14 sec
-    dashing_scoundrel      = {  90766, 381797, 1 }, -- Envenom also increases the critical strike chance of your weapon poisons by 5%, and their critical strikes generate 1 Energy.
-    deadly_poison          = {  90783,   2823, 1 }, -- Coats your weapons with a Lethal Poison that lasts for 1 |4hour:hrs;. Each strike has a 21% chance to poison the enemy for 20,617 Nature damage over 12 sec. Subsequent poison applications will instantly deal 1,995 Nature damage.
-    deathmark              = {  90769, 360194, 1 }, -- Carve a deathmark into an enemy, dealing 76,884 Bleed damage over 16 sec. While marked your Garrote, Rupture, and Lethal poisons applied to the target are duplicated, dealing 100% of normal damage.
+    caustic_spatter        = {  94556, 421975, 1 }, -- Using Mutilate on a target afflicted by your Rupture and Deadly Poison applies Caustic Spatter for 10 sec. Limit 1. Caustic Spatter causes 40% of your Poison damage dealt to splash onto other nearby enemies, reduced beyond 5 targets.
+    crimson_tempest        = {  90632, 121411, 1 }, -- Finishing move that slashes all enemies within 10 yards, causing victims to bleed. Lasts longer per combo point. Deals extra damage when multiple enemies are afflicted, increasing by 20% per target, up to 100%. Deals reduced damage beyond 5 targets. 1 point : 39,269 over 6 sec 2 points: 49,648 over 8 sec 3 points: 60,027 over 10 sec 4 points: 70,406 over 12 sec 5 points: 80,786 over 14 sec 6 points: 91,165 over 16 sec 7 points: 101,544 over 18 sec
+    dashing_scoundrel      = {  90766, 381797, 1 }, -- Envenom's effect also increases the critical strike chance of your weapon poisons by 5%, and their critical strikes generate 1 Energy.
+    deadly_poison          = {  90783,   2823, 1 }, -- Coats your weapons with a Lethal Poison that lasts for 1 |4hour:hrs;. Each strike has a 21% chance to poison the enemy for 25,032 Nature damage over 12 sec. Subsequent poison applications will instantly deal 2,339 Nature damage.
+    deathmark              = {  90769, 360194, 1 }, -- Carve a deathmark into an enemy, dealing 97,008 Bleed damage over 16 sec. While marked your Garrote, Rupture, and Lethal poisons applied to the target are duplicated, dealing 100% of normal damage.
     doomblade              = {  90777, 381673, 1 }, -- Mutilate deals an additional 20% Bleed damage over 8 sec.
     dragontempered_blades  = {  94553, 381801, 1 }, -- You may apply 1 additional Lethal and Non-Lethal Poison to your weapons, but they have 30% less application chance.
     fatal_concoction       = {  90626, 392384, 1 }, -- Increases the damage of your weapon poisons by 10%.
     flying_daggers         = {  94554, 381631, 1 }, -- Fan of Knives has its radius increased to 12 yds, deals 15% more damage, and an additional 15% when striking 5 or more targets.
-    improved_garrote       = {  90780, 381632, 1 }, -- Garrote deals 50% increased damage and has no cooldown when used from Stealth and for 6 sec after breaking Stealth.
+    improved_garrote       = {  90780, 381632, 1 }, -- Garrote deals 50% increased damage and has no cooldown when used from Stealth and for 12 sec after breaking Stealth.
     improved_poisons       = {  90634, 381624, 1 }, -- Increases the application chance of your weapon poisons by 5%.
     improved_shiv          = {  90628, 319032, 1 }, -- Shiv now also increases your Nature damage done against the target by 30% for 8 sec.
-    indiscriminate_carnage = {  90774, 381802, 1 }, -- Garrote and Rupture apply to 2 additional nearby enemies when used from Stealth and for 6 sec after breaking Stealth.
+    indiscriminate_carnage = {  90774, 381802, 1 }, -- Garrote and Rupture apply to 2 additional nearby enemies when used from Stealth and for 12 sec after breaking Stealth.
     intent_to_kill         = {  94555, 381630, 1 }, -- Shadowstep's cooldown is reduced by 33% when used on a target afflicted by your Garrote.
-    internal_bleeding      = {  94556, 381627, 1 }, -- Kidney Shot and Rupture also apply Internal Bleeding, dealing up to 31,410 Bleed damage over 6 sec, based on combo points spent.
-    iron_wire              = {  94555, 196861, 1 }, -- Garrote silences the target for 6 sec when used from Stealth. Enemies silenced by Garrote deal 15% reduced damage for 8 sec.
-    kingsbane              = {  94552, 385627, 1 }, -- Release a lethal poison from your weapons and inject it into your target, dealing 50,579 Nature damage instantly and an additional 45,342 Nature damage over 14 sec. Each time you apply a Lethal Poison to a target affected by Kingsbane, Kingsbane damage increases by 20%, up to 1,000%. Awards 1 combo point.
+    internal_bleeding      = {  94556, 381627, 1 }, -- Kidney Shot and Rupture also apply Internal Bleeding, dealing up to 36,373 Bleed damage over 6 sec, based on combo points spent.
+    iron_wire              = {  94555, 196861, 1 }, -- Garrote silences the target for 5 sec when used from Stealth. Enemies silenced by Garrote deal 15% reduced damage for 5 sec.
+    kingsbane              = {  94552, 385627, 1 }, -- Release a lethal poison from your weapons and inject it into your target, dealing 55,959 Nature damage instantly and an additional 48,216 Nature damage over 14 sec. Each time you apply a Lethal Poison to a target affected by Kingsbane, Kingsbane damage increases by 20%, up to 1,000%. Awards 1 combo point.
     lethal_dose            = {  90624, 381640, 2 }, -- Your weapon poisons, Nature damage over time, and Bleed abilities deal 1% increased damage to targets for each weapon poison, Nature damage over time, and Bleed effect on them.
     lightweight_shiv       = {  90633, 394983, 1 }, -- Shiv deals 100% increased damage and has 1 additional charge.
-    master_assassin        = {  90623, 255989, 1 }, -- Critical strike chance increased by 30% while Stealthed and for 3 sec after breaking Stealth.
+    master_assassin        = {  90623, 255989, 1 }, -- Critical strike chance increased by 25% while Stealthed and for 12 sec after breaking Stealth.
     path_of_blood          = {  94536, 423054, 1 }, -- Increases maximum Energy by 100.
-    poison_bomb            = {  90767, 255544, 2 }, -- Envenom has a 4% chance per combo point spent to smash a vial of poison at the target's location, creating a pool of acidic death that deals 34,201 Nature damage over 2 sec to all enemies within it.
-    rapid_injection        = {  94557, 455072, 1 }, -- Envenom deals 10% increased damage while your Envenom buff is active.
+    poison_bomb            = {  90767, 255544, 2 }, -- Envenom has a 4% chance per combo point spent to smash a vial of poison at the target's location, creating a pool of acidic death that deals 36,419 Nature damage over 2 sec to all enemies within it.
+    rapid_injection        = {  94557, 455072, 1 }, -- Envenom's effect increases the damage of Envenom by 10%.
     sanguine_blades        = {  90779, 200806, 1 }, -- While above 50% of maximum Energy your Garrote, Rupture, and Crimson Tempest consume 2 Energy to duplicate 30% of any damage dealt.
     sanguine_stratagem     = {  94554, 457512, 1 }, -- Gain 1 additional max combo point. Your finishing moves that consume more than 5 combo points have increased effects, and your finishing moves deal 5% increased damage.
     scent_of_blood         = {  90775, 381799, 2 }, -- Each enemy afflicted by your Rupture increases your Agility by 2%, up to a maximum of 20%.
     seal_fate              = {  90757,  14190, 1 }, -- Critical strikes with attacks that generate combo points grant an additional combo point per critical strike.
-    serrated_bone_spikes   = {  90622, 455352, 1 }, -- Prepare a Serrated Bone Spike every 30 sec, stacking up to 3. Rupture spends a stack to embed a bone spike in its target.  Serrated Bone Spike: Deals 29,615 Physical damage and 3,886 Bleed damage every 2.4 sec until the target dies or leaves combat. Refunds a stack when the target dies. Awards 1 combo point plus 1 additional per active bone spike.
+    serrated_bone_spikes   = {  90622, 455352, 1 }, -- Prepare a Serrated Bone Spike every 30 sec, stacking up to 3. Rupture spends a stack to embed a bone spike in its target.  Serrated Bone Spike: Deals 30,356 Physical damage and 4,138 Bleed damage every 2.4 sec until the target dies or leaves combat. Refunds a stack when the target dies. Awards 1 combo point plus 1 additional per active bone spike.
     shrouded_suffocation   = {  90776, 385478, 1 }, -- Garrote damage increased by 20%. Garrote generates 2 additional combo points when used from Stealth.
     sudden_demise          = {  94551, 423136, 1 }, -- Bleed damage increased by 10%. Targets below 35% health instantly bleed out and take fatal damage when the remaining Bleed damage you would deal to them exceeds 150% of their remaining health.
     systemic_failure       = {  90771, 381652, 1 }, -- Garrote increases the damage of Ambush and Mutilate on the target by 20%.
     thrown_precision       = {  90630, 381629, 1 }, -- Fan of Knives has 10% increased critical strike chance and its critical strikes always apply your weapon poisons.
     tiny_toxic_blade       = {  90770, 381800, 1 }, -- Shiv deals 200% increased damage and no longer costs Energy.
-    twist_the_knife        = {  90768, 381669, 1 }, -- Envenom duration increased by 2 sec.
-    venomous_wounds        = {  90635,  79134, 1 }, -- You regain 7 Energy each time your Garrote or Rupture deal Bleed damage to a poisoned target. If an enemy dies while afflicted by your Rupture, you regain energy based on its remaining duration.
+    twist_the_knife        = {  90768, 381669, 1 }, -- Envenom duration increased by 2 sec. Envenom can now overlap 2 times.
+    venomous_wounds        = {  90635,  79134, 1 }, -- You regain 8 Energy each time your Garrote or Rupture deal Bleed damage to a poisoned target. If an enemy dies while afflicted by your Rupture, you regain energy based on its remaining duration.
     vicious_venoms         = {  90772, 381634, 2 }, -- Ambush and Mutilate cost 5 more Energy and deal 35% additional damage as Nature.
     zoldyck_recipe         = {  90785, 381798, 2 }, -- Your Poisons and Bleeds deal 15% increased damage to targets below 35% health.
 
     -- Deathstalker
     bait_and_switch        = {  95106, 457034, 1 }, -- Evasion reduces magical damage taken by 20%. Cloak of Shadows reduces physical damage taken by 20%.
-    clear_the_witnesses    = {  95110, 457053, 1 }, -- Your next Fan of Knives after applying Deathstalker's Mark deals an additional 3,901 Shadow damage and generates 1 additional combo point.
-    corrupt_the_blood      = {  95108, 457066, 1 }, -- Rupture deals an additional 487 Plague damage each time it deals damage, stacking up to 10 times. Rupture duration increased by 3 sec.
+    clear_the_witnesses    = {  95110, 457053, 1 }, -- Your next Fan of Knives after applying Deathstalker's Mark deals an additional 23,752 Plague damage and generates 1 additional combo point.
+    corrupt_the_blood      = {  95108, 457066, 1 }, -- Rupture deals an additional 593 Plague damage each time it deals damage, stacking up to 10 times. Rupture duration increased by 3 sec.
     darkest_night          = {  95142, 457058, 1 }, -- When you consume the final Deathstalker's Mark from a target or your target dies, gain 40 Energy and your next Envenom cast with maximum combo points is guaranteed to critically strike, deals 60% additional damage, and applies 3 stacks of Deathstalker's Mark to the target.
-    deathstalkers_mark     = {  95136, 457052, 1, "deathstalker" }, -- Ambush from Stealth applies 3 stacks of Deathstalker's Mark to your target. When you spend 5 or more combo points on attacks against a Marked target you consume an application of Deathstalker's Mark, dealing 13,656 Plague damage and increasing the damage of your next Ambush or Mutilate by 25%. You may only have one target Marked at a time.
+    deathstalkers_mark     = {  95136, 457052, 1, "deathstalker" }, -- Ambush from Stealth applies 3 stacks of Deathstalker's Mark to your target. When you spend 5 or more combo points on attacks against a Marked target you consume an application of Deathstalker's Mark, dealing 28,502 Plague damage and increasing the damage of your next Ambush or Mutilate by 50%. You may only have one target Marked at a time.
     ethereal_cloak         = {  95106, 457022, 1 }, -- Cloak of Shadows duration increased by 2 sec.
-    fatal_intent           = {  95135, 461980, 1 }, -- Your damaging abilities against enemies above 20% health have a very high chance to apply Fatal Intent. When an enemy falls below 20% health, Fatal Intent inflicts 1,790 Plague damage per stack.
-    follow_the_blood       = {  95131, 457068, 1 }, -- Fan of Knives, Shuriken Storm, Crimson Tempest, and Black Powder deal 20% additional damage while 3 or more enemies are afflicted with Rupture.
-    hunt_them_down         = {  95132, 457054, 1 }, -- Auto-attacks against Marked targets deal an additional 3,901 Plague damage.
-    lingering_darkness     = {  95109, 457056, 1 }, -- After Deathmark expires, gain 30 sec of 10% increased Nature damage.
-    momentum_of_despair    = {  95131, 457067, 1 }, -- If you have critically struck with Fan of Knives or Shuriken Storm, increase the critical strike chance of Fan of Knives, Shuriken Storm, and Black Powder by 15% for 12 sec.
+    fatal_intent           = {  95135, 461980, 1 }, -- Your damaging abilities against enemies above 20% health have a very high chance to apply Fatal Intent. When an enemy falls below 20% health, Fatal Intent inflicts 5,341 Plague damage per stack.
+    follow_the_blood       = {  95131, 457068, 1 }, -- Fan of Knives and Crimson Tempest deal 30% additional damage while 2 or more enemies are afflicted with Rupture.
+    hunt_them_down         = {  95132, 457054, 1 }, -- Auto-attacks against Marked targets deal an additional 5,938 Plague damage.
+    lingering_darkness     = {  95109, 457056, 1 }, -- After Deathmark expires, gain 30 sec of 30% increased Nature damage.
+    momentum_of_despair    = {  95131, 457067, 1 }, -- If you have critically struck with Fan of Knives, increase the critical strike chance of Fan of Knives and Crimson Tempest by 15% and critical strike damage by 32% for 12 sec.
     shadewalker            = {  95123, 457057, 1 }, -- Each time you consume a stack of Deathstalker's Mark, reduce the cooldown of Shadowstep by 3 sec.
     shroud_of_night        = {  95123, 457063, 1 }, -- Shroud of Concealment duration increased by 5 sec.
-    singular_focus         = {  95117, 457055, 1 }, -- Damage dealt to targets other than your Marked target deals 3% Plague damage to your Marked target.
-    symbolic_victory       = {  95109, 457062, 1 }, -- Shiv additionally increases the damage of your next Envenom by 10%.
+    singular_focus         = {  95117, 457055, 1 }, -- Damage dealt to targets other than your Marked target deals 5% Plague damage to your Marked target.
+    symbolic_victory       = {  95109, 457062, 1 }, -- Shiv additionally increases the damage of your next Envenom by 18%.
 
     -- Fatebound
     chosens_revelry        = {  95138, 454300, 1 }, -- Leech increased by 0.5% for each time your Fatebound Coin has flipped the same face in a row.
     deal_fate              = {  95107, 454419, 1 }, -- Mutilate, Ambush, and Fan of Knives generate 1 additional combo point when they trigger Seal Fate.
-    deaths_arrival         = {  95130, 454433, 1 }, -- Shadowstep may be used a second time within 3 sec, with no cooldown.
-    delivered_doom         = {  95119, 454426, 1 }, -- Damage dealt when your Fatebound Coin flips tails is increased by 21% if there are no other enemies near the target.
+    deaths_arrival         = {  95130, 454433, 1 }, -- Shadowstep may be used a second time within 3 sec with no cooldown, but its total cooldown is increased by 5 sec.
+    delivered_doom         = {  95119, 454426, 1 }, -- Damage dealt when your Fatebound Coin flips tails is increased by 30% if there are no other enemies near the target. Each additional nearby enemy reduces this bonus by 6%.
     destiny_defined        = {  95114, 454435, 1 }, -- Weapon poisons have 5% increased application chance and your Fatebound Coins flipped have an additional 5% chance to match the same face as the last flip.
-    double_jeopardy        = {  95129, 454430, 1 }, -- Your first Fatebound Coin flip after breaking Stealth flips two coins that are guaranteed to match the same face.
-    edge_case              = {  95139, 453457, 1 }, -- Activating Deathmark causes your next Fatebound Coin flip to land on its edge, counting as both Heads and Tails.
-    fate_intertwined       = {  95120, 454429, 1 }, -- Fate Intertwined duplicates 20% of Envenom critical strike damage as Cosmic to 2 additional nearby enemies. If there are no additional nearby targets, duplicate 20% to the primary target instead.
-    fateful_ending         = {  95127, 454428, 1 }, -- When your Fatebound Coin flips the same face for the seventh time in a row, keep the lucky coin to gain 7% Agility until you leave combat for 10 seconds. If you already have a lucky coin, it instead deals 50,054 Cosmic damage to your target.
-    hand_of_fate           = {  95125, 452536, 1, "fatebound" }, -- Flip a Fatebound Coin each time a finishing move consumes 5 or more combo points. Heads increases the damage of your attacks by 3%, lasting 15 sec or until you flip Tails. Tails deals 29,443 Cosmic damage to your target. For each time the same face is flipped in a row, Heads increases damage by an additional 1% and Tails increases its damage by 10%.
-    inevitability          = {  95114, 454434, 1 }, -- Cold Blood now benefits the next two abilities but only applies to Envenom. Fatebound Coins flipped by these abilities are guaranteed to match the same face as the last flip.
+    double_jeopardy        = {  95129, 454430, 1 }, -- Your first Fatebound Coin flip after breaking Stealth flips two coins that are guaranteed to match the same outcome.
+    edge_case              = {  95139, 453457, 1 }, -- Activating Deathmark flips a Fatebound Coin and causes it to land on its edge, counting as both Heads and Tails.
+    fate_intertwined       = {  95120, 454429, 1 }, -- Fate Intertwined duplicates 30% of Envenom critical strike damage as Cosmic to 2 additional nearby enemies. If there are no additional nearby targets, duplicate 30% to the primary target instead.
+    fateful_ending         = {  95127, 454428, 1 }, -- When your Fatebound Coin flips the same face for the seventh time in a row, keep the lucky coin to gain 7% Agility until you leave combat for 10 seconds. If you already have a lucky coin, it instead deals 85,507 Cosmic damage to your target.
+    hand_of_fate           = {  95125, 452536, 1, "fatebound" }, -- Flip a Fatebound Coin each time a finishing move consumes 5 or more combo points. Heads increases the damage of your attacks by 10%, lasting 15 sec or until you flip Tails. Tails deals 42,753 Cosmic damage to your target. For each time the same face is flipped in a row, Heads increases damage by an additional 2% and Tails increases its damage by 10%.
+    inevitabile_end        = {  95114, 454434, 1 }, -- Cold Blood now benefits the next two abilities but only applies to Envenom. Fatebound Coins flipped by these abilities are guaranteed to match the same outcome as the last flip.
     inexorable_march       = {  95130, 454432, 1 }, -- You cannot be slowed below 70% of normal movement speed while your Fatebound Coin flips have an active streak of at least 2 flips matching the same face.
     mean_streak            = {  95122, 453428, 1 }, -- Fatebound Coins flipped by Envenom multiple times in a row are 33% more likely to match the same face as the last flip.
     tempted_fate           = {  95138, 454286, 1 }, -- You have a chance equal to your critical strike chance to absorb 10% of any damage taken, up to a maximum chance of 40%.
@@ -222,7 +239,7 @@ spec:RegisterPvpTalents( {
     control_is_king    = 5530, -- (354406)
     creeping_venom     =  141, -- (354895)
     dagger_in_the_dark = 5550, -- (198675)
-    death_from_above   = 3479, -- (269513) Finishing move that empowers your weapons with energy to performs a deadly attack. You leap into the air and Envenom your target on the way back down, with such force that it has a 40% stronger effect.
+    death_from_above   = 3479, -- (269513) Finishing move that empowers your weapons with energy to perform a deadly attack.; You leap into the air and $?s32645[Envenom]?s2098[Dispatch][Eviscerate] your target on the way back down, with such force that it has a $269512s2% stronger effect.
     dismantle          = 5405, -- (207777) Disarm the enemy, preventing the use of any weapons or shield for 5 sec.
     hemotoxin          =  830, -- (354124)
     maneuverability    = 3448, -- (197000)
@@ -239,10 +256,13 @@ end )
 
 spec:RegisterStateExpr( "effective_combo_points", function ()
     local c = combo_points.current or 0
-    if not talent.echoing_reprimand.enabled and not covenant.kyrian then return c end
-    if c < 2 or c > 5 then return c end
-    if buff[ "echoing_reprimand_" .. c ].up then return 7 end
-    return c
+
+    if talent.supercharger.enabled and buff.supercharged_combo_points.up then
+        if talent.forced_induction.enabled then return c + 3
+        else return c + 2
+        end
+    else return c
+    end
 end )
 
 
@@ -324,7 +344,6 @@ local tracked_bleeds = {}
 local function NewBleed( key, spellID )
     tracked_bleeds[ key ] = {
         id = spellID,
-        exsanguinate = {},
         rate = {},
         last_tick = {},
         haste = {}
@@ -333,25 +352,19 @@ local function NewBleed( key, spellID )
     tracked_bleeds[ spellID ] = tracked_bleeds[ key ]
 end
 
-local function ApplyBleed( key, target, exsanguinate )
+local function ApplyBleed( key, target )
     local bleed = tracked_bleeds[ key ]
 
-    bleed.rate[ target ]         = 1 + ( exsanguinate and 1 or 0 )
+    bleed.rate[ target ]         = 1
     bleed.last_tick[ target ]    = GetTime()
-    bleed.exsanguinate[ target ] = exsanguinate
     bleed.haste[ target ]        = 100 + GetHaste()
 end
 
-local function UpdateBleed( key, target, exsanguinate )
+local function UpdateBleed( key, target )
     local bleed = tracked_bleeds[ key ]
 
     if not bleed.rate[ target ] then
         return
-    end
-
-    if exsanguinate and not bleed.exsanguinate[ target ] then
-        bleed.rate[ target ] = bleed.rate[ target ] + 1
-        bleed.exsanguinate[ target ] = true
     end
 
     bleed.haste[ target ] = 100 + GetHaste()
@@ -370,12 +383,7 @@ local function RemoveBleed( key, target )
 
     bleed.rate[ target ]         = nil
     bleed.last_tick[ target ]    = nil
-    bleed.exsanguinate[ target ] = nil
     bleed.haste[ target ]        = nil
-end
-
-local function GetExsanguinateRate( aura, target )
-    return tracked_bleeds[ aura ] and tracked_bleeds[ aura ].rate[ target ] or 1
 end
 
 NewBleed( "garrote", 703 )
@@ -449,14 +457,6 @@ spec:RegisterCombatLogEvent( function( _, subtype, _,  sourceGUID, sourceName, _
             end
         end
 
-        -- Exsanguinate was used.
-        if subtype == "SPELL_CAST_SUCCESS" and spellID == 200806 then
-            UpdateBleed( "garrote", destGUID, true )
-            UpdateBleed( "rupture", destGUID, true )
-            UpdateBleed( "crimson_tempest", destGUID, true )
-            UpdateBleed( "internal_bleeding", destGUID, true )
-            return
-        end
     end
 
     if death_events[ subtype ] then
@@ -532,15 +532,6 @@ spec:RegisterHook( "spend", function( amt, resource )
             end
         end
 
-        if amt > 0 and talent.elaborate_planning.enabled then
-            applyBuff( "elaborate_planning" )
-        end
-
-        if amt > 1 and amt < 6 and action.echoing_reprimand.known then
-            local er = "echoing_reprimand_" .. amt
-            if buff[ er ].up then removeBuff( er ) end
-        end
-
         if amt > 4 and debuff.deathstalkers_mark.up then
             if debuff.deathstalkers_mark.stack > 1 then debuff.deathstalkers_mark.stack = debuff.deathstalkers_mark.stack - 1
             else
@@ -564,56 +555,6 @@ spec:RegisterStateExpr( "persistent_multiplier", function ()
 
     return mult
 end )
-
-
-
-
-local exsanguinated_spells = {
-    garrote = "garrote",
-    garrote_deathmark = "garrote_deathmark",
-    kidney_shot = "internal_bleeding",
-    rupture = "rupture",
-    rupture_deathmark = "rupture_deathmark",
-    crimson_tempest = "crimson_tempest",
-
-    deadly_poison = "deadly_poison_dot",
-    sepsis = "sepsis",
-    serrated_bone_spike = "serrated_bone_spike",
-}
-
-local true_exsanguinated = {
-    "garrote",
-    "garrote_deathmark",
-    "internal_bleeding",
-    "rupture",
-    "rupture_deathmark",
-    "crimson_tempest",
-}
-
-spec:RegisterStateExpr( "exsanguinated", function ()
-    local aura = this_action and exsanguinated_spells[ this_action ]
-    aura = aura and debuff[ aura ]
-
-    if not aura or not aura.up then return false end
-    return aura.exsanguinated_rate > 1
-end )
-
-spec:RegisterStateExpr( "will_lose_exsanguinate", function ()
-    local aura = this_action and exsanguinated_spells[ this_action ]
-    aura = aura and debuff[ aura ]
-
-    if not aura or not aura.up then return false end
-    return aura.exsanguinated_rate > 1
-end )
-
-spec:RegisterStateExpr( "exsanguinated_rate", function ()
-    local aura = this_action and exsanguinated_spells[ this_action ]
-    aura = aura and debuff[ aura ]
-
-    if not aura or not aura.up then return 1 end
-    return aura.exsanguinated_rate
-end )
-
 
 -- Enemies with either Deadly Poison or Wound Poison applied.
 spec:RegisterStateExpr( "poisoned_enemies", function ()
@@ -749,21 +690,18 @@ spec:RegisterAura( "septic_wounds", {
 local kingsbaneReady = false
 
 spec:RegisterHook( "reset_precast", function ()
-    local status = "Bleed Snapshots       Remains  Multip.  RateMod  Exsang.\n"
-    for _, aura in orderedPairs( exsanguinated_spells ) do
-        local d = debuff[ aura ]
-        d.pmultiplier = nil
-        d.exsanguinated_rate = nil
-        d.exsanguinated = nil
 
-        if Hekili.ActiveDebug then
-            status = format( "%s%-20s  %7.2f  %7.2f  %7.2f  %7s\n", status, aura, d.remains, d.pmultiplier, d.exsanguinated_rate, d.exsanguinated and "true" or "false" )
+
+    -- Supercharged Combo Point handling
+    local charged = 0
+    if talent.supercharger.enabled then
+        for _, point in pairs( GetUnitChargedPowerPoints( "player" ) ) do
+            charged = charged + 1
         end
+        if charged > 0 then applyBuff( "supercharged_combo_points", nil, charged ) end
     end
 
-    if Hekili.ActiveDebug then Hekili:Debug( status ) end
-
-    if debuff.sepsis.up then
+    if covenant.night_fae and debuff.sepsis.up then
         state:QueueAuraExpiration( "sepsis", ExpireSepsis, debuff.sepsis.expires )
     end
 
@@ -790,9 +728,8 @@ spec:RegisterHook( "reset_precast", function ()
         kingsbaneReady = true
     end
 
-    if buff.master_assassin.up and buff.master_assassin.remains > 3 then
-        removeBuff( "master_assassin" )
-        applyBuff( "master_assassin_aura" )
+    if buff.master_assassin.up and buff.master_assassin.remains <= spec.auras.master_assassin.duration and buff.master_assassin.remains > 1.5 then
+        applyBuff( "master_assassin_aura", buff.master_assassin.remains - 1.5 )
     end
 end )
 
@@ -802,16 +739,12 @@ spec:RegisterHook( "runHandler", function( ability )
 
     if stealthed.mantle and ( not a or a.startsCombat ) then
         if talent.master_assassin.enabled then
-            removeBuff( "master_assassin_aura" )
-            applyBuff( "master_assassin" )
-        end
-
-        if talent.subterfuge.enabled then
-            applyBuff( "subterfuge" )
+            applyBuff( "master_assassin_aura" ) -- 1.5s
+            applyBuff( "master_assassin" ) -- 6 + 3 * subterfuge rank seconds
         end
 
         if talent.indiscriminate_carnage.enabled then
-            applyBuff( "indiscriminate_carnage", 6 )
+            applyBuff( "indiscriminate_carnage", ( 6 + 3 * talent.subterfuge.rank ) )
         end
 
         if legendary.mark_of_the_master_assassin.enabled and stealthed.mantle then
@@ -831,7 +764,7 @@ spec:RegisterHook( "runHandler", function( ability )
         end
     end
 
-    if buff.cold_blood.up and ( ability == "envenom" or not talent.inevitability.enabled ) and ( not a or a.startsCombat ) then
+    if buff.cold_blood.up and ( ability == "envenom" or not talent.inevitable_end.enabled ) and ( not a or a.startsCombat ) then
         removeStack( "cold_blood" )
     end
 
@@ -909,7 +842,7 @@ spec:RegisterAuras( {
     -- https://wowhead.com/beta/spell=2094
     blind = {
         id = 2094,
-        duration = function() return 60 * ( talent.airborne_irritant.enabled and 0.6 or 1 ) end,
+        duration = function() return 60 * ( talent.airborne_irritant.enabled and 0.7 or 1 ) end,
         mechanic = "disorient",
         type = "Ranged",
         max_stack = 1
@@ -966,9 +899,9 @@ spec:RegisterAuras( {
     -- Talent: Critical strike chance of your next damaging ability increased by $s1%.
     -- https://wowhead.com/beta/spell=382245
     cold_blood = {
-        id = function() return talent.inevitability.enabled and not state.spec.subtlety and 456330 or 382245 end,
+        id = function() return talent.inevitable_end.enabled and not state.spec.subtlety and 456330 or 382245 end,
         duration = 3600,
-        max_stack = function() return talent.inevitability.enabled and not state.spec.subtlety and 2 or 1 end,
+        max_stack = function() return talent.inevitable_end.enabled and not state.spec.subtlety and 2 or 1 end,
         onRemove = function()
             setCooldown( "cold_blood", action.cold_blood.cooldown )
         end,
@@ -976,17 +909,15 @@ spec:RegisterAuras( {
     },
     crimson_tempest = {
         id = 121411,
-        duration = function () return 2 * ( 1 + effective_combo_points ) end,
+        duration = function () return 4 + ( 2 * effective_combo_points ) end,
         max_stack = 1,
         meta = {
-            exsanguinated = function( t ) return t.up and tracked_bleeds.crimson_tempest.exsanguinate[ target.unit ] or false end,
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.crimson_tempest.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.crimson_tempest.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.crimson_tempest.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.crimson_tempest.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1043,16 +974,14 @@ spec:RegisterAuras( {
         id = 2818,
         duration = function () return 12 * haste end,
         max_stack = 1,
-        exsanguinated = false,
         copy = 394324,
         meta = {
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.deadly_poison_dot.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.deadly_poison_dot.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.deadly_poison_dot.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.deadly_poison_dot.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1062,15 +991,13 @@ spec:RegisterAuras( {
         id = 394324,
         duration = function () return 12 * haste end,
         max_stack = 1,
-        exsanguinated = false,
         meta = {
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.deadly_poison_dot_deathmark.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.deadly_poison_dot_deathmark.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.deadly_poison_dot_deathmark.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.deadly_poison_dot_deathmark.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1108,13 +1035,6 @@ spec:RegisterAuras( {
         duration = 30,
         max_stack = 1
     },
-    -- Talent: Damage done increased by $w1%.
-    -- https://wowhead.com/beta/spell=193641
-    elaborate_planning = {
-        id = 193641,
-        duration = 4,
-        max_stack = 1
-    },
     -- Poison application chance increased by $s2%.$?s340081[  Poison critical strikes generate $340426s1 Energy.][]
     -- https://wowhead.com/beta/spell=32645
     envenom = {
@@ -1122,7 +1042,7 @@ spec:RegisterAuras( {
         duration = function () return ( effective_combo_points ) + ( 2 * talent.twist_the_knife.rank ) end,
         tick_time = 5,
         type = "Poison",
-        max_stack = 1
+        max_stack = function () return 1 + ( talent.twist_the_knife.enabled and 1 or 0 ) end,
     },
     -- Talent: Dodge chance increased by ${$w1/2}%.$?a344363[ Dodging an attack while Evasion is active will trigger Mastery: Main Gauche.][]
     -- https://wowhead.com/beta/spell=5277
@@ -1188,21 +1108,22 @@ spec:RegisterAuras( {
         max_stack = 30,
         copy = 345569,
     },
+
+
+
     garrote = {
         id = 703,
         duration = 18,
         max_stack = 1,
         ss_buffed = false,
         meta = {
-            duration = function( t ) return t.up and ( 18 * haste / t.exsanguinated_rate ) or class.auras.garrote.duration end,
-            exsanguinated = function( t ) return t.up and tracked_bleeds.garrote.exsanguinate[ target.unit ] or false end,
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.garrote.rate[ target.unit ] or 1 end,
+            duration = function( t ) return t.up and ( 18 * haste ) or class.auras.garrote.duration end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.garrote.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.garrote.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.garrote.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1214,15 +1135,13 @@ spec:RegisterAuras( {
         max_stack = 1,
         ss_buffed = false,
         meta = {
-            duration = function( t ) return t.up and ( 18 * haste / t.exsanguinated_rate ) or class.auras.garrote_deathmark.duration end,
-            exsanguinated = function( t ) return t.up and tracked_bleeds.garrote_deathmark.exsanguinate[ target.unit ] or false end,
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.garrote_deathmark.rate[ target.unit ] or 1 end,
+            duration = function( t ) return t.up and ( 18 * haste ) or class.auras.garrote_deathmark.duration end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.garrote_deathmark.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.garrote_deathmark.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.garrote_deathmark.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1256,7 +1175,7 @@ spec:RegisterAuras( {
     },
     improved_garrote = {
         id = 392401,
-        duration = function() return combat and 6 or 3600 end,
+        duration = function() return combat and ( 6 + 3 * talent.subterfuge.rank ) or 3600 end,
         max_stack = 1,
         copy = { 392403, "improved_garrote_aura", "improved_garrote_buff" }
     },
@@ -1264,7 +1183,7 @@ spec:RegisterAuras( {
     -- https://wowhead.com/beta/spell=381802
     indiscriminate_carnage = {
         id = 381802,
-        duration = function() return combat and 6 or 3600 end,
+        duration = function() return combat and ( 6 + 3 * talent.subterfuge.rank ) or 3600 end,
         max_stack = 1,
         copy = 385747
     },
@@ -1288,14 +1207,12 @@ spec:RegisterAuras( {
         duration = 6,
         max_stack = 1,
         meta = {
-            exsanguinated = function( t ) return t.up and tracked_bleeds.internal_bleeding.exsanguinate[ target.unit ] or false end,
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.internal_bleeding.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.internal_bleeding.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.internal_bleeding.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod 
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.internal_bleeding.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1312,7 +1229,7 @@ spec:RegisterAuras( {
     -- https://wowhead.com/beta/spell=408
     kidney_shot = {
         id = 408,
-        duration = function() return ( 1 + effective_combo_points ) end,
+        duration = function() return ( 3 + effective_combo_points ) end,
         mechanic = "stun",
         max_stack = 1
     },
@@ -1350,11 +1267,11 @@ spec:RegisterAuras( {
     -- https://wowhead.com/beta/spell=256735
     master_assassin = {
         id = 256735,
-        duration = 3,
+        duration = function() return 6 + 3 * talent.subterfuge.rank end,
         max_stack = 1,
     },
     master_assassin_aura = {
-        duration = 3600,
+        duration = 1.5,
         max_stack = 1
     },
     -- Damage dealt increased by $w1%.
@@ -1412,18 +1329,16 @@ spec:RegisterAuras( {
     rupture = {
         id = 1943,
         duration = function () return 4 * ( 1 + effective_combo_points ) end,
-        tick_time = function () return ( debuff.rupture.exsanguinated and 2 or 1 ) * haste end,
+        tick_time = function() return 2 * haste end,
         mechanic = "bleed",
         max_stack = 1,
         meta = {
-            exsanguinated = function( t ) return t.up and tracked_bleeds.rupture.exsanguinate[ target.unit ] or false end,
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.rupture.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.rupture.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.rupture.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.rupture.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1432,18 +1347,16 @@ spec:RegisterAuras( {
     rupture_deathmark = {
         id = 360826,
         duration = function () return 4 * ( 1 + effective_combo_points ) end,
-        tick_time = function () return ( debuff.rupture_deathmark.exsanguinated and 2 or 1 ) * haste end,
+        tick_time =  haste,
         mechanic = "bleed",
         max_stack = 1,
         meta = {
-            exsanguinated = function( t ) return t.up and tracked_bleeds.rupture_deathmark.exsanguinate[ target.unit ] or false end,
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.rupture_deathmark.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.rupture_deathmark.last_tick[ target.unit ] or t.applied ) or 0 end,
             tick_time = function( t )
                 if t.down then return haste * 2 end
                 local hasteMod = tracked_bleeds.rupture_deathmark.haste[ target.unit ]
                 hasteMod = 2 * ( hasteMod and ( 100 / hasteMod ) or haste )
-                return hasteMod / t.exsanguinated_rate
+                return hasteMod
             end,
             haste_pct = function( t ) return ( 100 / haste ) end,
             haste_pct_next_tick = function( t ) return t.up and ( tracked_bleeds.rupture_deathmark.haste[ target.unit ] or ( 100 / haste ) ) or 0 end,
@@ -1472,11 +1385,9 @@ spec:RegisterAuras( {
         tick_time = 1,
         max_stack = 1,
         copy = { 328305, 375936 },
-        exsanguinated = false,
         meta = {
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.sepsis.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.sepsis.last_tick[ target.unit ] or t.applied ) or 0 end,
-            tick_time = function( t ) return t.up and ( haste * 2 / t.exsanguinated_rate ) or ( haste * 2 ) end,
+            tick_time = function( t ) return t.up and ( haste * 2 ) or ( haste * 2 ) end,
         },
     },
     sepsis_buff = {
@@ -1497,11 +1408,9 @@ spec:RegisterAuras( {
         duration = 3600,
         tick_time = 3,
         max_stack = 1,
-        exsanguinated = false,
         meta = {
-            exsanguinated_rate = function( t ) return t.up and tracked_bleeds.serrated_bone_spike.rate[ target.unit ] or 1 end,
             last_tick = function( t ) return t.up and ( tracked_bleeds.serrated_bone_spike.last_tick[ target.unit ] or t.applied ) or 0 end,
-            tick_time = function( t ) return t.up and ( haste * 2 / t.exsanguinated_rate ) or ( haste * 2 ) end,
+            tick_time = function( t ) return t.up and ( haste * 2 ) or ( haste * 2 ) end,
         },
         copy = { "serrated_bone_spike_dot", 324073 }
     },
@@ -1516,7 +1425,7 @@ spec:RegisterAuras( {
     -- https://wowhead.com/beta/spell=185422
     shadow_dance = {
         id = 185422,
-        duration = 6,
+        duration = function() return 6 + talent.improved_shadow_dance.rank * 2 + buff.first_dance.up and 4 or 0 end,
         max_stack = 1,
         copy = 185313
     },
@@ -1611,6 +1520,12 @@ spec:RegisterAuras( {
         id = 115192,
         duration = function() return 3 * talent.subterfuge.rank end,
         max_stack = 1,
+    },
+    -- todo: Find a way to find a true buff / ID for this as a failsafe? Currently fully emulated.
+    supercharged_combo_points = {
+        duration = 3600,
+        max_stack = function() return combo_points.max end,
+        copy = { "supercharge", "supercharged", "supercharger" }
     },
     -- Damage done increased by 10%.
     -- https://wowhead.com/beta/spell= = {
@@ -1741,7 +1656,7 @@ spec:RegisterAbilities( {
 
         spend = function()
             if buff.blindside.up then return 0 end
-            return 50 * ( 1 - 0.06 * talent.tight_spender.rank )
+            return 50 + ( talent.vicious_venoms.rank * 5 )
         end,
         spendType = "energy",
 
@@ -1750,14 +1665,14 @@ spec:RegisterAbilities( {
 
         cp_gain = function ()
             if buff.shadow_blades.up then return 6 end
-            return 2 + ( buff.shadow_blades.up and 1 or 0 ) + ( buff.broadside.up and 1 or 0 ) + talent.improved_ambush.rank + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitability.enabled and 1 or 0 )
+            return 2 + ( buff.shadow_blades.up and 1 or 0 ) + ( buff.broadside.up and 1 or 0 ) + talent.improved_ambush.rank + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 )
         end,
 
         handler = function ()
             gain( action.ambush.cp_gain, "combo_points" )
 
             if buff.blindside.up then removeBuff( "blindside" ) end
-            if buff.sepsis_buff.up then removeBuff( "sepsis_buff" ) end
+            if covenant.night_fae and buff.sepsis_buff.up then removeBuff( "sepsis_buff" ) end
             if buff.audacity.up then removeBuff( "audacity" ) end
             if buff.deathstalkers_mark_buff.up then removeStack( "deathstalkers_mark_buff" ) end
 
@@ -1777,7 +1692,6 @@ spec:RegisterAbilities( {
                 end
             end
 
-            if talent.venom_rush.enabled and debuff.poisoned.up then gain( 7, "energy" ) end
         end,
 
         bind = function()
@@ -1826,7 +1740,7 @@ spec:RegisterAbilities( {
     blind = {
         id = 2094,
         cast = 0,
-        cooldown = function () return ( talent.blinding_powder.enabled and 90 or 120 ) * ( talent.airborne_irritant.enabled and 0.3 or 1 ) end,
+        cooldown = function () return ( talent.blinding_powder.enabled and 90 or 120 ) * ( talent.airborne_irritant.enabled and 0.5 or 1 ) end,
         gcd = "spell",
 
         talent = "blind",
@@ -1848,7 +1762,7 @@ spec:RegisterAbilities( {
 
         spend = function ()
             if talent.dirty_tricks.enabled then return 0 end
-            return 40 * ( 1 - 0.06 * talent.tight_spender.rank ) * ( 1 + conduit.rushed_setup.mod * 0.01 ) end,
+            return 40 * ( 1 + conduit.rushed_setup.mod * 0.01 ) * ( 1 - 0.2 * talent.rushed_setup.rank ) end,
         spendType = "energy",
 
         startsCombat = true,
@@ -1864,12 +1778,12 @@ spec:RegisterAbilities( {
 
         nodebuff = "cheap_shot",
 
-        cp_gain = function () return 1 + ( buff.shadow_blades.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitability.enabled and 1 or 0 ) end,
+        cp_gain = function () return 1 + ( buff.shadow_blades.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 ) end,
 
         handler = function ()
             applyDebuff( "target", "cheap_shot", 4 )
 
-            if buff.sepsis_buff.up then removeBuff( "sepsis_buff" ) end
+            if covenant.night_fae and buff.sepsis_buff.up then removeBuff( "sepsis_buff" ) end
 
             if talent.prey_on_the_weak.enabled then
                 applyDebuff( "target", "prey_on_the_weak" )
@@ -1904,7 +1818,7 @@ spec:RegisterAbilities( {
 
     -- Talent: Increases the critical strike chance of your next damaging ability by $s1%.
     cold_blood = {
-        id = function() return talent.inevitability.enabled and not state.spec.subtlety and 456330 or 382245 end,
+        id = function() return talent.inevitable_end.enabled and not state.spec.subtlety and 456330 or 382245 end,
         known = 382245,
         cast = 0,
         cooldown = 45,
@@ -1916,7 +1830,7 @@ spec:RegisterAbilities( {
         nobuff = "cold_blood",
 
         handler = function ()
-            applyBuff( "cold_blood", nil,  talent.inevitability.enabled and not state.spec.subtlety and 2 or nil )
+            applyBuff( "cold_blood", nil,  talent.inevitable_end.enabled and not state.spec.subtlety and 2 or nil )
         end,
 
         copy = { 382245, 456330 }
@@ -1949,7 +1863,9 @@ spec:RegisterAbilities( {
         gcd = "totem",
         school = "physical",
 
-        spend = 30,
+        spend = function ()
+            return 45 * ( 1 - 0.06 * talent.tight_spender.rank )
+        end,
         spendType = "energy",
 
         talent = "crimson_tempest",
@@ -1960,15 +1876,12 @@ spec:RegisterAbilities( {
         usable = function () return combo_points.current > 0, "requires combo points" end,
 
         handler = function ()
-            applyDebuff( "target", "crimson_tempest", 2 + ( effective_combo_points * 2 ) )
+            applyDebuff( "target", "crimson_tempest", 4 + ( effective_combo_points * 2 ) )
             debuff.crimson_tempest.pmultiplier = persistent_multiplier
-            debuff.crimson_tempest.exsanguinated_rate = 1
-            debuff.crimson_tempest.exsanguinated = false
 
-            removeBuff( "echoing_reprimand_" .. combo_points.current )
             spend( combo_points.current, "combo_points" )
+            removeStack( "supercharged_combo_points" )
 
-            if talent.elaborate_planning.enabled then applyBuff( "elaborate_planning" ) end
         end,
     },
 
@@ -2048,7 +1961,7 @@ spec:RegisterAbilities( {
 
     -- Talent: Deal $s1 Arcane damage to an enemy, extracting their anima to Animacharge a combo point for $323558d.    Damaging finishing moves that consume the same number of combo points as your Animacharge function as if they consumed $s2 combo points.    |cFFFFFFFFAwards $s3 combo $lpoint:points;.|r
     echoing_reprimand = {
-        id = function() return talent.echoing_reprimand.enabled and 385616 or 323547 end,
+        id = 323547,
         cast = 0,
         cooldown = 45,
         gcd = "totem",
@@ -2057,19 +1970,14 @@ spec:RegisterAbilities( {
         spend = 10,
         spendType = "energy",
 
+        usable = function() return covenant.kyrian end,
         startsCombat = true,
         toggle = "cooldowns",
 
-        cp_gain = function () return 2 + ( buff.shadow_blades.up and 1 or 0 ) + ( buff.broadside.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitability.enabled and 1 or 0 ) end,
+        cp_gain = function () return 2 + ( buff.shadow_blades.up and 1 or 0 ) + ( buff.broadside.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 ) end,
 
         handler = function ()
-            -- Can't predict the Animacharge, unless you have the talent/legendary.
-            if legendary.resounding_clarity.enabled or talent.resounding_clarity.enabled then
-                applyBuff( "echoing_reprimand_2", nil, 2 )
-                applyBuff( "echoing_reprimand_3", nil, 3 )
-                applyBuff( "echoing_reprimand_4", nil, 4 )
-                applyBuff( "echoing_reprimand_5", nil, 5 )
-            end
+            -- Can't predict the Animacharge, unless you have the legendary.
             gain( action.echoing_reprimand.cp_gain, "combo_points" )
         end,
 
@@ -2084,7 +1992,9 @@ spec:RegisterAbilities( {
         gcd = "totem",
         school = "nature",
 
-        spend = 35,
+        spend = function ()
+            return 35 * ( 1 - 0.06 * talent.tight_spender.rank )
+        end,
         spendType = "energy",
 
         startsCombat = true,
@@ -2109,12 +2019,13 @@ spec:RegisterAbilities( {
 
             if level > 17 and buff.slice_and_dice.up then
                 buff.slice_and_dice.expires = buff.slice_and_dice.expires + combo_points.current * 3
-            end
+            else applyBuff( "slice_and_dice", combo_points.current * 3 ) end
 
-            applyBuff( "envenom" )
+            -- TODO: Manage async stacks
+            addStack( "envenom" )
             spend( combo_points.current, "combo_points" )
+            removeStack( "supercharged_combo_points" )
 
-            if talent.elaborate_planning.enabled then applyBuff( "elaborate_planning" ) end
         end,
     },
 
@@ -2133,39 +2044,6 @@ spec:RegisterAbilities( {
 
         handler = function ()
             applyBuff( "evasion" )
-        end,
-    },
-
-    -- Talent: Twist your blades into the target's wounds, causing your Bleed effects on them to bleed out 100% faster.
-    exsanguinate = {
-        id = 200806,
-        cast = 0,
-        cooldown = 180,
-        gcd = "totem",
-        school = "physical",
-
-        spend = 25,
-        spendType = "energy",
-
-        talent = "exsanguinate",
-        startsCombat = true,
-
-        handler = function ()
-            local rate
-
-            for i, aura in ipairs( true_exsanguinated ) do
-                local deb = debuff[ aura ]
-
-                if deb.up and not deb.exsanguinated then
-                    deb.exsanguinated = true
-
-                    rate = deb.exsanguinated_rate
-                    deb.exsanguinated_rate = deb.exsanguinated_rate + 1
-
-                    deb.expires = query_time + ( deb.remains * rate / deb.exsanguinated_rate )
-                    deb.duration = deb.expires - deb.applied
-                end
-            end
         end,
     },
 
@@ -2206,7 +2084,7 @@ spec:RegisterAbilities( {
         cooldown = function() return 15 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) end,
         charges = function() return talent.graceful_guile.enabled and 2 or nil end,
         recharge = function() return talent.graceful_guile.enabled and ( 15 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) ) or nil end,
-        gcd = "totem",
+        gcd = "off",
         school = "physical",
 
         spend = function () return talent.nimble_fingers.enabled and 25 or 35 + conduit.nimble_fingers.mod end,
@@ -2240,14 +2118,10 @@ spec:RegisterAbilities( {
         handler = function ()
             applyDebuff( "target", "garrote" )
             debuff.garrote.pmultiplier = persistent_multiplier
-            debuff.garrote.exsanguinated_rate = 1
-            debuff.garrote.exsanguinated = false
 
             if debuff.deathmark.up then
                 applyDebuff( "target", "garrote_deathmark" )
                 debuff.garrote_deathmark.pmultiplier = persistent_multiplier * ( buff.improved_garrote.up and 1.5 or 1 )
-                debuff.garrote_deathmark.exsanguinated_rate = 1
-                debuff.garrote_deathmark.exsanguinated = false
             end
 
             if buff.indiscriminate_carnage_garrote.up then
@@ -2289,7 +2163,7 @@ spec:RegisterAbilities( {
 
         cp_gain = function ()
             if buff.shadow_blades.up then return combo_points.max end
-            return 1 + ( buff.broadside.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitability.enabled and 1 or 0 )
+            return 1 + ( buff.broadside.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 )
         end,
 
         handler = function ()
@@ -2379,12 +2253,9 @@ spec:RegisterAbilities( {
         handler = function ()
             applyDebuff( "target", "kidney_shot", 1 + combo_points.current )
             if talent.alacrity.enabled and combo_points.current > 4 then addStack( "alacrity" ) end
-            if talent.elaborate_planning.enabled then applyBuff( "elaborate_planning" ) end
             if talent.internal_bleeding.enabled then
                 applyDebuff( "target", "internal_bleeding" )
                 debuff.internal_bleeding.pmultiplier = persistent_multiplier
-                debuff.internal_bleeding.exsanguinated = false
-                debuff.internal_bleeding.exsanguinated_rate = 1
             end
 
             if pvptalent.control_is_king.enabled then
@@ -2452,7 +2323,9 @@ spec:RegisterAbilities( {
         gcd = "totem",
         school = "physical",
 
-        spend = 50,
+        spend = function()
+            return 50 + ( talent.vicious_venoms.rank * 5 )
+        end,
         spendType = "energy",
 
         startsCombat = true,
@@ -2465,7 +2338,6 @@ spec:RegisterAbilities( {
                 active_dot.caustic_spatter = 1
             end
 
-            if talent.venom_rush.enabled and debuff.poisoned.up then gain( 7, "energy" ) end
 
             if talent.doomblade.enabled or legendary.doomblade.enabled then
                 applyDebuff( "target", "mutilated_flesh" )
@@ -2532,7 +2404,7 @@ spec:RegisterAbilities( {
 
         spend = function()
             if buff.goremaws_bite.up then return 0 end
-            return 25
+            return 25 * ( 1 - 0.06 * talent.tight_spender.rank )
         end,
         spendType = "energy",
 
@@ -2557,14 +2429,10 @@ spec:RegisterAbilities( {
 
             applyDebuff( "target", "rupture" )
             debuff.rupture.pmultiplier = persistent_multiplier
-            debuff.rupture.exsanguinated = false
-            debuff.rupture.exsanguinated_rate = 1
 
             if debuff.deathmark.up then
                 applyDebuff( "target", "rupture_deathmark" )
                 debuff.rupture_deathmark.pmultiplier = persistent_multiplier
-                debuff.rupture_deathmark.exsanguinated = false
-                debuff.rupture_deathmark.exsanguinated_rate = 1
             end
 
             if buff.indiscriminate_carnage_rupture.up then
@@ -2579,17 +2447,20 @@ spec:RegisterAbilities( {
             if buff.finality_rupture.up then removeBuff( "finality_rupture" )
             elseif talent.finality.enabled then applyBuff( "finality_rupture" ) end
 
-            if buff.serrated_bone_spike_charges.up then
-                gain ( 1 + buff.serrated_bone_spike_charges.stack, "combo_points" )
-                removeStack( "serrated_bone_spike_charges" )
-                applyDebuff( "target", "serrated_bone_spike_dot" )
-            end
+
 
             if talent.scent_of_blood.enabled or azerite.scent_of_blood.enabled then
                 applyBuff( "scent_of_blood", dot.rupture.remains, active_dot.rupture )
             end
 
             spend( combo_points.current, "combo_points" )
+            removeStack( "supercharged_combo_points" )
+
+            if buff.serrated_bone_spike_charges.up then
+                gain ( 1 + buff.serrated_bone_spike_charges.stack, "combo_points" )
+                removeStack( "serrated_bone_spike_charges" )
+                applyDebuff( "target", "serrated_bone_spike_dot" )
+            end
         end,
     },
 
@@ -2613,7 +2484,7 @@ spec:RegisterAbilities( {
 
     -- Talent: Infect the target's blood, dealing $o1 Nature damage over $d. If the target survives its full duration, they suffer an additional $328306s1 damage and you gain $s6 use of any Stealth ability for $347037d.    Cooldown reduced by $s3 sec if Sepsis does not last its full duration.    |cFFFFFFFFAwards $s7 combo $lpoint:points;.|r
     sepsis = {
-        id = function() return talent.sepsis.enabled and 385408 or 328305 end,
+        id = 328305,
         cast = 0,
         cooldown = 90,
         gcd = "totem",
@@ -2623,18 +2494,17 @@ spec:RegisterAbilities( {
         spendType = "energy",
 
         startsCombat = true,
-
+        usable = function() return covenant.night_fae end,
         toggle = "cooldowns",
 
         cp_gain = function()
             if buff.shadow_blades.up then return 7 end
-            return 1 + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitability.enabled and 1 or 0 ) + ( buff.broadside.up and 1 or 0 )
+            return 1 + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 ) + ( buff.broadside.up and 1 or 0 )
         end,
 
         handler = function ()
             applyBuff( "sepsis_buff" )
             applyDebuff( "target", "sepsis" )
-            debuff.sepsis.exsanguinated_rate = 1
             gain( action.sepsis.cp_gain, "combo_points" )
         end,
 
@@ -2718,6 +2588,7 @@ spec:RegisterAbilities( {
             gain( action.shiv.cp_gain, "combo_points" )
             removeDebuff( "target", "dispellable_enrage" )
             if talent.improved_shiv.enabled then applyDebuff( "target", "shiv" ) end
+            if talent.supercharger.enabled then addStack( "supercharged_combo_points", nil, talent.supercharger.rank ) end
         end,
     },
 
@@ -2810,6 +2681,8 @@ spec:RegisterAbilities( {
         handler = function ()
             applyBuff( "stealth" )
 
+            if talent.crackshot.enabled then setCooldown( "between_the_eyes", 0 ) end
+
             if talent.improved_garrote.enabled then applyBuff( "improved_garrote" ) end
             if talent.premeditation.enabled then applyBuff( "premeditation" ) end
             if talent.silent_storm.enabled then applyBuff( "silent_storm" ) end
@@ -2892,6 +2765,7 @@ spec:RegisterAbilities( {
         handler = function ()
             applyBuff( "vanish" )
             applyBuff( "stealth" )
+            if talent.crackshot.enabled then setCooldown( "between_the_eyes", 0 ) end
 
             if talent.improved_garrote.enabled then applyBuff( "improved_garrote" ) end
             if talent.invigorating_shadowdust.enabled then
@@ -3023,6 +2897,7 @@ spec:RegisterSetting( "envenom_pool_5_points", true, {
 } )
 
 spec:RegisterStateExpr( "envenom_at_5cp", function ()
+    if buff.darkest_night.up then return 0 end -- Bypass with Darkest Night to ensure pooling to CP cap.
     return settings.envenom_pool_5_points and 1 or 0
 end )
 
@@ -3080,4 +2955,4 @@ spec:RegisterSetting( "allow_shadowmeld", nil, {
 } )
 
 
-spec:RegisterPack( "Assassination", 20241006, [[Hekili:L3ZAZTTTw(BXtNrvkX2rs2knPRT7KRt7Un3nTDQZT9BMIMIYIRLi1LpCIVJh9BFph8IaGhasPiN0DVtBIDebboVW5nGUE01F46RMfwgF9VmE44thnC4lpE03nA84jxFv5dRJV(Q1Hr3fEl8lPHRG)(nffHffjPHLjzP4tFyzw4mCwkYQYJGrSOSCDX3)IxCBs5IQBookB1lkswvTK9gr5HZlX)D0lU(QBQsww(ZPxFdniCY1xfwvUil)6RUkz1LWmNmBwmF4XfrxFfo8Jg(6Jg)QVFZ0Fkdw9ntxNLTmj92ntNNLVz6pMEFCA2Qnt)iamzvLBM(2W87IlGF5xsUDb8JK5AJkPyZ0zzFmDZ728o1KFkm5F4JXH3rn5WBPn2rtGXIW6MPvRruY4HJGh(7X3NuaG58KLlJ1aqTXnCYHBMI)8vIF(ANt6RoAm(W3SCz2h9mNVIJe6ZX)XMP5Xld)0MPXPX53(a(pVnof)X)SkjpEvCAzHXmm(7Xzo8MLa0Vklh(738R)O(igHRXpLatzre82bfHLv5mM(MP3hMNWEvTXp81a(nAi8s)dgib0(55ixGbNQb(Dhn(7qoWcyf)Zqa9(tGvMaIEltkklycELXHllxeJsH)ctGoMbNZU(VbsqrcbvG1fKhlfsrbO8K18NDLCcaCIn8IRVc4WbPXFQeNr4Vg7yAdxDtvXcR57nRxVeOOVnoSCrrz4Y7IZbK79GKhxElbK7weI4BiWXaYt285xFf8(LXaz66RoaKcJVPA(8JNPpfbRGz44Q1BM2BZu4ZaIm1aeqjBu93mfH07JdMLrn4ntphKX2m9Xh3mLVG8ThbP4UJJz7fMoajaN4GauSi5El0)9H3b8QIkugPmdr17HFd29Epk9b4wvoBt0Fh(7IBctHhIeJquconC5MPrlIJUtNGiq27KVGnoIix9dltIUJTaiwfb8Den0EocddKVAnTgXej1v)JGndHjPaaEgiUkFt2JJ5B0GxcPqN6GcjgLfrsPZbPq4cuc)b(xOyoo51KPRQUbidZRqDW1KK45ZJ5Cwqb7nzbRZsWDStV486DBhxpOI1XPZcIeyhn5YgTQrCyoprrR9kzQeKINDlaAHfXMFCeWncUzzw2moBajCt2ncNK(8(qqbaOxqAzc2Fb)b(LBrvvLH53gxUVOCmCyfBbdcfRxqiOMtk4OMa(6hWx(NoA3lDq7YRwdAFrjMhIuGrbQmBFsjssNLGSMvO)aiiNNcUkiPf9rRjZbDUl4wnqeb2UvexwIcFhZanZTIQvLznsAcb3OlE5A6BdBmIrGc3cSVw0EGqNjsfGpDfqrYcMLaR(fWM6jwIy)o)1RfX(zd8CZ0l5ikYa(ohmGBdZZZkBHbOSCDCYQ15z3hplq8E1eqnLpJ5i5AWzQYK1ltqPECV5i(N3VtCfn7bQ1cMCoycodSkbTepqsZoWRmnff9inOgOUJTiU)Sat3m9)KV8OdmCdMOtv)oxIH7XghH0gBXHiceLvLww7hMhUZRS4oBdP3fzMIL4Nk5wRH(CDIKKRVze0vmpjcDy4coe8CGIUz6ZuoauSipRAga9fWIKfX2linp2uASe(VRUpmnb8zHWzjkVIa6PWekaM4)9hSxhSl9qAKKdyZtLSpMlqOcothQUc(zEyq4kKrE9vNoXLFAE88sGfMWSe2qJQZz)gd((jqUyE1s0b2za3XYxlg7zomKBaWzwWYQO7Ea0iMKQPiZAm4tboCYYIJb94r3Xzpt0uwBn2fXHZShRx)QAf9kwNdZPgfxQSsrZ1I6X1wetcHqKYss1WzR6r5qlJ(GLJ0AdMXyu(NjFynnxtf1XU2mQpgdJndOS5AyQvTY1psF74PTVDSpYfIxUuQDhy6PbzZdUlf0WIA)(b(04Z7qR4sAUXWkqexol5vEHTja0VhEptcrQmvUlDVjD8)Len8Z5q7wECVQDQDtVsBe2dreoDG4sheKPl9eEU72N)gBqC821dq82uU)8V1smY1QdEfnsyRipmzwq89iMfodSqGck4unevBylUr4qt3eidxU8gMLhsrtAUMxcDh4SwUIBqp7ztRRjmNqltQXiTIwNX4ClcxRb(17bshHJoeMDXC8KcMObokOInKjFeIXte)P1qSuOJzn25)vuUEFyK0HC8jd5UCgLLZc5Wxg6urmzWiUKLQXzHRa9bqec3JOgUXcOO3KSmPKfTsvbsOGLp)HpUigFH3RYOY)Pkqmfj3Rd29C68VatTeK7YM9X(CKvfQUvs0KiGkA0Q0LXfygQLPWovKcBKcSEFfy)(g57ZKsEUqXipPLHWU30BdkWa5MLhVSwy)zCpJLVG78bad8LMHPsK)sEI5C5InAVPid8JpE1A4DSf84pDZ0pWFS0zP3NH5gVAfM1wCxFX6WK89fX3M(YJCuSIO5Mz81ZqL5lzdLo(t(2pwsAj26Lbsnfy2XQ1fYNe83wwfRNkAJ0JQPqXWvIM5EXoOswwGJYa794huWwYaEPLWviq9iQTmTdVEDsYkPTwKnZv3gUuZOjeUfPfNJ6mZiHzQiKFtotSbIn93YJJskKsMMwhcfJkyTCqgiMdKOdETCoB3PG1zTHq3ppxHV4epX0xwiqxspER90yjUx9JX4FhWKYCJAeCbDdHoCW1HVXBM(kJSgs)2efqOEZhq(gFQzkmfiLnTuHt4c6kxrsJ1oyeoYxEdPLNucQJIQye0WidVxzYiEcMIqg6NuUDvOTRrTvr6Z1S60lTp3Yq4nKVu96f(L(ccBdJyWUyJriMYt69d0kVQF(NbM9Lse1vykeKQ3wTATS6GiuoN7udyuuN6Ctg65tpXJdmK2IwGWwbZNGxXn4TcIMmiAwH)kcZ)PPBxWlc6lbIFwvHrQp)TSslDZmHew9ywwbuG8yyMfza0f0IEe7iKfUmMlNezltW8Q8hAeOsEcduvcy5H4pl4zj8gWqtXdPriBLBWrU3TqhvCan2w38)c1aBCErCUlthDCsMNKhZWA)Q8mKODKBehbtA7yZavzu2TPB3maPPOme4tfL5Wo7iq)bxsgCvWvGtT7nuBjOuRmcSYPbpIxFX8W07ypEmJSGjYC8q7UCi7hX2PXBGzxIvYhK8wec7my12Ev4NswHEpFfUICNO)B4AcGkMD8cE8mrv55WZrvKAoIXaYAxNH5kG)s7MZIFoEQ7kmjlI0)v8Y14J)dzdWW2vgXjl3ewKeX66HKIf4OO9lgy)bYX0nVp32iBW)XyiIRpWft4wT(ySS1na)LRUDHvRczumnDHmHBrM2IOXbYyE6qmLV0NlPDQYR71ua4TW1DdJgzxMuv(LQwFxC8ASUNllYyP6OG3bryUby7brjk04JghQUU4(QzqNAsGDHf23Np1o7NbTx1l5SVFTwCHpCv8nQZ0z1Tv2C(K1otCImJeU73GMzh57(kMDeh99WojZHUOxuRu)gHsDdjX2BxLVwYDEL4834jDJtp61TWkASjSlDxcTodr70PCj8wKhfwICiwKumlXldrv)x(BOtIZzzznu3weBGyNiXdzbTfKod7(vDMKndyhvRA2wfNJoseDxa3BIEDifgNOP9W188mPnPTA2AJXoGXB5PqXUdpudcMtrEWb62kYGsA3zfICRji5EZq)46q2AuaVwcwbvKABw6kPi1LmzIpaXHFhkUQ5Uc4vdqR4pWF68u(9csCfixaKldIxHHpKvT86Ra9oWNop42OzmJs8531OnIjy7DghLehPccOfIIhFVcxccmqePbRR(x)lyd9nzFYjMqnucnGUPOU8bQKPBoohImeEXW0IvjLWS6cqCo8TcyC5MXQWzb)ZQ44uSxhtzD6VHNyULFz7ghk1BUJYWNiXsc4WJjPeW34C01FydnOYFgeC2dbqyTvRCrf99gBfH0Lw)9NO1NNYK23CyN)hhjhJByHzPPQGbdq4CyKIk1kgBQvKojvdZSrqXYSsMowLjgNvZ0lGpupdaTSuJ1C3qmIJlhFSI8HTM1d1jx2rgd8k6RGObnBXqcGcc8e)LcCZm7HJ01gi(epvbxmMXBhjF8xos(iks(O)srYhZnYd(9ec(4qzM30D74czlwIXBVgOujmhP6Jjm((QLOtBSpq1wUO)3OpwHL65xNpluwyn782uGVI765b8ljfCN5d5NHOIKvRyBetWbZxHczQdbfkAEOChO3GYqOz2DJNd6BrFR0YobSwb8)raEiE4hLhzYoQFbc7BT7MKxV7oRz7iFPuXl6uJwUzqosjVxcW8rLLYAq5ubZWmTujMfCTHHW2HAEmuIypqgCskg6bvZPFP6P)OiWRFNFYTsJJNHFmR5qfHVaYsF4xF7V(9auxa(WY(eW78carWqGG3OaD)hn2pqhLSccIYoz7ivFVMS9eLM7eZsvbxJpRrzO4VQG(UoQUZnpDilmA09I60GIX4Gcmy37wh29r8q7Rh29qCnOVsS1SOEGDX5r70OEzT8gMXTIfGZSZ4jUxytmRkxIb68OuiUyXbsKYPHoXF(3NSdB7rs7KhUmOjMR1a3wjeGCDnjj)zSOnWei3v15y4JlyhdqKrlwc2zCGJTlsk5N2bDsutm3mtl2251swR6KpKNDBvmxK13XHaFUZyBVaJTfMZ8KOsM)NDslF9r2eFPHo8jPyzsuCaULCwsJdT5VH91(vPVLFMctsbzkyfFq4o5L4trnHmA2LlahnpuLViP9S6Z9liMHYGmtGZKurZIZYfhmGi9k)q7nTDvf0DIPljD8EhvHLvK1r2ExezwAsAGL6r6(4pXbORDgnKhmpegCftVx2pwzw8LDw)cVVSSxcXzWDXfpWzlrT1sRYAWHVIRGC97utsoOCG9(2MrRbyHnkZSMnHzKI09aT4cZJWo4OmJPvKTmmRbwpFD1YIy9fhh4R0hiRXrkc(FQMDl2Yz2J916J9MWBzjHbiLOMo9rcVi2Acm)uvEbRagSXhc4oHyTaBFf8kZUfyShpVknnEPUkX15jzaL9HaqfMsNOT4M35xotnC8xNNPficOIbv7xECy6dbZwxqhHyZrXQTar8mZu5xgfeOcYSEeQS8RnSKIJrTCX53aUEveCdy0gZwV1YrokApu(4IeCceVmyYaJ9rD6UzXT)hixPqXDgTBUWpMKctr7OciSfkmj97I2ybnjWoiDnwnheyFYx7ueerR5oEG1OM5Xk4B2z)atDUF3BBeWgq4bRrXcBaS4fqpr4vgqRg16irZIKtfYGP9784JIyLG4k0yeyagb83Y(v9WHjJZ1zRyz5XG7kv0QbynDybfXiwxWLOlv6ZjcWVEbdJuNZ2yPFgScb47Kqku0dCYN1F4XN(8HhFYZO4DOh4hn84rtEgDej4ZhCeNQOInkkRqtcQZh0s6JH)BzKGAx8FtTB94)PCTcvlGQ8tI4KES9j49exP6(u5qmtGRxJocJB2cxbdF(dmVO42jKE)FOyaS)aHZY78RzyvSoKxasmbjG56JPCEZUKBm5GpZEarneTOXmcITgze280JHySOzWCcei9sFFTDwPSDl0q0MFWwAPj4P5UQY8O4JYQ)j8V28A0PHRNBnPwhn3nRgok9O8qtlWZay38KiBVRBW88484wg8oRMQ49YJU6smN9IpDNu2lBGZWQciEdGQfIzWPXbcKkMK(6Ph1EcSopv2p2mrgsXnFe(EDNuwFGxUKVSGHb(6At5KGvnf0Tt1QLM4fv03vvLjlfLdY9bASttL4(aIiHdQnCrlYqTb5XGpQyDOSOd)dSKi)iFqyU9eJYmNToHl5DaL30qXsxdrocKGOrEGAu8MuEAz(7ISeHk4p55YkLtEbnGqiRhvRBNGIwXaUOtd)4LcXDPk(hP3wnuNIg9nmIHvUihOVuTwTm5ESDglJbrsSa0GZDPXfacj1YDq7zj0BspSi((AnR6AIotfsfZHJMB4jOJYKW24G8iFGJBrfxCRVcCK2Knzf2GF3IWPofIlGRuU3zs3jEqk(cGh7KgGFYny6X55Dt2yJ80gjPLBMkjMdeBd(azAzS0nyLNu2hYbK)gyaAwrYS4xuFNpDmyRnt4UufQAq(c87knvfKiUuT6PDOupUl73Kjy)gjCOmi0iNH6nRx7zYVUea8coP2hzUsd8MrjLw6p)9eh4X9m7Zf22iLFEZ6l9HWBo69ci3qG8TmiepxbCpCrbOXkznVPhRMs4OU61lyF1vaYn5XHCcGYNoHlpdAr2GhZJJttr7oRuRq05Xf3HQOgv(s7EO5pdte1Xu7GxZS2yDf08(3icTuuyp7tKwTVfkPuWv0p3ZHynstCicq0TTJq1yAitnA)ncENaWgBQBl7WxiZoSlNlPkpNNIXRK1OP8UgdfnWojgkrc5HGHFeXvrEQW9d1oG18ds9Hc5fy3eiGvYAgsoVuVb9fLYPa0)xmpbtJcf7YBZAz52x4TQdmPYHjrhCEuKr32jaqbSDzyAjmnctB1XAFD3YnnVLejcdr(2AhYoZTJSK3yDThWk3I0w6htqsyrv(9mBTlZqXe(Hj4AhTzcbPt4lqZ(WKLG8HDTQRTLpQl1up8gTewiU3klyxioDIIkpVJUdLOFZACBOtOX9o5lLwCP2H1VL2AblEZWALSe1JVduWrA1)rTb0xCoLlakcAMoo02LN7ZsMXlkSmTp88EDOWfhUIBKiiYQZm2zeuDo)uLlMLte0HVqbmtL2hnarJIX)FYAUmCO7IUiyusiXODHjV0qfNWAbfUvFKp1)m9YgndHo2v7Cvd8sGwdCepO(rO8LuHgAM6w2rH8f)o)Gg(IFLRhcpZLB0pEHDAZI6KAsftKbZS2CftZCV2A46UT(1xToo9BV(8c0WHemzpI(tqi0MSc88k30sbAds40fACbf)zB7wvLgTG7sglWySNQPKGnVpq71AxSns1YS7wY4(IL3ZTpvMAHD44M9TRZlbnKLPuwEPu9GMNZp8cM4yrzwQTJ46n9wn3KpEEpiHPGzcLNL1dViBzgdwTEVxjODnNUAbwXX)7Ey7jL3HrMjRvF4cDiCISlqyIlqyJ(Pzn((WchE(0owoEII)lnkfE7T5z6gHMLg)qqXIm(LCcW3adkSvuDpYF9vFmmpffpGaXqdgjRwNLxkSY)TknkFR6EphB0OmwBkvvMTI3CoGYXuq54XBE3)nRUy4nH(LzW(5C2J)w552cLJmUvF)w(wF3dqgsamW(J(0a1kCc9kOe0TM4gHyypFVIE(OU7qTMAFxVO1RYM3rqD57z3osRde3srVfm6iSYosuPlaO1s4)(PRRRKvNvzVgoUbWSN9jpH0ihZ9tanY1kTFOrV8jKg5yU35nNF3tiS6yUFc4NUwP9d)0HcSN2zFVWbE9teKtQYv2ACBNsxx2ZSphYwWOZZPClajgvZEba35DCo0p38E1XAIDFX70rDe7XvWX(TDMM4y(2lqmPyGmWVTtuWHzJDgT3FZhjsk6C09co(uTFKLaWTdcBOWu0VB2Naofe66iY1QM4DEIDRaw8k2hDSgtjXa8RzFNNyxCgXbjB74nou9O3(ywcouDfyhvOzwIBR5LU(3TinQA6UTdRBOsxXmS7huc2bXq8BVqjv26KtoKon5e9HQpjjTX8Ko9ToXenyRVDRBlCVRtFhMyYw1LyYDnUob)o6BycAFNwMtFkfnDn57LnvUH8DJb)ep9ToX76gQoc37603Hj(lKaz3wMoU9YHps7SvoA7VSECE7me5aWSALslyZrJCAJ0oILKOpQSMFpDAvhxd7MWYAbC1JwDC2)SCJGpZSVijFQjoUwKpBQdD08BBWr7V4K38UFMbk40GFhxXt6(MPSVZnHNJhoIS5j1nzqXXkh3E(5Vq)mET5DuJqwEMdXQWDEJUt8qwxQCUXX7AZ7(Mnt32ZIuxwDXSuFcCeR(OdtMFUBBE96FGBRTp(Ohf3xCUhRrd6Dql6m1NB6dH0NbspwhPBIxAiDtksnGrGxx4HGOHZoqj9P2bo)nyZOu2XdVuxirnR(PGgPFyfoA8z)WeQZOddG66HCIgCKn3j9dnAsRdBCyL4IVAh7PEh0Yjo(Dmq(Z7wjrbR6G)3GFftv(5F3JOp54TpIGNll2Q(JTR5pNJotBSFdtx5UC3FOVoMsmg1AwiS4PLpoBSamEIUrpCdOw3VhcqLSJxUy0eDnVD7EQW9kR1VaIvTpztj94JKTvm8Xgno1GhFSVvpr1Z4Fl6lIZoFem06RbKloV)PdF(jdP25EKRJvhmdy1O7z0)mND(4Hmc0xMB8cpcFoVhkKeApIIseM4M(4zJhCXpiWX96vyrBOs9fAHab4mEIBKJloVUDpCsfAx9qDtHYVHa4QqTAt2hF09DLXJp6OLKUGt(EYVZkmu)AAGaWKdO6Uxyddr782tVRGU48rGDF)wpE8r6oUXqjKytjcloafp9F8ztSaQjTZrbxO7WGevnR9rksNVH4Xbo60OwNmE0L6JZ8ECaNCZ(4d4dtEoDBj2Cwy32d6FU1L7G(JmUlhe(b8u0T91EYamMg76P7cCXE)dKrRrx2vU5c7JYuhxoIgk3AvvJ4XhjA7SAlbcps(I395DftBGFwk38T)7IjKkkST(Ear3(3RLo9N65emfg1D)3O82ep6TRSYKbqaZz27ZUdwMF8tGOyQ67AJA(oBuMtAc7DcIfVsasJeb)M9rqGojDEfMBaCxpDxAZ2u(50Z924PAjW1SVVwWVxZ2Vh0fn0V)qDOH67gLN9vaK1ivshmy30NqT9O6Dq9zVCqdH1(eDbQuC)8jd5AvAWkCG3chLFcBVDBQGwZFxBF3SF371VF)gwrgoK2mcq54aXfNFYGEeDH(fNFkG8E8Jega979sLN62DSUYTCj8bG3alARaSE2l5Ur1L(pVBYwYUqOBJM3sJmsTr3O3ZHBFNl2jKT)7t8gaCMSj1RLe07B8EEK0hnuKBa7ofVhDxIR5UDZCK0RpvVHRIBZrFHFbO14XhD4l1ab4P6cCWBucZW4oF3Zab(RY5X(6lzunMIWNsGZiCkbzluxvcmNR1Uu8Xiv7PN2MM6EpsX44oCS1FxHscNcd7m3o3f2(oId9p959D1blpBYGNxlozL0IN9YbdCi3YzQBZxGNKuKiZVgD2vkJoHGbUE(c98Ix2Zv8eFnsYWXIiE(QKSHD97oP2H(zKFLIiZc2oWITf(DiaUlFplrHnecMgKBqBQMl1KiBx3EYT4UV(2iIczK6hnov)8yR3j9Lh4sHrh0K(0(nGdf2l16sG9BdhS)bosxk)e(KP9nEZayWojr9DV188Xp(O7NEgYwAlfr(yatgaQZ9zN47EkSt8xdgIt2Xbw51SwwYRW8R9zx8lZ3sq(2PBvxQoUl)XhvrAvk)A9PN3qrGyy638DE242Fl3e3bxCQpV9RrBE69aS24I27q5L)hirPF1)D(t(n)hs1dJSVtcfrO8x8BZpcQQwQK)RrSlowo9Af39aCymLT8s4ZprA7Org36GDR6FQl6oc4W07R6Bwgz90Puam65MxzFAfyWG34m)7gbgzFNY1jG08sEt2tkKTSfzQr7FGZ7zpLmLJ7yVZoF8aAfJJ61wfhQrj5ffKHXRMygXBYVRQA99y5JnU97Rokzt77bVglgFriZ1MicH91Lrhb4zyuWbO17GgnUupFX9a2woQV7UoRNJ2fBG0PbYlDUEhqxRAAceRDl(sEJO1kPLWpRdM57g8c2w1GStw(h(hATPuZzlng5tatJhU(xOB3TUVdwGWCx11V(10RRnRwqdC7dl516MqkvFo5eHD8kqZN(STxO5apx4BBRiHOoF789T22OPwQP10JaZV9fRNpwrQAylJ(BAoH9m6I)7kxXNn2rnrCukOXnHneRWFxusDYVnhpu7B1oo7TpPOypZpTUumJCvBQ2bOMFZ51eAuSiAsBBRHJVVf37RtZVXd5zvXDnVozyVd2c(7jML6ucfZYcCGIWgQI7AINKlPJmHk0ZaZ)YKBXl3dmEkyvIyD(meeBeeHtI8xvnvsxhFTOI0SB(dRrFEGpSmVsGPYzL8HnMI4CGcuI8GqWhKBrb9KcwNGRAxnNJqFYik4OFba3FLuU3L160(MTxzJRnXg6FB77rs3WEXHSwhx2XZJmlfEJMKgZkbr)n4Qo4ynp9mzJnAHCfDGDOqHaBOAKcp7DHLBGE4qnwVbDMmmUnYW49jzyKrtL)LGmWdomb2sSCjy3GfoGw)oXRVCn1swKywYCyMoLbuZsH3siMieAJkjjaNmKWHjri()rOz)RaoqZlQDDRdHWDSQUXeL3wd6yGtW8Q8hyB2OwuQ3cS5gNJ7f3M3Ao46IQEZD9La9pXGIYWLbyb2zsznAXQEum8MD9B3ETTWPHxjfm4nOcv9KWLVH3v4h2SXQmb4EeHNqLYGUSukiVXI2GKWnTu3Ul1gunGznSMPdnmlwkV9MC(17a7OmWJSPbmY6KfGvkw(M3ieUwx)HDDkJazvQlJUHsWOyrW7StdTasP4gRBi)ymBNkJjjAKqlyLGy3BRCf9vOgmYX7UrcV48XNIrFjt1Kfjq1YJU8pYdDBqBCV9oDXFhtoAGLP8cnXqLSNm83z1Dy3Etg0LQ5AqINGBnD0cjoEuSTjOvVB8GTh4EQKbWu(ZA6m(wim4BEdMX65mxOeL1DzNz9kPYtzseaDhr2QpLp75URkcpTjQ8duFH5HzZv2XJyHyxGLVAoWKyh7G5ZPxM6SGy4hH5TWhOzuwzXgpSxFEIXcuHOy84ZhkCX3m16O4(arkOXofTGvuz0KU4ikYi74HaGiZoI6YnpHDUK497ajYzj0xlPTf7e51d22AvZo47Srn6Esg(PsUbICRu5BNv7qC81yyDwVOXgTIvSlLUHwjRbixh2QP7R2sdYO20AFoY62AsaK457zvheeIfLhKxgl(2tvwvFkOami0U2KHv5HMM(11tShPdQwNqsh(zJ(aaZzfRraOrDpvDFNjfoBebSQWQYpd2NlIzNoPIJzRUV(JWOCtwvKxyOVr(MBwlz5rQ7NfhFivn5)ELQp0(3VBEYFqCsBSKf3yRO5EA8g3hXP6kQpcIo3Uc9T0bi900LkMVZ4RU4SKIDQHdjvp97Wy)4xl4JRUmaXpxaJ7TAQO(Cu(UZh98XQ(FJ4Yv10mQ1XWbdyKFqMVcIkuYZTLIKcmVTP3s8cm7X8RztjC6eruQ8ffvXpN9BSf(NaM78kw9PzvfQ5QO1V0mkg2bd3G9StWYQO7Ea2qNWsbwFRNIFoqQtwwiRW(eHIhRXSioCw9yg0aAlwJzrqJYivoPDekuzSV1npu4vj5Xss5Rh9wbP7gnegvgOLXkIeh9yhTfw1FMMsTboYpJNCTDQlbwVv08hoDW(s6IjtH148EghsQMtknVp5oFTzo(OOJBsuA6rrtVg9rg8tf0YGcDXuoXvAuSLWSEJgj0)))XR81PyGvEWysyYSG47zH9nduvLKIjO0KfRc0KMz3fIwd83LAjDpu07bpt0Nd)NqMsTgh2kNIbN6fpjmBrOCwg7nq8afbH8M8a9Ym(tq04L6N8r3c(pHsh7IAwczItgkS7tCBwCC9TwbGCAFRdGyy91M)zJN44v0VF)zodLTmRN2l(kig2UmpIl0FvYVB89gqV(2t9e7PEGJ5w728NcehpP3bSSpi(saatfZ1)Y4jVMDX)F9)7]] )
+spec:RegisterPack( "Assassination", 20241023, [[Hekili:v3ZAZTTn2(BXtNrvkX2rs2kp612DYM0U3MDtBN6STFZu0uuw8AjsT8HD8oE0V975Gxea8aqkf50UtBIDebboVX5fGUA0vF6QlNfwgF1ppE44thnC8jhp60tpz8KRUS8H1XxD56WOBdVb(L0WvWF)2IIWIIK0WYKSu8PpSmlCgolfzv5rWiwuwUU47EXlUjPCr11hhLT6ffjRQwYEJO8W5L4)o6fxD51vjll)P0RUMgeo5QldRkxKLF1LxMS6DWmNmBwmF4XfrxDjo8Jgn8OXJ(UntXHSzA1ACM28HnFG9WHV5OXVgE4pMbG2MPRZYwMKEZMPZZY3m9hsVlonB1MP3dqAwv5MPVpm)24c4x(5KBwa)izU2Osk2mDw29Pgt(PWK)P7JdVLAYH3sBSJM4bkhHOWVfFxsbaMZtwUmwda1g3WjhUzk(Zxl(5BCoPV(OX4dF7YLz37zoFnhj0NJ)NntZJxg(5ntJtJZV5b8FEtCk(J)DvsE8Q40YcJzy83HZC41lbOFvwo83V9x(b9rmcxJFmbMYIi4TdkclRYzseBMExyEc7v1g)W3a43OHWl9VyGeq7NNJCbgCQg4RoA8RqoWcyf)Jqa9(dGvMaYLltkklysLLXHllxeJIO)mtApMbNZU6VbIxrcPyG1fKhlLGrPR8K18NDPCcaCIn8IRUe4WbPXFUeNr4Vg7yAdxDDvXcR57TRxVeOOVpoSCrrz4YBJZbK7JGKhxElbK7weI4BiWXaYt285xDj8(LXaz6QlpaKcJVUA(8JNPpfbRGz44Q1BM2BZu4ZaIm1aeqjBu93mfH07IdMLrn4ntphKX2m9Xh3mLVGC1JGuu74yMUW0bib4eheGIfj3zH(Fm8wGxvuHYiLziQEh8BGQ9DO0hGBv5mLO)b83fxhMcpejgHOeCA4YntJwehDRobrGS3kFbdCeXS6NuMeDlB27PiIiiEmishMKclZzGqh7PSNfZ1vaQkIKN6ajfJYcpvMnqKeN9s4pW)cLuXjVgtVS6AatMxH2yRXQ45ZJ5mhWa61zbRZsqLUPxCETcZX1dQyDC6SGO1TG0gOvnwdZ5jsrc)cxkzH4z3aGwyrS5hhLTCwW1lZYMX(CM0XKDJWjPpFme0HbvB5opGkc8h4xUbT2ugMFtC5(IYXWHvSfmiuSEbHGLkPMLqHbSlUkbnkDUuG5jHY9shuU8Q1G5tuE5HOLXbCAqbAnAFshssNLGmMv4U9iiNNcociPe9XTdMdgnxWn7JicyBQiUSef9oMbAaEih8bARkB7e5EaOMQ4LvdO5MeIrGI2cSVwWEGWOhsfGpDfqrYcMLaR(fa7zILa2VXF9AbSFYap3m9DCefzaVYbd4MW88SYwyaQTEooz168S7INfiEVAcOMDNXCKCn4QuzY6LjOm)zC5l8Z73jUIMbD1AbtohmvsTdK0mBX5lKIZueZJ0ayyGJTOR)Kaj3m9VZxz05d(MDOdr)gxyH7Tfhx0gBXHiWeLvLww7dLhgZRTymBdv3ffMIB4Ka1QLc3dqFDorYj01rbtiZtIqhbUGdDphO2BM(m1g7flYZQMbywbSizrmve52EnfslH)7Y7cttaFriCcIYBhGwdUeH7WdGj(F)o71HnREinsYDS53swlZ1g0UNPJsxc)mpmiCfYKV6YtN4Y)lpEujWctywcB4oTZz)gd((rqMzE1s0X0zGmLLpum2ZCyixdGZSGLvr3(ayOmjvZ(M1yWNcQ6jllogmVhDlN9mrZgU1yxehoZESE9xQv0RyDomNAuCPnmfnxlAgxQpMecHiLLKQHtu1JYHXh9blhPLYNXyIecxsBuA0Cnlxh7srvFmg7bnGARyJDGvRC9J0vhpTD1X(ixiE5sPrFGPNgKnp42uWqbAH475tJpxgTI3OPIHvagU8GYR8ctjam7hEhtcrAOvQLU3Ko(Vjrd)CoMvw(A1H9)gj08ZdtMfeFhIzHZa9D07uCQg2ItC(zEqWFxZSBWyJ2(atZL8sy7aN0Y)kd6xpBABnHGh6aPkNH2ilulPIyJHBRg6Z9RTH0rSnfHrtmY7uWalWbbfKqM8qi6Ky8NxdoiJBR2iIZ)eLJ3hM4Ci3EYqUddrz5m)i9L3eLBWgmI3Xsa0SWvG(p473DiQHksaf96KLjLmhPQkqcfS85pC)Iy8f(Oki5)UY7Afj3R7rUDRtGPwcYDr5ESp3quXFzLAdjcOcXOkDzCbM3qzIftfjwePaR3xrRTVr((mPKNlmeYtLuiO9MEtqb6I(S84L1c7pJ7xJ8fChKhmWxQf7bpMqIeljfKflDuyvbeQhGYHLaXQHflUEG9OKXqxkYcfHuCgWakWChuBwHd64VTSkwpxBkBxw2bnYOuZytT9UMLMROmyRs8dkylzapX64keOEeL0x7WR3uHzLsl2NvhWT5QBdxQz0ec3I8(XrDMf5WmvOcVnNj(doP)R5XrjfSH2WqBOyubRLdYaXCGeDyd)Zzc6cwh67srg4HF8Q1GWOIf6XpoN4jMENcb6QYKj9M2lrz(7JX)oGjL5g1i4c67P4ipNgprFNGxBKvf63wTzcXuGKpMxoAQZsDwlAPcNOIP2CxphSbh5sSHSYtk50y7vkIQWWRLeIhNajKG(rL)lfA6mkffPZlZQJYEFQWq4wHppX8c)sNQaLWigSlulcXScrRnqB6Q(5Fby2xhbu7et5Hq9(QvRLL(aHX5CFdGn21PnxNHoq0t84adzTOfOHTc2wRVMVz3kiiSGOzf(l3f)NMEVaViyRei9zvfg5)5xfdxdMqrewUQxc76cY)WmlsdIlOfDS0HN)Cjmx(AXwMG5v5p0WF)8egOQeVYdXFwWtvY1WMmfpKgHmv(Mnsn3cDuXb0yVZM)xOgyJZlIZDTTrhNK5j5XmS2Vbpd5zhv)Yrmz2o1mqLI5DB62TnF0mtgc8PIYCqVocSEWLKb3eCf)r7Ec9u4oTL83)B8Y14J)Dz5RzIDSYtcsFHfjrSAwcXKIJI2Ppa)cKJXVZFsm1Y6JDOx8NUz6N4pMByzm4z(N4UaXnkFFSSWRGZGv3SWQq)gPtx3bkXE(MMAPXHDn2Jx6ZVYov2L9AOIERAv3WOr2fkrLhIQ13ghVgR8XYImwiXf86)JXq(2SFGlrHwx14q1ffZNNPDQcH7clSVphgDwmtTx1l5S2ceVcGGZ68zjpmL3pcJnInKCuNPZQBRMz8jRDM4ezKRUl2yZOOF1tFu0UcH2vrp3jzo0dugPg7gfybrITTKORCuxlj(NLCNxjo)vDUBC6rVPfwrdLqpreqNtnLndrZWO855gKhfwICiwGcSgmzziA6)D)k6f0Cw24c13lInqSne4EKJ7fKoBzIznYSza7OzvZcREoMjWOBd4PdSxhIp)enRhUMNNj3tARMT2ySdy8wE(bSRJRAqWCkYxkq3wr61D7oRq2ud9AntUJRJjPEaM6eEIDyS92sxkfPEhtM4tqyM3IIRAURaE1a0k(d6M7kGbV4cKlaYLbXRq)JZQwE1LGDh4tNhCt0m2Ms8531OnC6D792eLehP8YTfIIh3pcxccmqixbRR(p)hqH(6Sp7etOgkHfq3uux7SxYSnhNdH(aVyyAXQemHNUaeNdFRagxg3xfol4FxfhNIn6ukRjEn8eZT8ltBCO0U5okdFIeljGdpMytaFJZrx)bfAWK)mi6JhcG42Qw5Ik67n2kcPR8OS)eT(YmM0UYHDcoCK7h(glSDAQkyWqrziSHrPYSIHsTI0jPAyO7bflZkD3JDMTwNpaFOEiUTSuJ1C3qmIJlhFSI8HnGXdeMBmeApWDWYEvk4WQ75EGcroWpIabRI)sbAaG9Wr6wqeFcWnFJtRmSXmE7ytJ)6XMgrXMg9F9SPXCNja)RcbFPOCNW0T(4czdBHX1VgOUjmh26J5D9UQLOZHSpqLmt0pF0xUWs90uZNfQDYn7XVuqwaTUWtSGKiXdAiKFsdkswTIrfsWbZxHczo4adxAEcDlqWO2W1mnPXZb76OpCAzbbwRa()iaB1FEd)ltQs9lqSpA7UJXJ6reTasQssXGfO6L03PE6picv634NuI044z4hZAAlrahax5t)Y7)LVdygfGxNSpb8NUidMaiOf4nkqh2XTNhO71Lvylu7h3os1VfVJFM)yQ5UypG3EtJhArgyXn(E)f8)D8eJD)c2UayukRc)CYQk8mDuhA5FteAj2ZCf86KhvLNdphRyGwvjzazDc8G5kG)suB83o5HNputmxRX9ScrKCDnjj)rSObsei3L1rDE)c2X6OkxGNOEuvQORawKuY7awDsutm3m2BBVkAhF771NlpMmDN6yQ6lB8znktg)vfQBRJQBWUthYYdc6FyTCjgKkYCWMSSoVjhXZnt9WUdcmfD2LTMf1dSlE)BlxlKzLPmTybenYmEPfeo1W4ICmqNjLMvgiopyu(m1o)zFWC0bOe0sMS8he773oeTLSx9fpAzY6a5P9aw8rd36vNqi5vdzCFtHKIW0BQalYGkCiWknLtg6roHBMZWUB1AWPFy7fiIPablgb(Tp(EzA0Uqjzpr8JwaiDOj8USKzbW(0mGy77neV1TMLtrEOyKJd8LYGHolOiJB6zK9E3TdjkJP6cLnDxsSim4s9HkQqT8hDZdTLZu9y1Kv5ZK6rnLh4dWHLeNwdg5UUG1hEH8SBQI5ZVVt0a(CNjN6cm5uWCMNevYcGStUpvFIjXxYvK)ENcS(Z4l7kaC)VSSXdXzWENTAsvyuZtMX2JSYImIVIRs373zZKCWva27BBtTgwfwVmZA6eMjasNn1YlqEe2GkLzmFGy(NZmEA981vllI1xCCGJ0hiRVykc()QMDdE8DTh7y9XED4nSKWbKs0Vg9rcVi25fS4hurNOagSVoc4U0AVaBTvIYSBUbu6MxLMgVuxBADEsgqzFia0auEaTvwHKZuJaY05zAbvUiSaDYR84W0hcMTUGodbnhfR2seXMotvFbuqGkjd1JqvLhTHLuCmgnvC(1GPVIGRHTkWQ1yTCKJI2bN7xKGtG4LbloymPQZMllVn)oYvkuCNr7wOvJjPWu0oQG7BHcts)UOnwqtcSdsxJvZbb2N81of6w0AEygypkWCKbIe7SV3Y7bkVJBeinq4HqZJffZHf9jg3bVYqA9OGos0SjjOIWYyH(184JIyLGcm7G37cHiG)E2VQNMIROY)GZondNQaelNLGhAg3vQ6G2Q6RMnSGIyeRl4s0Lk75ejEPXwpOJ4kpfyfcY35DtyOh4KpR)WJp95dp(KNrX7q)(oA4XJM8m3(fo4iovr57DuwHMeuNpoD0Na73Zib1b0)26G4X)tDaTrZcOj)KioPhBFgEl)vQUnmoeZem430mEcJcxbdF(dSaw47tiJ1)qXay)jzviV12MHvX8qEbOXexbBxF8vMnoOdFa7zwXYo35pQHO50MrWv1OGyNo98emw0JBuoNyxXE(HyXr)M5NdPkvNIxiRGRiL7MxKjxz36EKKlFTmLUjODZYVJYhZOlh51tE3CeAxa3Yi4zvghVBumc9Rioq8P7Kj7oC0fCvNM(TDQg0KfTFSzmisboFK(EDIkwFYwEhFfbl78L0MOjHOAIN9ofeLlJ4fvK2vvLjlf1ZZDWaDAQexhle5JrocJCI2O0wP8uu(pezmfn)DYZL9ra5byhblwlQw3SffobB5n0d3erdVCLchDPhhosVPJwLHo8xTchhGrRdtYPoyGLlYbhJO6RAzMZysClJb(nwEEW1N04caHK2poO9uWrL5PDI2Zk3a)UfGBeUqC55KYLMLBM8GK9aeewB0JFY1yQ255yv2wJ8ItiP5BMkj6deS5p5y7)zXHZuH8GFclxkEzrkvCcoSm9EnoDrYh44QVWLC0FcYkK53Zsd0Q4bSpKZX(BGX9zfjZIFr9TIZXW2zzcVkQWIklFb(fcLQaye3Cq90oJNh3ffpzASVwchklUnYmJEpn2EkzRZLlVEzkfkZvAazggBylSBD152imCEZ7ZJpfE9rFuSIgACVNj0JNlaUdCOgYyLYez6jBIboABG6fSV6Em4684qobv5UJWnGbTG3Cx6DCAiAFx8AlAop10o0yBuMqTltJ)imru(uTZFmB7cR7rJp(wrKtIEk3(0KvVZRs6c8s7l9me69mfGOBBhaQX0qMA0(pcHDcaBOmkZfSzqIgvSFIxVUOQUHNUdqjRrt5DngkAGDm6krc5HyHFsPvbwPW9d1oNX8Zt8Hc5fqBceWkz96jNxQF(de1LSa2ZPyEcMLak2L3ErZaK)xfH3OoSJkpEenO6rrgntOaafW27ctlHPrS3DDOKx1TuVY74sc)ZLVT2rKZuDKLBcRt)pRERsNfUpbjHfv53XCMyzgkMWpRex5OJyiiDITmB2MPS8)oSR1KST0T8onZdVvlECXLQxb7w9WnfnQz)6jUu8yv9rVYaIdZOB)W73SaXgMmACB79s5gPukG9BPnCoNxinPnyI6L2bc8iT7HiL(PVGekxaueC334qBpzWskXBaczsp4z95qHNlC76irqKtJzSJaO6y8PAncwM(qhEdfWmvsp0aenkg59AO4KoZCKPnFcfNiAxtZlBNKQyA6qO(zv8LoIfWmlISJD4l(n(H67f)c3MbE(gnokFDYuH6urs5DQbLTERfMv0ET173DB9fxyj(CUR(Ol0W5bmJfIgJribLSc8sk30QoUFHWbjCJauwKPdSQknAb39jwuOy7DtjozEVe2R1wGBKQ7D3TCk9xZKXP5vpHJosdATmLeuowA(knAonpNq3fmHWIYSuBxL17gUAEiF882JaBM3ju((vp8ISLzmy169ETGI1C6QftfN)W7aLsk)3ImZ0O(WfH(WPVUaHjUaHn6Nx047clC4Bs7y54jkwV0iw4n3KNPVpWS04hckwWkzd)(ZloNTIY7O6XhdbDDFyEkkBablHwTtwTolVuSt83QSK8TQlozSZ2Yy9fxvz2kE3Gb2ftb7IhV5d)twPzWRs53Lb6X5Sh)TYJogkjzCRI(TCvE3dq62omW(J(8a1kCc9kOKYTM4gHbypFVME(OUKcTMAF3JH1RYMpqqD5kSBhP1bIBzG3cgDe6xhjQ01GYAj8F1P11vYQ3qSxdhxwv2Z(KNqAKJ5(jGg5AL2p0Ox(NXSVx4aV6jcYjvrLnYZ2PK6Y(N9rN128NRJwRnjWX8BvkfRz3rHCAHaGopVxq(D20SdBfnVfvSMy3xZkDuADpUcoKz3zAIJ5BVaXKIbYGp2orbhMW2z0E)nFKiPOr62oC80NmDDsyKLWOTdcB4BJO9FSpqyki01jgZMDS)My1u(ghtP9PIQXusmadyD)nXU4mIZ702XBCOiR3nnwcounjvhnpywttR5LUGN2Zm7RZekhLn7zDR52rhT3IOUQbN2osAJ9luCA7EVJGxtme)BgPe5BDYjhsNMCIE(ZNyQ2yEsN(wNyIMz0NPGTfU31PVdtmzBrsm5UgxNGFh9OjbTVtltJnI2NIMUM89IsLBiF3yWpXtFRt8UQq1r4ExN(omXFLei72Y0r1lhofUZBHsV5oRFs3UnICayFHrP5W1l(Bt07lwZVNUJPJRHDJZyTaU6RMoo77bFuA4Q3taTXXA8ftBOtcX2g31(le8nF4NyGcon43Nm8SlVzk77Mo45xHxUErx9ZJN8gSJ0ZMNux67IJvEW98ZFH(bRzZhOgHSsjhI1B68gTw2HSEN4CJZuZMp8nBMUThaKUS6IzP(ypiw9rhMm)C3B(1R)bU329Xh9yb)IZ9ST0GEh0IXt95M(KF8fG0J1r6M4Lgs3KIudye41fEiiA4SdusFQDGZFd2IeLD8eJ0fsuZ68jOr6Dx(rJp77NqDWiyauxpzj0GJSvbPFOrRdDyJticx8v7SM07a)NYe0aW3GxieFjxrhkyvh8)g8BVLYV8lId9jhVkoe8Czbg1FSD1T5C0zAJfnM8uDByOdjMYuw3ngcbkYdv5fJMWGYVoxwfUbz3xHecOVVNw0qQzqCjD8SXdU47hpKHJ71BFI2qL67IcbcW7CeIltJloxvrF3ub99L62nVGBauRVbKexYof6XhjBHx4Jn6MPbp(yFRgvQh1DGWzNpcgA9DwWfN3)0Hp)KHu21oY1j9cMbS(09mAWMZoh5WUqx9duVaF)sqx3lK(PKxNP3oDX9C2841BQnZPJVA4r10rRCJD0OH(o0CUxA1DbGXkEbWZMa)VN50dfIFNdi3HlRrRKijjVS3bKpfV(Q2c5ALILUmWJpEG6Zfaup1hOq6EK9VthF36XOjs84JQpUjx9Xh9krtVttDxVYpH)8DJT6d4hF09vLWJp6OpUUOdRoeerhgKOCNTpsrTsmqLWi9ok6IrTpl8WQ1hN5LfaoRMx8axC(OjpN(2TQ5SWUsb0)CRBqa9hzCHbi875PON3R9Cd4inukO7fBH(XbY4uPluo3IO95UPJlhrBDBTQQr84JEmfC(yHhyF17b8UIPnWplnWEE6c)lM0JO777zVVXbe9CFVw63EQNtWuyu39F7QBt8OvxzfFeGaMZ73LHFlO)dFgeftvFJvuZ3zJYCstyVtqS4vcqAKiy)S7bb6K05vyArqTE6MHMPu(L05724PAjW1SVVgHVxZMGhSfn0Jho1Ua6RT27gLN1V1aiQ08QBVD7jqj0WqjtVH0uD17k6ZE5GgYW9RJi3U1zV48jd5gBAWHCqoKHT801C52ubT22gPdhq0T596t0G4xC(PWwWUdEbEEpYx7L0yUIks0h5p7Ld4zeOlDjE3KtK9Pr3gnVbez0hJEgVNd)moxivNT)7M7gaCMSvYRzF6D3DppINJgkYRHT)G9O7LBTq6AMFNE9P6GBvygo6E7lalap(OTdrdeWLQtT71NYXzupL4vjWyvgA2xFFvQXgeUcc8cHlfC7pnph(GzWE91U38Xih7PNKPMwopsXQ4UlS1FTtscNITLzonUlm6Deh6F6Z7l8rQrx98SjdEETaKvMEa9)bGeGJqxOliKY3IMxRcdeYc76xQp10uHZ9nDII876czaN7bsoxwEV8faef2ez(fpel8lDt9GwRMByKiBxfkEjdv2xFn5qHmsTsJZrnpqSDsl9axIPDq)9P9RMfkSxQRtG9BdhS)boYIexhlt7RIfuv1jjQV7CAE(yLUmXtpdzl(tcp(6Uzatgagr8zD6vFjwNOno9xfgIt2rnJYo9UEfMFJt8vxx(j9RVgFA6w1UPJA5p(OYzuKyY((MPNxpCpbe1B(opBC7VLBI7Glo1NxL1OnpLqawBCdGDO8wjdKO0VtYo)j)kjtlXwZQVS0eEc)x8RzmcQQmH3kNQB4J8wS79tONXmY7wEhH5hD3UicmUWc7w1Cu3cxeWHPFu13UhQCRtOkp6ihEgst2TjPcVbDFVx1jW08IOs2dg0UMsLAS(U9xvjP44ka7SZhpG2i3OEnr2g4I8EAXyhOMOeXBYVIFA99aI7(6c1IaimSU2aw4WqVdA0Lm98v5vWi9r9D3St9C0MsdK7(sEXz17a6s)rtGy12)R5TEvxiTA23BCByDMh6jiD3GbqMfE(hAPBO5)Igl9jG9XZ92xPROQURpjqyU3V63Hu61aJLs(bUDlK8UPsiVQpNCIWoEFq5Z6Ip)D7gBvuYKD(cKABS9jTDzU9Q53wE1ZhlF)n2wG(BgmTA1BVhG7u1D2yh5r2rw1h3e2qSc)Drzjj)237qTVfY4SO(KIt9m)060xpYvA(BhGA(nDwtOrXIOjTTTgo((XBVVon)gQZOKee1j4KH9oyl4VNyw1ijumllWbkckuf32epjxslFgWaJywjGzEzYn4DGagGbm)rSoNfIQlc2sir(RQ(bPRJVwirU9z(dRr)hGpSmVsGJYzL8HnMI4Ca3lrQFi4lXnOiEsbRtIvDRIZrOpzeLNXpR39xEG7DPSoPXS9MzCP(Ay5TTVX)Cd7fhY63yzBYoYSEIn6SwmmDIIe7QyIytB5zYgB03Xk6aR8G9CSXjznQ9OlpEi9mnyGEx20a2g0zs242izJ3NKSrgDT8F1iz8i3savTLlHxKfUGwZOWlyynLvw1pwwtyBglJ3LLRSLqCliMfvssSoziHBuIiW)9qZMlaCWMxLY6(6aH7yvHajQxPg0XaNG5v5pWuIPwuQ3c2fpohPCBZBnhCgsvaXU(sGDniw78WLbyftzsKn6)LEuIbnBYYU9ABHBiVwkyW7EaQc3GlFd)1WpSzxVycW9icAHkE(USukiVXI2GKW3YQUPdQtBRbmRH1mBZHzQEf4T58B0awF1ZJ3PbmkBEcXY38sqW166pyStzeiRAkz0QkcgflcFNTbMfqkf3yTQ29Xmnvgts0LxwWkbXU3w5C7Rr7AKJ3DxEH5WdJjtMhilsGQF0A6XLhk2G24B7DkI)gzB0alNdk0eavsDYWHNv34t7nPpxgLRbjEoK1SolK14r12MiwTE4bBpWT)5(y(0zT7dxTbddN3ApSU9XfYq20nI(R51sdMY0ja2lISnzkF2ZDxYbEcuuzkO(okdtVQSf0WQCUaRn0CG9WoFcZNtVm15dXWJcZl(mWAOSSDnEyV(cARkqhJhF(qr4cMPogf0hiYjm26EfSk2IBJloJCmYoE9asKJhrrVMNKYeZyjdNe5Se312(J2OuZEP6Sr27lWaAvEpqiELkR2SQTHJVgSRtQfniQvuGDPPfOredqUoIwtFwTzXYW60ASjYkDAsaK45hz1tdKmffuJx4hmUfwtFWtF6tbfGbH2vZlSkN1vD2Q97rkGQndKuGFYOM5yISyfnNgP9uH6DMi4SO9yfuvLQf2ITiMDQKkoMT6(6La9ydSRETyV6gjsMO3ufTC5pjodbQ6x)Dklz4gz)ghiLEtH4K2yjRFXwrZ90KkUpNd1vFEee4UD1SBPBj6PzAumFNXxDHe5GbnQEKVMcySFeRfeXvP4reRbu4vTY9dvXX5OAzNp65JvN2iIBRsCts9TjTo3dyqG8tk7LqKEsHaBXkPe07B6heVMUE2E1SI(Nore5jFrrR9Zz)gBH)rGBpVIvsywLGAUkAn1kJMHL))ASHxcwwfD7dGgEclDz9TEk(5GeAYYczHQNiSeznMfXHZQhZGgqBXAmlcAugP1kTEwxLx)w1MOWRsYZbIYloADdP7enesvoblJ)J1A0AXdAleR)mnRCdCKFgp5L7uxISERI53F6G9L0ftMcRR5DmoK0UNuAEFYD(ZM54JIo2xR7aBLagUctMfeFhliHzG4Fs6fqmGM0svyjmQAdVt6crRb(7suxFBq9MIYe95W)jKPEPXrJOXGQLs9HNeMcju4LrQbepq4kK3SaORmXFgIDRu)4lrqEE6Lo2fvxczItgk2lH4i4FC9rThqoTRhCedRVFRpB8ehVI(fXnBJ3SLz90EXxdX90L5rCZBRssAJl47E9TN6j2t9ahZT21UnfioEsVdyrSYVTUXRL7R()d]] )

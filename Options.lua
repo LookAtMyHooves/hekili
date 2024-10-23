@@ -42,10 +42,10 @@ local IsHarmfulSpell = C_Spell.IsSpellHarmful or _G.IsHarmfulSpell
 local IsHelpfulSpell = C_Spell.IsSpellHelpful or _G.IsHelpfulSpell
 local IsPressHoldReleaseSpell = C_Spell.IsPressHoldReleaseSpell or _G.IsPressHoldReleaseSpell
 
-local GetNumSpellTabs = C_SpellBook.GetNumSpellBookSkillLines;
+local GetNumSpellTabs = C_SpellBook.GetNumSpellBookSkillLines
 
 local GetSpellTabInfo = function(index)
-    local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(index);
+    local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(index)
     if skillLineInfo then
         return	skillLineInfo.name, 
                 skillLineInfo.iconID, 
@@ -54,7 +54,7 @@ local GetSpellTabInfo = function(index)
                 skillLineInfo.isGuild, 
                 skillLineInfo.offSpecID,
                 skillLineInfo.shouldHide,
-                skillLineInfo.specID;
+                skillLineInfo.specID
     end
 end
 
@@ -63,9 +63,9 @@ local GetSpellInfo = ns.GetUnpackedSpellInfo
 local GetSpellDescription = C_Spell.GetSpellDescription
 
 local GetSpellCharges = function(spellID)
-    local spellChargeInfo = C_Spell.GetSpellCharges(spellID);
+    local spellChargeInfo = C_Spell.GetSpellCharges(spellID)
     if spellChargeInfo then
-        return spellChargeInfo.currentCharges, spellChargeInfo.maxCharges, spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.chargeModRate;
+        return spellChargeInfo.currentCharges, spellChargeInfo.maxCharges, spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.chargeModRate
     end
 end
 
@@ -978,6 +978,29 @@ do
                         desc = "Siege of Boralus - Bilge Rat Pillager",
                         [454440] = "Stinky Vomit",
                     },
+
+
+                    -- Nerub'ar Palace
+                    [203669] = {
+                        desc = "Nerub'ar Palace - Rasha'nan",
+                        [436996] = "Stalking Shadows"
+                    },
+                    [201792] = {
+                        desc = "Nerub'ar Palace - Nexus-Princess Ky'veza",
+                        [437839] = "Nether Rift",
+                        [436787] = "Regicide",
+                        [436996] = "Stalking Shadows",
+                    },
+                    [201793] = {
+                        desc = "Nerub'ar Palace - The Silken Court",
+                        [438200] = "Poison Bolt",
+                        [441772] = "Void Bolt"
+                    },
+                    [201794] = {
+                        desc = "Nerub'ar Palace - Queen Ansurek",
+                        [451600] = "Expulsion Beam",
+                        [439865] = "Silken Tomb",
+                    },
                 },
 
                 iconStore = {
@@ -1026,7 +1049,8 @@ do
         local option = info[ n ]
 
         if type(val) == 'string' then val = val:trim() end
-        if shareDB[ option ] then shareDB[ option ] = val; return end
+        if shareDB[ option ] then shareDB[ option ] = val
+return end
 
         shareDB.displays[ option ] = val
         shareDB.export = ""
@@ -1718,7 +1742,8 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeXY( info ); return "Position" end,
+                                name = function( info ) rangeXY( info )
+return "Position" end,
                                 order = 10,
 
                                 args = {
@@ -2313,7 +2338,8 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "Position" end,
+                                name = function( info ) rangeIcon( info )
+return "Position" end,
                                 order = 3,
                                 args = {
                                     anchor = {
@@ -2861,7 +2887,8 @@ do
                             position = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "Position" end,
+                                name = function( info ) rangeIcon( info )
+return "Position" end,
                                 order = 3,
                                 args = {
                                     anchor = {
@@ -2959,7 +2986,8 @@ do
                             position = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "Text Position" end,
+                                name = function( info ) rangeIcon( info )
+return "Text Position" end,
                                 order = 3,
                                 args = {
                                     anchor = {
@@ -3037,7 +3065,8 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "Position" end,
+                                name = function( info ) rangeIcon( info )
+return "Position" end,
                                 order = 2,
                                 args = {
                                     anchor = {
@@ -3134,7 +3163,8 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "Position" end,
+                                name = function( info ) rangeIcon( info )
+return "Position" end,
                                 order = 3,
                                 args = {
                                     anchor = {
@@ -3205,7 +3235,8 @@ do
                             pos = {
                                 type = "group",
                                 inline = true,
-                                name = function( info ) rangeIcon( info ); return "Position" end,
+                                name = function( info ) rangeIcon( info )
+return "Position" end,
                                 order = 2,
                                 args = {
                                     anchor = {
@@ -3314,7 +3345,8 @@ do
 
                         posRow = {
                             type = "group",
-                            name = function( info ) rangeXY( info, true ); return "Position" end,
+                            name = function( info ) rangeXY( info, true )
+return "Position" end,
                             inline = true,
                             order = 2,
                             args = {
@@ -3779,7 +3811,8 @@ do
                                                 local hasDisplay = false
 
                                                 for key, value in pairs( shareDB.displays ) do
-                                                    if value then hasDisplay = true; break end
+                                                    if value then hasDisplay = true
+break end
                                                 end
 
                                                 return not hasDisplay
@@ -4193,7 +4226,8 @@ do
         self.DB.profile.specs[ spec ] = self.DB.profile.specs[ spec ] or {}
         self.DB.profile.specs[ spec ][ option ] = val
 
-        if option == "package" then self:UpdateUseItems(); self:ForceUpdate( "SPEC_PACKAGE_CHANGED" )
+        if option == "package" then self:UpdateUseItems()
+self:ForceUpdate( "SPEC_PACKAGE_CHANGED" )
         elseif option == "enabled" then ns.StartConfiguration() end
 
         if WeakAuras and WeakAuras.ScanEvents then
@@ -4592,7 +4626,8 @@ do
 
                             if detected then
                                 for page, text in pairs( detected.upper ) do
-                                    if found == false then output = output .. "\n"; found = true end
+                                    if found == false then output = output .. "\n"
+found = true end
                                     output = format( "%s\n|cFFFFD100%s|r detected on action page |cFFFFD100%d.", output, text, page )
                                 end
                             end
@@ -5295,13 +5330,13 @@ do
                     args = {
                         core = {
                             type = "group",
-                            name = "Core",
+                            name = "Specialization Settings",
                             desc = "Core features and specialization options for " .. specs[ id ] .. ".",
                             order = 1,
                             args = {
                                 enabled = {
                                     type = "toggle",
-                                    name = "Enabled",
+                                    name = specs[ id ] .. " Enabled",
                                     desc = "If checked, the addon will provide priority recommendations for " .. name .. " based on the selected priority list.",
                                     order = 0,
                                     width = "full",
@@ -5323,7 +5358,7 @@ do
                                     name = "Priority",
                                     desc = "The addon will use the selected package when making its priority recommendations.",
                                     order = 1,
-                                    width = 2.85,
+                                    width = 1.5,
                                     values = function( info, val )
                                         wipe( packs )
 
@@ -5363,8 +5398,8 @@ do
                                     type = "select",
                                     name = "Potion",
                                     desc = "Unless otherwise specified in the priority, the selected potion will be recommended.",
-                                    order = 1.2,
-                                    width = 3,
+                                    order = 3,
+                                    width = 1.5,
                                     values = class.potionList,
                                     get = function()
                                         local p = self.DB.profile.specs[ id ].potion or class.specs[ id ].options.potion or "default"
@@ -5376,7 +5411,7 @@ do
                                 blankLine1 = {
                                     type = 'description',
                                     name = '',
-                                    order = 1.2,
+                                    order = 2,
                                     width = 'full'
                                 },
                             },
@@ -5395,8 +5430,10 @@ do
                                     type = "description",
                                     name = "These settings control how targets are counted when generating ability recommendations.\n\nBy default, the number of "
                                         .. "targets is shown on the bottom-right of the primary icon in the Primary and AOE displays, unless only one target is "
-                                        .. "detected.\n\n",
+                                        .. "detected.\n\n"
+                                        .. "Your true in-game target is always counted. \n\n|cFFFF0000WARNING:|r 'Soft' targets from the Action Targeting system are not presently supported.\n\n",
                                     width = "full",
+                                    fontSize = "medium",
                                     order = 0.01
                                 },
                                 yourTarget = {
@@ -5431,10 +5468,10 @@ do
                                     args = {
                                         damagePets = {
                                             type = "toggle",
-                                            name = "Enemies Damaged by Minions",
+                                            name = "Include Enemies Damaged by Your Pets and Minions",
                                             desc = "If checked, the addon will count enemies that your pets or minions have hit (or hit you) within the past several seconds.  "
                                                 .. "This may give misleading target counts if your pet/minions are spread out over the battlefield.",
-                                            order = 1,
+                                            order = 2,
                                             width = "full",
                                         },
 
@@ -5448,13 +5485,13 @@ do
                                             min = 1,
                                             max = 10,
                                             step = 0.1,
-                                            order = 2,
-                                            width = "full",
+                                            order = 1,
+                                            width = 1.5,
                                         },
 
                                         damageDots = {
                                             type = "toggle",
-                                            name = "DOTted / Debuffed Enemies",
+                                            name = "Include Enemies With Your DOTs / Debuffs",
                                             desc = "When checked, enemies that have your debuffs or damage-over-time effects will be counted as targets, regardless of their location on the battlefield.\n\n"
                                                 .. "This may not be ideal for melee specializations, as enemies may wander away after you've applied your dots/bleeds.  If |cFFFFD100Count Nameplates|r is "
                                                 .. "enabled, enemies that are no longer in range will be filtered.\n\n"
@@ -5477,19 +5514,112 @@ do
                                 },
                                 nameplates = {
                                     type = "toggle",
-                                    name = "Count Nameplates",
-                                    desc = "If checked, enemy nameplates within the specified radius will be counted as enemy targets.\n\n"
+                                    name = "Count Nameplates Near You",
+                                    desc = "If checked, enemy nameplates within the specified radius of your character will be counted as enemy targets.\n\n"
                                         .. AtlasToString( "common-icon-checkmark" ) .. " Recommended for melee specializations using a range of 10 yds or fewer\n\n"
                                         .. AtlasToString( "common-icon-redx" ) .. " Discouraged for ranged specializations.",
                                     width = "full",
                                     order = 0.1,
                                 },
 
+                                petbased = {
+                                    type = "toggle",
+                                    name = "Count Targets Near Your Pet",
+                                    desc = function ()
+                                        local msg = "If checked and properly configured, the addon will count targets near your pet as valid targets, when your target is also within range of your pet."
+
+                                        if Hekili:HasPetBasedTargetSpell() then
+                                            local spell = Hekili:GetPetBasedTargetSpell()
+                                            local link = Hekili:GetSpellLinkWithTexture( spell )
+
+                                            msg = msg .. "\n\n" .. link .. "|w|r is on your action bar and will be used for all your " .. UnitClass( "player" ) .. " pets."
+                                        else
+                                            msg = msg .. "\n\n|cFFFF0000Requires pet ability on one of your action bars.|r"
+                                        end
+
+                                        if GetCVar( "nameplateShowEnemies" ) == "1" then
+                                            msg = msg .. "\n\nEnemy nameplates are |cFF00FF00enabled|r and will be used to detect targets near your pet."
+                                        else
+                                            msg = msg .. "\n\n|cFFFF0000Requires enemy nameplates.|r"
+                                        end
+
+                                        return msg
+                                    end,
+                                    width = "full",
+                                    hidden = function ()
+                                        return Hekili:GetPetBasedTargetSpells() == nil
+                                    end,
+                                    order = 0.2
+                                },
+
+                                petbasedGuidance = {
+                                    type = "description",
+                                    name = function ()
+                                        local out
+
+                                        if not self:HasPetBasedTargetSpell() then
+                                            out = "For pet-based detection to work, you must take an ability from your |cFF00FF00pet's spellbook|r and place it on one of |cFF00FF00your|r action bars.\n\n"
+                                            local spells = Hekili:GetPetBasedTargetSpells()
+
+                                            if not spells then return " " end
+
+                                            out = out .. "For %s, %s is recommended due to its range.  It will work for all your pets."
+
+                                            if spells.count > 1 then
+                                                out = out .. "\nAlternative(s): "
+                                            end
+
+                                            local n = 1
+
+                                            local link = Hekili:GetSpellLinkWithTexture( spells.best )
+                                            out = format( out, UnitClass( "player" ), link )
+                                            for spell in pairs( spells ) do
+                                                if type( spell ) == "number" and spell ~= spells.best then
+                                                    n = n + 1
+
+                                                    link = Hekili:GetSpellLinkWithTexture( spell )
+
+                                                    if n == 2 and spells.count == 2 then
+                                                        out = out .. link .. "."
+                                                    elseif n ~= spells.count then
+                                                        out = out .. link .. ", "
+                                                    else
+                                                        out = out .. "and " .. link .. "."
+                                                    end
+                                                end
+                                            end
+                                        end
+
+                                        if GetCVar( "nameplateShowEnemies" ) ~= "1" then
+                                            if not out then
+                                                out = "|cFFFF0000WARNING!|r  Pet-based target detection requires |cFFFFD100enemy nameplates|r to be enabled."
+                                            else
+                                                out = out .. "\n\n|cFFFF0000WARNING!|r  Pet-based target detection requires |cFFFFD100enemy nameplates|r to be enabled."
+                                            end
+                                        end
+
+                                        return out
+                                    end,
+                                    fontSize = "medium",
+                                    width = "full",
+                                    disabled = function ( info, val )
+                                        if Hekili:GetPetBasedTargetSpells() == nil then return true end
+                                        if self.DB.profile.specs[ id ].petbased == false then return true end
+                                        if self:HasPetBasedTargetSpell() and GetCVar( "nameplateShowEnemies" ) == "1" then return true end
+
+                                        return false
+                                    end,
+                                    order = 0.21,
+                                    hidden = function ()
+                                        return not self.DB.profile.specs[ id ].petbased
+                                    end
+                                },
+
                                 npGroup = {
                                     type = "group",
                                     inline = true,
                                     name = "Nameplate Detection",
-                                    order = 0.2,
+                                    order = 0.11,
                                     hidden = function ()
                                         return not self.DB.profile.specs[ id ].nameplates
                                     end,
@@ -5562,7 +5692,7 @@ do
                                             desc = "If |cFFFFD100Count Nameplates|r is enabled, enemies within this range will be included in target counts.\n\n"
                                                 .. "This setting is only available if |cFFFFD100Show Enemy Nameplates|r and |cFFFFD100Show All Nameplates|r are both enabled.",
                                             width = "full",
-                                            order = 1.7,
+                                            order = 0.1,
                                             min = 0,
                                             max = 100,
                                             step = 1,
@@ -5631,95 +5761,8 @@ do
                                         }, ]]
 
                                         -- Pet-Based Cluster Detection
-                                        petbased = {
-                                            type = "toggle",
-                                            name = "Count Targets Near Your Pet",
-                                            desc = function ()
-                                                local msg = "If checked and properly configured, the addon will count targets near your pet as valid targets, when your target is also within range of your pet."
 
-                                                if Hekili:HasPetBasedTargetSpell() then
-                                                    local spell = Hekili:GetPetBasedTargetSpell()
-                                                    local link = Hekili:GetSpellLinkWithTexture( spell )
 
-                                                    msg = msg .. "\n\n" .. link .. "|w|r is on your action bar and will be used for all your " .. UnitClass( "player" ) .. " pets."
-                                                else
-                                                    msg = msg .. "\n\n|cFFFF0000Requires pet ability on one of your action bars.|r"
-                                                end
-
-                                                if GetCVar( "nameplateShowEnemies" ) == "1" then
-                                                    msg = msg .. "\n\nEnemy nameplates are |cFF00FF00enabled|r and will be used to detect targets near your pet."
-                                                else
-                                                    msg = msg .. "\n\n|cFFFF0000Requires enemy nameplates.|r"
-                                                end
-
-                                                return msg
-                                            end,
-                                            width = "full",
-                                            hidden = function ()
-                                                return Hekili:GetPetBasedTargetSpells() == nil
-                                            end,
-                                            order = 3.1
-                                        },
-
-                                        petbasedGuidance = {
-                                            type = "description",
-                                            name = function ()
-                                                local out
-
-                                                if not self:HasPetBasedTargetSpell() then
-                                                    out = "For pet-based detection to work, you must take an ability from your |cFF00FF00pet's spellbook|r and place it on one of |cFF00FF00your|r action bars.\n\n"
-                                                    local spells = Hekili:GetPetBasedTargetSpells()
-
-                                                    if not spells then return " " end
-
-                                                    out = out .. "For %s, %s is recommended due to its range.  It will work for all your pets."
-
-                                                    if spells.count > 1 then
-                                                        out = out .. "\nAlternative(s): "
-                                                    end
-
-                                                    local n = 1
-
-                                                    local link = Hekili:GetSpellLinkWithTexture( spells.best )
-                                                    out = format( out, UnitClass( "player" ), link )
-                                                    for spell in pairs( spells ) do
-                                                        if type( spell ) == "number" and spell ~= spells.best then
-                                                            n = n + 1
-
-                                                            link = Hekili:GetSpellLinkWithTexture( spell )
-
-                                                            if n == 2 and spells.count == 2 then
-                                                                out = out .. link .. "."
-                                                            elseif n ~= spells.count then
-                                                                out = out .. link .. ", "
-                                                            else
-                                                                out = out .. "and " .. link .. "."
-                                                            end
-                                                        end
-                                                    end
-                                                end
-
-                                                if GetCVar( "nameplateShowEnemies" ) ~= "1" then
-                                                    if not out then
-                                                        out = "|cFFFF0000WARNING!|r  Pet-based target detection requires |cFFFFD100enemy nameplates|r to be enabled."
-                                                    else
-                                                        out = out .. "\n\n|cFFFF0000WARNING!|r  Pet-based target detection requires |cFFFFD100enemy nameplates|r to be enabled."
-                                                    end
-                                                end
-
-                                                return out
-                                            end,
-                                            fontSize = "medium",
-                                            width = "full",
-                                            disabled = function ( info, val )
-                                                if Hekili:GetPetBasedTargetSpells() == nil then return true end
-                                                if self.DB.profile.specs[ id ].petbased == false then return true end
-                                                if self:HasPetBasedTargetSpell() and GetCVar( "nameplateShowEnemies" ) == "1" then return true end
-
-                                                return false
-                                            end,
-                                            order = 3.11,
-                                        }
                                     }
                                 },
 
@@ -5739,7 +5782,7 @@ do
 
                                 cycle = {
                                     type = "toggle",
-                                    name = "Recommend Changing Targets |TInterface\\Addons\\Hekili\\Textures\\Cycle:0|t",
+                                    name = "Allow Target Swaps |TInterface\\Addons\\Hekili\\Textures\\Cycle:0|t",
                                     desc = "When target swapping is enabled, an icon (|TInterface\\Addons\\Hekili\\Textures\\Cycle:0|t) may be shown when you should use an ability on a different target.\n\n" ..
                                         "This works well for some specs that simply want to apply a debuff to another target (like Windwalker), but can be less-effective for specializations that are concerned with " ..
                                         "maintaining dots/debuffs based on their durations (like Affliction).\n\nThis feature is targeted for improvement in a future update.",
@@ -5771,8 +5814,8 @@ do
 
                                 aoe = {
                                     type = "range",
-                                    name = "AOE Display:  Minimum Targets",
-                                    desc = "When the AOE Display is shown (or the Primary display is in AOE mode), its recommendations will assume that there are at least this many targets available.",
+                                    name = "Minimum Targets for Dedicated AOE Recommendations",
+                                    desc = "When the AOE display is shown (or AOE mode is active), its recommendations will assume that there are at least this many targets available. \n\nThis can be useful with the Dual display mode to guarantee your AOE priority is shown if it doesn't normally change until, for example, 5 targets. \n\nUsing a setting of 5 would make sure the right priority is followed for \"AOE\" mode. Different values may be optimal different specializations and builds.",
                                     width = "full",
                                     min = 2,
                                     max = 10,
@@ -5919,7 +5962,7 @@ do
 
                     options.args.core.plugins.settings.prefHeader = {
                         type = "header",
-                        name = "Preferences",
+                        name = specs[ id ] .. " Preferences",
                         order = 100.1,
                     }
 
@@ -6762,7 +6805,8 @@ do
                                             for pId, pData in pairs( Hekili.DB.profile.packs ) do
                                                 if pData.builtIn and pData.spec == specId then
                                                     defPack = pId
-                                                    if spec.package == pack then spec.package = pId; break end
+                                                    if spec.package == pack then spec.package = pId
+break end
                                                 end
                                             end
                                         end
@@ -6977,7 +7021,8 @@ do
                                             if Hekili.Scripts and Hekili.Scripts.DB then
                                                 local scriptHead = "^" .. pack .. ":" .. k .. ":"
                                                 for k, v in pairs( Hekili.Scripts.DB ) do
-                                                    if k:match( scriptHead ) and v.Error then err = true; break end
+                                                    if k:match( scriptHead ) and v.Error then err = true
+break end
                                                 end
                                             end
 
@@ -7290,7 +7335,8 @@ do
 
                                         remove( p.lists[ packControl.listName ], id )
 
-                                        if not p.lists[ packControl.listName ][ id ] then id = id - 1; packControl.actionID = format( "%04d", id ) end
+                                        if not p.lists[ packControl.listName ][ id ] then id = id - 1
+packControl.actionID = format( "%04d", id ) end
                                         if not p.lists[ packControl.listName ][ id ] then packControl.actionID = "zzzzzzzzzz" end
 
                                         self:LoadScripts()
@@ -7593,7 +7639,8 @@ do
                                                         for_next = {
                                                             type = "toggle",
                                                             name = function ()
-                                                                local n = packControl.actionID; n = tonumber( n ) + 1
+                                                                local n = packControl.actionID
+n = tonumber( n ) + 1
                                                                 local e = Hekili.DB.profile.packs[ pack ].lists[ packControl.listName ][ n ]
 
                                                                 local ability = e and e.action and class.abilities[ e.action ]
@@ -8439,23 +8486,23 @@ do
                             args = {
                                 key = {
                                     type = "keybinding",
-                                    name = "Funnel Rotation",
-                                    desc = "Set a key to toggle Funnel Rotation on or off, for specs which support it.",
+                                    name = "Funnel Priority",
+                                    desc = "Set a key to toggle Funnel Priority on or off, for specializations which support it.",
                                     width = 1,
                                     order = 1,
                                         },
 
                                 value = {
                                     type = "toggle",
-                                    name = "Enable Funnel Rotation",
-                                    desc = "If checked, rotations for funnel specs may change slightly to use single target spenders in AoE.\n\n",
+                                    name = "Enable Funnel Priority",
+                                    desc = "If checked, priorities for funnel specializations may change slightly to use single target spenders in AoE.\n\n",
                                     width = 2,
                                     order = 2,
                                         },
                                     
                                 supportedSpecs = {
                                     type = "description",
-                                    name = "Supported Specs: Subtlety, Assassination, Enhancement, Destruction",
+                                    name = "Supported Specializations: Subtlety, Assassination, Enhancement, Destruction",
                                     desc = "",
                                     width = "full",
                                     order = 3,
@@ -9766,7 +9813,8 @@ function Hekili:GenerateProfile()
     local covenants = { "kyrian", "necrolord", "night_fae", "venthyr" }
     local covenant = "none"
     for i, v in ipairs( covenants ) do
-        if state.covenant[ v ] then covenant = v; break end
+        if state.covenant[ v ] then covenant = v
+break end
     end
 
     local conduits
@@ -10073,7 +10121,7 @@ do
                         args = {
                             gettingStarted_displays_info = {
                             type = "description",
-                            name = "|cFFFFD100Displays|r are where Hekili shows you the recommended spells and items to cast, with the |cFF00CCFFPrimary|r display being your DPS rotation. When this options window is open, all displays are visible.\n" ..
+                            name = "|cFFFFD100Displays|r are where Hekili shows you the recommended spells and items to cast, with the |cFF00CCFFPrimary|r display being your DPS priority. When this options window is open, all displays are visible.\n" ..
                                 "\n|cFFFFD100Displays|r can be moved by:\n" ..
                                 "• Clicking and Dragging them\n" ..   
                                 "  - You can move this window out of the way by clicking the |cFFFFD100Hekili " .. Hekili.Version .. " |rtitle at the very top and dragging it out of the way.\n" ..
@@ -10175,54 +10223,20 @@ do
 
             snapshots = {
                 type = "group",
-                name = "Issue Reporting (Snapshots)",
+                name = "Snapshots (Troubleshooting)",
                 desc = "Learn how to report an issue with the addon, such as incorrect recommendations or bugs.",
                 order = 86,
+                childGroups = "tab",
                 args = {
-                    autoSnapshot = {
-                        type = "toggle",
-                        name = "Auto Snapshot",
-                        desc = "If checked, the addon will automatically create a snapshot whenever it failed to generate a recommendation.\n\n" ..
-                            "This automatic snapshot can only occur once per episode of combat.",
-                        order = 1,
-                        width = "full",
-                    },
-
-                    screenshot = {
-                        type = "toggle",
-                        name = "Take Screenshot",
-                        desc = "If checked, the addon will take a screenshot when you manually create a snapshot.\n\n" ..
-                            "Submitting both with your issue tickets will provide useful information for investigation purposes.",
-                        order = 2,
-                        width = "full",
-                    },
-
                     prefHeader = {
                         type = "header",
-                        name = "Snapshots / Troubleshooting",
-                        order = 2.5,
+                        name = "Snapshots",
+                        order = 1,
                         width = "full"
                     },
-
-                    header = {
-                        type = "description",
-                        name = function()
-                            return "Snapshots are logs of the addon's decision-making process for a set of recommendations.  If you have questions about -- or disagree with -- the addon's recommendations, " ..
-                            "reviewing a snapshot can help identify what factors led to the specific recommendations that you saw.\n\n" ..
-                            "Snapshots only capture a specific point in time, so snapshots have to be taken at the time you saw the specific recommendations that you are concerned about.  You can generate " ..
-                            "snapshots by using the |cffffd100Snapshot|r binding ( |cffffd100" .. ( Hekili.DB.profile.toggles.snapshot.key or "NOT BOUND" ) .. "|r ) from the Toggles section.\n\n" ..
-                            "You can also freeze the addon's recommendations using the |cffffd100Pause|r binding ( |cffffd100" .. ( Hekili.DB.profile.toggles.pause.key or "NOT BOUND" ) .. "|r ).  Doing so will freeze the addon's recommendations, allowing you to mouseover the display " ..
-                            "and see which conditions were met to display those recommendations.  Press Pause again to unfreeze the addon.\n\n" ..
-                            "Finally, using the settings at the bottom of this panel, you can ask the addon to automatically generate a snapshot for you when no recommendations were able to be made.\n\n"
-                        end,
-                        fontSize = "medium",
-                        order = 10,
-                        width = "full",
-                    },
-
                     SnapID = {
                         type = "select",
-                        name = "Select Entry",
+                        name = "Select a Snapshot",
                         desc = "Select a Snapshot to export.",
                         values = function( info )
                             if #ns.snapshots == 0 then
@@ -10242,14 +10256,92 @@ do
                         get = function( info )
                             return snapshots.selected
                         end,
-                        order = 12,
+                        order = 3,
                         width = "full",
                         disabled = function() return #ns.snapshots == 0 end,
                     },
+                    autoSnapshot = {
+                        type = "toggle",
+                        name = "Auto Snapshot",
+                        desc = "If checked, the addon will automatically create a snapshot whenever it failed to generate a recommendation.\n\n" ..
+                            "This automatic snapshot can only occur once per episode of combat.",
+                        order = 2,
+                        width = "normal",
+                    },
+                    screenshot = {
+                        type = "toggle",
+                        name = "Take Screenshot",
+                        desc = "If checked, the addon will take a screenshot when you manually create a snapshot.\n\n" ..
+                            "Submitting both with your issue tickets will provide useful information for investigation purposes.",
+                        order = 2.1,
+                        width = "normal",
+                    },
+                    issueReporting_snapshot = {
+                        type = "group",
+                        name = "What is a snapshot?",
+                        order = 4,
+                        args = {
+                            issueReporting_snapshot_what = {
+                                type = "description",
+                                name = function()
+                                    return "Snapshots are logs of the addon's decision-making process for a set of recommendations.  If you have questions about -- or disagree with -- the addon's recommendations, " ..
+                                    "reviewing a snapshot can help identify what factors led to the specific recommendations that you saw.\n\n" ..
+                                    "Snapshots only capture a specific point in time, and explain the current recommendation as well as all future recommendations based on icons shown. So if you show 3 icons in the addon, the snapshot will explain the current recommendation and the next 2." ..
+                                    "\n\nYou can also freeze the addon's recommendations using the |cffffd100Pause|r binding ( |cffffd100" .. ( Hekili.DB.profile.toggles.pause.key or "NOT BOUND" ) .. "|r ).  Doing so will freeze the addon's recommendations, allowing you to mouseover the display " ..
+                                    "and see which conditions were met to display those recommendations.  Press Pause again to unfreeze the addon.\n\n" ..
+                                    "Using the settings at the top of this panel, you can ask the addon to automatically generate a snapshot for you when no recommendations were able to be made.\n\n"
+                                end,
+                                order = 4,
+                                width = "full",
+                                fontSize = "medium",
+                            },
+                        },
+                    },
 
+                    issueReporting_snapshot_how = {
+                        type = "group",
+                        name = "How do I get one?",
+                        order = 5,
+                        args = {
+                            issueReporting_snapshot_how_info = {
+                                type = "description",
+                                name = function()
+                                return "|cFFFFD100When should I do it|r\n" ..
+                                "You should generate the snapshot when the issue is actively happening. If you look at the recommendations and think \"this seems wrong\", that's when you should do it. Most of the time, issues can be recreated at training dummies." ..
+                                "\n\nFor example, if the issue usually happens 20 seconds into your rotation, then an out-of-combat prepull snapshot isn't going to help the Dev or other community members diagnose and fix the issue." ..
+                                "\n\n|cFFFFD100How do I do it|r\n" ..
+                                "You can generate a snapshot one of 3 ways:\n" ..
+                                "• Pressing the snapshot keybind: |cffffd100" .. ( Hekili.DB.profile.toggles.snapshot.key or "NOT BOUND" ) .. "|r" ..
+                                "\n• Pressing the pause keybind: |cffffd100" .. ( Hekili.DB.profile.toggles.pause.key or "NOT BOUND" ) .. "|r" ..
+                                "\n• One can be automatically generated if the addon fails to recommend something, if you allow it to via the checkbox at the top of this window (|cFFFFD100Auto Snapshot|r)" ..
+                                "\n\n|cFFFFD100Okay I made one, where is it?|r\n" ..
+                                "The snapshot can be retrieved by picking it from dropdown list near the top of this window, then copying it from the textbox that appears. Be sure to press |cFFFFD100Ctrl + A|r before copying it so that you get the entire thing. It should be very, very long."
+                                end,
+                                order = 4.1,
+                                fontSize = "medium",
+                                width = "full",
+                                },
+                        },
+                    },
+                    issueReporting_snapshot_next = {
+                        type = "group",
+                        name = "What do I do with it now?",
+                        order = 6,
+                        args = {
+                            issueReporting_snapshot_next_info = {
+                                type = "description",
+                                name = "|cFFFFD100Now that the snapshot is in your clipboard ready to be pasted|r\n\n" .. 
+                                "1. Head to the Pastebin website: https://pastebin.com/" .. 
+                                "\n\n2. Create a paste with it and post the link wherever it's required (probably the discord, or a github ticket)",
+                                order = 5.1,
+                                fontSize = "medium",
+                                width = "full",
+                            },
+                        },
+                    },
                     Snapshot = {
                         type = 'input',
-                        name = "Snapshot",
+                        name = "Grab your Snapshot from this textbox",
                         desc = "Click here and press CTRL+A, CTRL+C to copy the snapshot.\n\nPaste in a text editor to review or upload to Pastebin to support an issue ticket.",
                         order = 20,
                         get = function( info )
@@ -10263,16 +10355,16 @@ do
 
                     SnapshotInstructions = {
                         type = "description",
-                        name = "Click the Snapshot and press CTRL+A, CTRL+C to select all text and copy it to the clipboard.\n\n"
-                            .. "Paste the text into a text editor for your own review, or upload to Pastebin to link to an issue report on GitHub.",
+                        name = "|cFF00CCFFClick the textbox above and press CTRL+A, CTRL+C to select ALL text and copy it to the clipboard. It should be hundreds of lines long.|r\n\n",
                         order = 30,
                         width = "full",
+                        fontSize = "medium",
                         hidden = function() return snapshots.selected == 0 or #ns.snapshots == 0 end,
-                    }
-                }
+                        }
+
+                },
             },
         },
-
         plugins = {
             specializations = {},
         }
@@ -11048,7 +11140,8 @@ do
                                 if type( v ) == "function" then
                                     local ok, val = pcall( v )
                                     if not ok then
-                                        if not keyNamed then results = format( "%s - Aura: %s\n", results, k ); keyNamed = true end
+                                        if not keyNamed then results = format( "%s - Aura: %s\n", results, k )
+keyNamed = true end
                                         results = format( "%s    - %s = %s\n", results, tostring( val ) )
                                         count = count + 1
                                     end
@@ -11058,7 +11151,8 @@ do
                                 if type( v ) == "function" then
                                     local ok, val = pcall( v )
                                     if not ok then
-                                        if not keyNamed then results = format( "%s - Aura: %s\n", results, k ); keyNamed = true end
+                                        if not keyNamed then results = format( "%s - Aura: %s\n", results, k )
+keyNamed = true end
                                         results = format( "%s    - %s = %s\n", results, tostring( val ) )
                                         count = count + 1
                                     end
@@ -11075,7 +11169,8 @@ do
                                 if type( v ) == "function" then
                                     local ok, val = pcall( v )
                                     if not ok then
-                                        if not keyNamed then results = format( "%s - Ability: %s\n", results, k ); keyNamed = true end
+                                        if not keyNamed then results = format( "%s - Ability: %s\n", results, k )
+keyNamed = true end
                                         results = format( "%s    - %s = %s\n", results, tostring( val ) )
                                         count = count + 1
                                     end
@@ -11085,7 +11180,8 @@ do
                                 if type( v ) == "function" then
                                     local ok, val = pcall( v )
                                     if not ok then
-                                        if not keyNamed then results = format( "%s - Ability: %s\n", results, k ); keyNamed = true end
+                                        if not keyNamed then results = format( "%s - Ability: %s\n", results, k )
+keyNamed = true end
                                         results = format( "%s    - %s = %s\n", results, tostring( val ) )
                                         count = count + 1
                                     end
@@ -11155,29 +11251,29 @@ local B64tobyte = {
 
 -- This code is based on the Encode7Bit algorithm from LibCompress
 -- Credit goes to Galmok (galmok@gmail.com)
-local encodeB64Table = {};
+local encodeB64Table = {}
 
 local function encodeB64(str)
-    local B64 = encodeB64Table;
-    local remainder = 0;
-    local remainder_length = 0;
-    local encoded_size = 0;
+    local B64 = encodeB64Table
+    local remainder = 0
+    local remainder_length = 0
+    local encoded_size = 0
     local l=#str
     local code
     for i=1,l do
-        code = string.byte(str, i);
-        remainder = remainder + bit_lshift(code, remainder_length);
-        remainder_length = remainder_length + 8;
+        code = string.byte(str, i)
+        remainder = remainder + bit_lshift(code, remainder_length)
+        remainder_length = remainder_length + 8
         while(remainder_length) >= 6 do
-            encoded_size = encoded_size + 1;
-            B64[encoded_size] = bytetoB64[bit_band(remainder, 63)];
-            remainder = bit_rshift(remainder, 6);
-            remainder_length = remainder_length - 6;
+            encoded_size = encoded_size + 1
+            B64[encoded_size] = bytetoB64[bit_band(remainder, 63)]
+            remainder = bit_rshift(remainder, 6)
+            remainder_length = remainder_length - 6
         end
     end
     if remainder_length > 0 then
-        encoded_size = encoded_size + 1;
-        B64[encoded_size] = bytetoB64[remainder];
+        encoded_size = encoded_size + 1
+        B64[encoded_size] = bytetoB64[remainder]
     end
     return table.concat(B64, "", 1, encoded_size)
 end
@@ -11185,27 +11281,27 @@ end
 local decodeB64Table = {}
 
 local function decodeB64(str)
-    local bit8 = decodeB64Table;
-    local decoded_size = 0;
-    local ch;
-    local i = 1;
-    local bitfield_len = 0;
-    local bitfield = 0;
-    local l = #str;
+    local bit8 = decodeB64Table
+    local decoded_size = 0
+    local ch
+    local i = 1
+    local bitfield_len = 0
+    local bitfield = 0
+    local l = #str
     while true do
         if bitfield_len >= 8 then
-            decoded_size = decoded_size + 1;
-            bit8[decoded_size] = string_char(bit_band(bitfield, 255));
-            bitfield = bit_rshift(bitfield, 8);
-            bitfield_len = bitfield_len - 8;
+            decoded_size = decoded_size + 1
+            bit8[decoded_size] = string_char(bit_band(bitfield, 255))
+            bitfield = bit_rshift(bitfield, 8)
+            bitfield_len = bitfield_len - 8
         end
-        ch = B64tobyte[str:sub(i, i)];
-        bitfield = bitfield + bit_lshift(ch or 0, bitfield_len);
-        bitfield_len = bitfield_len + 6;
+        ch = B64tobyte[str:sub(i, i)]
+        bitfield = bitfield + bit_lshift(ch or 0, bitfield_len)
+        bitfield_len = bitfield_len + 6
         if i > l then
-            break;
+            break
         end
-        i = i + 1;
+        i = i + 1
     end
     return table.concat(bit8, "", 1, decoded_size)
 end
@@ -11248,11 +11344,11 @@ StringToTable = function( inString, fromChat )
         decoded = fromChat and decodeB64(inString) or Encoder:Decode(inString)
         if not decoded then return "Unable to decode." end
 
-        decompressed, errorMsg = Compresser:Decompress(decoded);
+        decompressed, errorMsg = Compresser:Decompress(decoded)
         if not decompressed then return "Unable to decompress decoded string: " .. errorMsg end
     end
 
-    local success, deserialized = Serializer:Deserialize(decompressed);
+    local success, deserialized = Serializer:Deserialize(decompressed)
     if not success then return "Unable to deserialized decompressed string: " .. deserialized end
 
     return deserialized
@@ -11709,7 +11805,8 @@ do
             if result.use_off_gcd then result.use_off_gcd = tonumber( result.use_off_gcd ) end
             if result.use_while_casting then result.use_while_casting = tonumber( result.use_while_casting ) end
             if result.strict then result.strict = tonumber( result.strict ) end
-            if result.moving then result.enable_moving = true; result.moving = tonumber( result.moving ) end
+            if result.moving then result.enable_moving = true
+result.moving = tonumber( result.moving ) end
 
             if result.target_if and not result.criteria then
                 result.criteria = result.target_if

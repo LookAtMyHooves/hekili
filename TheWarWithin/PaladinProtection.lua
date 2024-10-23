@@ -36,11 +36,11 @@ spec:RegisterTalents( {
     divine_toll                     = { 81496, 375576, 1 }, -- Instantly cast Avenger's Shield on up to 5 targets within 30 yds. After casting Divine Toll, you instantly cast Avenger's Shield every 5 sec. This effect lasts 15 sec. Generates 1 Holy Power per target hit.
     fading_light                    = { 81623, 405768, 1 }, -- Blessing of Dawn: Blessing of Dawn increases the damage and healing of your next Holy Power spending ability by an additional 10%. Blessing of Dusk: Blessing of Dusk causes your Holy Power generating abilities to also grant an absorb shield for 20% of damage or healing dealt.
     faiths_armor                    = { 81495, 406101, 1 }, -- Shield of the Righteous grants 5% bonus armor for 4.5 sec.
-    fist_of_justice                 = { 81602, 234299, 2 }, -- Each Holy Power spent reduces the remaining cooldown on Hammer of Justice by 1 sec.
+    fist_of_justice                 = { 81602, 234299, 1 }, -- Each Holy Power spent reduces the remaining cooldown on Hammer of Justice by 1 sec.
     golden_path                     = { 81610, 377128, 1 }, -- Consecration heals you and 5 allies within it for 902 every 0.7 sec.
     greater_judgment                = { 81603, 231663, 1 }, -- Judgment causes the target to take 40% increased damage from your next Holy Power ability. Multiple applications may overlap.
     hammer_of_wrath                 = { 81510, 24275 , 1 }, -- Hurls a divine hammer that strikes an enemy for 47,636 Holy damage. Only usable on enemies that have less than 20% health, or during Avenging Wrath. Generates 1 Holy Power.
-    holy_aegis                      = { 81609, 385515, 2 }, -- Armor and critical strike chance increased by 2%.
+    holy_aegis                      = { 81609, 385515, 1 }, -- Armor and critical strike chance increased by 2%.
     improved_blessing_of_protection = { 81617, 384909, 1 }, -- Reduces the cooldown of Blessing of Protection and Blessing of Spellwarding by 60 sec.
     incandescence                   = { 81628, 385464, 1 }, -- Each Holy Power you spend has a 5% chance to cause your Consecration to flare up, dealing 7,127 Holy damage to up to 5 enemies standing within it.
     judgment_of_light               = { 81608, 183778, 1 }, -- Judgment causes the next 5 successful attacks against the target to heal the attacker for 3,499.
@@ -364,6 +364,11 @@ spec:RegisterAuras( {
         id = 465,
         duration = 3600,
         max_stack = 1
+    },
+    divine_guidance = {
+        id = 460822,
+        duration = 30,
+        max_stack = 50
     },
     divine_purpose = {
         id = 223819,
@@ -884,6 +889,9 @@ end )
 rawset( state, "holy_bulwark", "holy_bulwark" )
 rawset( state, "sacred_weapon", "sacred_weapon" )
 
+local ld_stacks = 0
+local free_hol_triggered = 0
+
 spec:RegisterHook( "reset_precast", function ()
     last_consecration = nil
     last_blessed_hammer = nil
@@ -908,11 +916,40 @@ spec:RegisterHook( "reset_precast", function ()
         else applyBuff( "holy_bulwark_ready" ) end
     end
 
-    if IsActiveSpell( 427453 ) then applyBuff( "hammer_of_light_ready", 12 - ( query_time - action.eye_of_tyr.lastCast ) ) end
+    if IsSpellKnownOrOverridesKnown( 427453 ) then
+        if talent.lights_deliverance.enabled then
+            -- We need to track when it ticks over from 59/60 stacks.
+            local stacks = buff.lights_deliverance.stack
 
-    if buff.hammer_of_light_ready.down and buff.lights_deliverance.stack_pct == 100 and cooldown.eye_of_tyr.remains > 0 then
-        removeBuff( "lights_deliverance" )
-        applyBuff( "hammer_of_light_free" )
+            if stacks < ld_stacks then
+                free_hol_triggered = now
+            end
+            ld_stacks = stacks
+
+            if free_hol_triggered + 12 < now then free_hol_triggered = 0 end -- Reset.
+
+            if free_hol_triggered > 0 and action.hammer_of_light.lastCast > action.eye_of_tyr.lastCast then
+                local hol_remains = free_hol_triggered + 12 - query_time
+                hol_remains = hol_remains > 0 and hol_remains or ( 2 * gcd.max )
+
+                applyBuff( "hammer_of_light_free", max( 2 * gcd.max, hol_remains ) )
+                if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light active; applied hammer_of_light_free: %.2f : %.2f : %.2f : %d", buff.hammer_of_light_free.remains, free_hol_triggered, query_time, ld_stacks ) end
+            else
+                if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light active; hammer_of_light_free ruled out: %.2f : %.2f : %d", free_hol_triggered, query_time, ld_stacks ) end
+            end
+        end
+
+        if not buff.hammer_of_light_free.up then
+            local hol_remains = action.eye_of_tyr.lastCast + 12 - query_time
+            hol_remains = hol_remains > 0 and hol_remains or ( 2 * gcd.max )
+            applyBuff( "hammer_of_light_ready", hol_remains )
+            if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light not active; applied hammer_of_light_ready: %.2f", buff.hammer_of_light_ready.remains ) end
+        end
+
+        if buff.hammer_of_light_ready.down and buff.hammer_of_light_free.down then
+            if Hekili.ActiveDebug then Hekili:Debug( "Hammer of Light appears active [ %.2f ] but I don't know why; applying hammer_of_light_ready." ) end
+            applyBuff( "hammer_of_light_ready", 2 * gcd.max )
+        end
     end
 
     hpg_used = nil
@@ -953,6 +990,9 @@ spec:RegisterHook( "spend", function( amt, resource )
         end
         if talent.tirions_devotion.enabled then
             reduceCooldown( "lay_on_hands", amt )
+        end
+        if talent.divine_guidance.enabled then
+            addStack( "divine_guidance", nil, 1 )
         end
         if legendary.uthers_devotion.enabled then
             reduceCooldown( "blessing_of_freedom", 1 )
@@ -1255,6 +1295,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
 
         handler = function ()
+            if buff.divine_guidance.up then removeBuff( "divine_guidance" ) end
             applyBuff( "consecration" )
             applyDebuff( "target", "consecration_dot" )
             last_consecration = query_time
@@ -1886,4 +1927,4 @@ spec:RegisterOptions( {
 } )
 
 
-spec:RegisterPack( "Protection Paladin", 20270918, [[Hekili:TVr7UnoUXNLGdWRnUSETKJ3K9qSbUEOa3fC4qXLTOO)XY0w026ISKROuY6cd)S3zi1hKuKsYEZUDBX9hNyXrdNz48nhp3z(hN)OpjLo)3Ch5EZOp4C3qNXotCM)y6H905pUNS6jYg4FIi7Gp)BjXP0vPbXrNw83iHe)GieMdHXeFevS4SKvaCBtt3Z(H39UnbPBZwoCv8U3Xc2LfsWxDvczDk(9vVB(JlZcct)LO5lnshJ(W8hjzPBJtM)4Jb7(jaZb((ub4u2Q5pIG)2rF4TJU7hoT43PS04e6Pf7csd2qe0jjNEddyPNE40dLVH71NwG)9M8)Iya3KtlY2J0sfW39whhaixxaI)UyTfRtI3LdFjC3(w3XaiFClS()GKaFa8pkIW9MHcOkcd(2VXf)0iYYqQ)8)Y8hxLeKstciOyz9AqSfXOG0cbFOF8laIemdaP0sZtbPMvmLsIEkiAZPf9oTGJv22aAOVx8AV0TuVKGnBtPXzm(gWHQ)PfBJdp4Tp(fAYqF66GvbPNwmfKsNwC8yoA8dEoiI6TplzFmJomB)PfdQOplBcsQJTsQBPKW0Td3Vc2T7pT4L4nEIh95rwLRbeveik8crYXBDcTgz)sCcNO3egNCaj2BAqUgsJshUoiIe6XaPS)WC44uRSypicmaWn2NSdmM8MWoTy2Pf(S8hWb6kohYPtscOIN6bSinYh4vfMytgSCajcjts0QaesCNyQGLlheNdQlTpMRqPX6kVaY6t6KkLfEBtm5PVL4oR4f503BLt5ejl4zyRG3a2YWUE4(TMaG8mnAdsMVaon2IC9T))05R2MI83DD1pJZKk8eso4fh5TfmNrvJuUkajlmT0DDbKj0LzprL3HgDd3Kdiq(z11xd(M0DKwgBGeg6j(Ihg4re(XtebFvCCi6PNzY7wNWGuimdEj6ekstcIEIMA04RtiqLg01K7ek4USb1gXP8(ekONVKu)C2N(mxJZJKLqmDCxQ6GhQmV)iZFZoqxud0XYGsswra1BixLK6qEJmKkX5vHtxYhVhykAA17(mb08GvX)lmd(JJIrU4myyQZWTeMxHEHW)M6AGOkDij6GN)EwrO4RKGY1auO9QeAkq)q)SK88YMnvbfgGyGan13Qcy58OQoLh7q0kpwyCQjLR2LrUgLrUniJmX91LrMKKkYiJsGzTjeniIColruQKLqJzKMNVtUw(MSaFW)nvjNhGLljr6bkp7VdjdtO7ibrmUJnxjp5Bj72rtqOe(dtOe)dch7YsqX(Mq9JZwMwTFLOPyfGnw9KqTYTsQiE7Leg3gUyVQqZGo6UqJyB2z)Lr5aHpwI35GaVbJHHmGn2NaYvjU0rNlryYypbbw9faBIlnWi2ZiVpNsuzNIC592lkgmorL1kvbmaPxWk)k9brQ7cgUk1EUwVBPQTqmOF(zkBbLsrKYkPFR6BwvjRQrORv3yVGHi6Ns9ij7iy0boZZiRavaVxOK9XrsQ8ICfKxSKk7BCvzlS3xW5IKXus7RiBJYJiTLRWdQlosNT5NrfCaRPO)vbbR4F2EkyFLss2ar(Tvfk)WFCvXQlZcFHK8ecxL606SKdYgcJRPbbYHXWEFyviTyhrFBnKUbxsqtyffaXBVqsWEXQ8k6xhhgg)cpX4qqFd2rcqVlPu4SJ6dSPpcdS7hIZGp5bkyKOG0dxd5rdh5ba4GDW2Oa0vZHtliqrGyGGnGuhwkgEPi85zma7)4JIhLqbTqgud8sssc8M(WAXRHTIeGvgdg7W2KcjsSb)kIiI)ZaNqsWDGVL72hIDJaxleLgWZJHp(zqybqkrDW3GxAvwcJ6FDoUJIxg7dpLTnol0N3pLmb57dux62a214HfIH1CE)0IF)V(J)6V(pH0yjrCPsAmasgwjHq3hFPcHiFpkxjoJVm8C0CbwvCS8ggU)4bJ41gw0wh2WIOxF)03PDgEDW6Px1Iwu2(EfHiSctU2sVoPapB64Ex1VFZrl7kQCgn44XCwO4WhbJF0d0(az7RRA1Kj36VRmmh4orP5MHL5IxpwJOQt1ey1lqRjNhR2Iuatj8(6mGYG825l5LgSJkCCTbIXSJ8jZ2)F4m8pZ9OKlMe(nlOcKiAYVOZOwYniHe47bgFW5aX3NnK(jSdHc(sFTarIGoJm1VMuWPeFh1ZCZG00G4WPLkw55FabAimgKZjQcNRe1r9cHJ4cAPaBc9c((Bp3JVa7FL(yT42o2dC)ArisAmRsYyGTCcuqqsWtuobylwAZrM(fmidetkKIg2iraUA)yHh)cF27tcIb(j4FJ9ghc2Ks4nI40cqK8en3J7ptXTcdPHXaWmUqi48ht0(C0NaQn(ZaFHHz)jioaa0qn3qn78JZS2B52vy0aP(ENT3s1WiAS3dR(LKrq0UyinET8(7zXodSSVzIWoSJNSZKZBVg37tddGOQkcGs(PQijo3yVJvn7BQrprFq2HSMbOw3mgz23TQTI27O0ReD1AnyV4UJ1HApltPvq3RXA5QvSrfLwRzAUQnOr3MtLrS7R4Z5831Eh3TlFAILSBKPLRSudq1AnfIMB7wdPsL6RNHojuGGCyC0mwlAeZWAnPGF05OuvSHQA4jeKxwNurm3mQSqY23exZn3QQGwSGXYIUTrjdK7ktt7iemh)hMKmXqxf0KBUNNCZ9RHCZXCdV(Qj3CfAF6D2OX2z1AdwkVwXo1FLZoIXKg7iJDpLB3Vbmo9CX9Nl8N0vQ0MBNgUpw996M5FETaPgcDK7XtdNe2O9jDVAJ3ldQLM0FBNJvE35hQ8dDpsPJsKy5m9194wDDonQTRQyQDtf69m9cQn52jMxwo(K(9JKQD)jA3qPQePLYeQ5oPcTI7lSz9sl(hLBRMZKsVHIknlQitPOSDXiRPef2Eq9ZWBXyZAdPnD31n5XVJnauYyqRbSLwlDERlrni4URcXRdsOldJJf3dhOrJTUcxbheOBh9Hr3nesvaYYnIFB9IoXfSBFCsAE32Et5D39gSzz)RmaJylXIXtjswA8ocVWfO4DiNo2Wtp8R8gpn5hGcyIJG9JV8BkICPE)jVr0eU3y56vGL778PbDePYx)JfeRbsNqE9BGQgYncsNqUHRDYaPBcMVOOVveB4(0mivUy6(srFhqCJQF1wwHAF)xFK(zQ2zd5Vkgm2P8l7W7lm6BfXxQXshP7lf9DaXxKl1tpyWBF(BXopN9oTFuXRsPPZPcauKLVEiUeLUTF8ygLgaqHwF9qm)W5x4NliMUvDkBrXop9Mvq(jVhhUM41b4mw8DFx192ug1(7N(omXbm1cgjcwDDWkX0n8qBWt8)JIjH4btWPm7oMbrpxyJaP2ueZWi3yeZquut714efmnx4wvy718jqzQdETvMnC6z35yV(xz3T8XJnyHpBAdUTWRFYCmKphw0vMfDnZI15cjwSo)xXIg4IznW(YCO2Kq9qjpIQC8X9t(jk9Bd5i7nPRx149DV0unlHm9zprialifw7GknX7TcBHl02H8CWAXfXkj3kf3S6wAOeRXYsNn1foBmxm6XJ1leD2TtQ)yOGhJeJAXjMHru5y5jB9sPm(wALaIVE)gQh6EhGQ7JLuoZz0GbMXPunF1fB2ViAZitVuo7m4XJLMlwi(PJhP6LwEJcIEo(jQh9tqvH4qYJBIqvH35zVGO1zSlqcxwYOTxmN6MDNSQyLQ8uzx1L4O2p2ctVkS7we3CxAI5MUxHJaR)ml61V(VKHPJoEK)I1MMPbwOKAoGm6L582R8NB0lMn6qzyTfYbB)0i6viIQpw5Zk)5q07QCdMAdsEo110qKRYyLdqE(JlhECB8IvulF(AG4LMh()Bs(f)kfqQT(VDHMK(FJWaA75)Bi1L)rdOzh6mr2hK0SkzogQ2vbizmzBsI6x6IU(e3EVBohyBYhhG5uzCkvZFrLjuveqULjQDGrU1aFDo780XaLYFS5ljy2uNkkZ29FyMYAWDE)(v0yXZRp0RsbjBzGxNoAqVkFXZChKZQggUvRHcWzlRXJulN4fUWTC8Om2aiVRmWbtvM2uqNreJqBavH0ym88cvX337ktHQHCJ7qogwi7YujvMSjrfuDlhPXIy1TmLP4m9vDWDpKx13L)J88phj0)CKqBxl7R6iHA0s5BeXqlXg0QfRJw65dLjp6u9rc9(P5Jd6f54tEkR6LVrtDnIkTA06FovUchQNfBBey17RUSUMLggCXUDGDFBNx1Iy(Lzd1UR8xJnYL7c)BIzNSZ2RTmeCgLCAf6EL2KvA8LQYJKRh3Wuu2ZGQ80BMC8yNoeMHz1DvRtl3NTDBhmwoh98UOIAeMZPFHTeROmLjZd740rDrPQdh(x4PZzWPMjuL2TZROQk7RjTQPlxXLwEWwkfPPslg1Hkl6Sg)KMOmvzV8SsnDs7ertyUHICu2MBUqYZPOsglIWUDEOf(VoO1VKM6WyZWUPn2I9D9xXQzEDqLshqwFSO17aeqg9Eqfc7yxZNMXIUYZZPPV95FCQtpJ9tglatzqoVF6nyUInHkxLRns9o(kYYS22mata1oshComRBBmR7RhZ6OCbsVsmlFMLM)F(d]] )
+spec:RegisterPack( "Protection Paladin", 20271023, [[Hekili:vVX2UTno2VLGbW1gBQRLCCsMIy)WoVmnyrXGnDX(MLzKOT5ezjVKsj1lc83(EiPUqsrkjNKMTdqrtI5HNB8CL84LEl)2Y7Iqz4LF1FI)fEt8No27IPZM6T8USd7XlVBpk8b0g4xsq7G))pOPz4WmsAYXv)bkgfrs4WCioffXXflnNgcWTnlBp7ZF6tBizBZVFCy6UpXi7YJr8TgsrRZ4)D4NwE395K4SVKS8E7mYY7q5zBtPlV7oYUFdqmjkclHgZcxEhh6p6n5JEENFCf8tFVpFC1)AphvhxTMMU74k(gpE7XBfGo5x)4KRbq(NywwkfGzhjJSbjLiuHKftyzA7Whqo)Nxu8togeODvUKuvaFTKt897GnU6J(tbq(2wy9)nIc)hOP4ktoTzCvzyAACu6tj8)4RIdkCc6(yC0Y)oSiLKHPeeOX3JJJdYq0n4m24yYMTzSG)mpAZoCs2XvlMdmZXvp)8XvNDCffrIcWpcRmgffXgJ)oNAYLnxJakIfhxD1m7lNVhoAe6lopRr1LzWPiNHlxhbBBdjztWtuu2wvbbGCQtr7(81RhRVxnYUpv8tahx4ehdpUYgAO4Disci53awnfsiaAgzhwi1EtoUAe8VAITlLlAbPRd2eNspWP6SEEOW2sWXr8TMTfhq5klCAotE4mTMerKhjj4GS04yo6V8evmsPO0SXTeZj6KAQEpIX)fo7joh5K(QtI0vOguCxxJ41ek((400OLCCc(RRr5XzvwZLGbaL)a2WOWVDga0OjC6ly4G1umwi)doUAlgfdS0(WmXz7tPBcKFunbFkLgPDoAAbwcyicoeL)ra3Tu6CgiJew7EAX(RxyOoYJnJPEHImkj5bWeZM5sVqGopyES3luWYqjriAXP8Ekgc2FpQ55Ce(rH)AakNISDC7kAILWfvbwOHiHhdL2eYluHmmnHHHepY)sdotnFkeIHHZQ37JiWYdwL)BX5Wp8unilodgN5nElIfuAxiSgnwduvq0ZKdbr7zI1hkIkxbLVfO4(0kOPY9okNwK1IhfrbfwGyuvcadsvcRqg1TPcyhscdyXPz2mU6wh5Bvh53IoYM03uhzttQPJSQbw0Ls0IkY7KurzAotTMYwect1GCSKawTvBnyi469aehuONkdmAlvZ4kTnOn3MgFiyF6ty6yiMmjKaHkbtOjsnGanfzI2Nt3NYKXwvsf6GiTNm3zG5xhBvTMJucJAjUV7QgYqX8cDwtsqXbIaCJlGtAYQO2jjq8ooHJq7GcLdMjZdgXk(abqNjKqzUtAeVocqeXjrGSQjeBYHLjirYyusiHdjNsmDWk0dYZb9LK1ezk6ABO9sx6HSTjf9WptsNt82EvucMKrEeifSdGKX99W9NnfGr91Twa3FffpDIYLVR7BCgVzkfwGoea1FSfCNzYi2v1pzjED5UkGXZORIYeEJBKmqe2YRmSwB1QVweRsRY8lMuLlQBI4BViIQ0Bumk6qvInxCYi1SFTrr4iH)lmfDILStg6n)ttV5)EO38SxyX7MEZxA9TfTBhMw34vRfnuQsGvymoJaBlcbmlKEk8bHF7K6AyK5V4GKZEaCgJKWwLeRGXpH(uv8Jm57wlrz7(nq95b(C6lu(Z6lxwtq8bSGRoq7OgdtADrVkAXDDanqONsWQ2ojCX7Zu7jPwpA7ErUufuhndDLkmc(bhfirRbKxBNW66c9T8RA9prZzii4luneL0ODDVjAD6PCpgAWLP0TyRg7fwgfDcUjNeb5tWA1Gnu5QoQ1XAxSJVYHLHnBGWfV0nUoyGKUuCuA(9z10RcnLRuEuRD7Af728cv086guhsXKLkQzTNTDFsoHUPNl9fBl6bSW8asOcX(yk9kDtLFWzoHUX1r54mYB8m7X0b2P1ioUJcOFuwAChSxE11Pu9J16G(nHmGegvZTYMrA)mS0S6vg3jb)9SaeDhsEjUaLzOqW2l4jmAFAIIfRu9RUyLQFO1vv1WxQjlwsXnO33NO51Lk6MRucy2A5OzOTt)(tbkx37795XpHOpWHR(SCDo9GQ3Qe(6Enf6HPaTpegJlPip0uRToCwNKSq7vgsWjCQH06RuRFRXIZfmLP0DxhxFBzIceJb(08aRfCBpzGBkvJoTC6ovtR1W)UZLgPolt(9dL587lZzM6TkFBpDMc3Y5gMw2Q15axsXYLcKp7b3rEdeWBh6729h864kTkY7xLUUWTtV4rZl3YZV)Le55oOFZiMcF8chpzKSs9WC9ClnIu516Zj9YEgnXdkzVejof7rWrBhiD8erVbwPt7LRS37qeN28w9(XhlXVDhsZ4fUIolE2AkzVC1Vagh8wiIX8ufCM48JR(gE3(y(tcZ2MMhdPg2tjPG8q(V8NRgs6MHex15Xv3Xl7c2j)rK)DzHxq4eOZ1qEjOCieYht(I28SmCRXFhKlEIVFdkVeaASrIT2R9wuNPz0hT9RDX2AXXmVw7wB2TGnij7sHAEnkKEGd)mElFZo5wBNQuvNU0hHJjpIPAkahD257U672Jn1wKi)P9Ubp)lo9o88N1)w887iwJ7NKT(WSPBOwP4d7Y4tVGuPmUM3KK960B7U)91ADUHxQUO7o6YRYIPJAmSQrBrKM62T0OExL0XgVGkhnAVAR73nv0opiQm(k8P25kVjGl9DGnDI4Y3VtmClKD7tPGv)6uG2FO65H)a4bJ)p5ek)uLLYR)aLNLUdjctbPQHZd24J3(pG0Kad)ziCvAcqnXYFO8s70FIoaNzPkRM1y5HEFFuprQ6lm6aXgG0lK38roBGCRG0lKB5LnTW62G5hk67eXwEYwlALxmF)srFpqCRMFnwwJBV89hPVsZoxi)nXHXnN)Yo8(bJ(or8l1zPN89lf99aXVOqQhV1s0(IDXoTG9EDFujUMT2oNkbqtx(2H4ku639XJDuAbanE9TdXIdNViox4y6k9XCLR25tTv6AcF4D(LFPCz24QC1)T5FIxjbVydguytgznjuEvW32f8OO)S8AJV1gCAdfMDqmhPvRaPxgJDyulLXoeLpI358RyFEHkT(L8oxmAtZ9oNSEUD3LbUdjoy4zUdg)8ZT4xVyElbRg98ZNzpZXRre9vfrF7IytPqreBk)1IOfPyrlIVQeAmID3wjJCtoXCKQ(jAviZLi3LvpOESbUrz0KuqM5JXivGLScRBqvg08oHTmWz3qEkyT8T3u0BvQBwtpnUgR1PlFXCF4SX(LH98ZnBqFXvZA(XqtIwzg9le1omYXfP6KT5dyyDxgtYnF7dTT)IgkVXd46H8RiDH3KrJSJtL7ZRPAZXLpSy(u7iZ8beDlGp)CL7IdMF(0j6rPvjej5X0hWb4VdTjYN0norKMkIEfdijRZzVanC1KF7AJfC3IRvnfRnLNRgQUchnMysBBfOUd1TiKMC4NgugiW5SsoyyZXrC(KNFw9EURhdXro4KgbGSgL50OvXNBnkMl(qBIRK6bxZ34GsvuZzdBr1mno4SchMgtdwb312KGPlyvtbwXhxnbyUKfNOw981cZRmuB))K9lh1qo32CaeBt7)tIayqZ)AO1vN8pd)qVzQXGktr6mhQXd(R4m54olhmSkeDZrG4g)cjW1CemIxtL1HsPyJAdKImHChJHYObNzLKLxzRnDHfP2nomLn3JsYnEa76agTKBw0CEJH0YAdnYn(w59wshuRBl)0MtjIcx0XeImFIlvB1Wgzv3QDR)C2s79cMRn(gG5GuFzmXhqfkw(8sfZLf8vJ03d6r5dQL8OW2vvjQ9WKYMJ6x5ptLPH7ySnGQKguNF8MPwzgJ7VNZdN1bYbHVVdNXG(jpZTZBoEkMkFiBVnz)O4ntDDUALr0F(O3F6B8(sVfmG)jXaTzYwmCaIiOnhoIBMxmye2fmBvRADyiMpRdteJMDoHWeQpP4GcPzU9iIgnRm8uAHdAb6K0TV7UeVxM(VBM4q7Bhx9tXGc07qVD8kU9Xh6mJXiW6MQllqyh3YidmWIP88lGki61HaeAhsT35d9(Q9B7HT7P4p1htuRWCkxC2WUEBF(LN0EfYvfHy)f9N7QeedtVEyI8cpdpb9HDgv72PfnGuxrJ9uc6xwDnigLwAV28H1bDiMF)ewmPUfHuhFZlg1B)IzTXz66E1VlfZN1nt0gMBPMEnYCXlK98kADXLkSFNhgjZBcAZ30OjmUC)BJWoIc0Clodg0euLIguThlVPAaICgoGKH3Xox8TDQ8sSfLxn093pQ5EdSE9R8MA07VB(ftalZ2qLV2RSO)qyLTA2GmJ4VWGBKo6uew)Uew)3oH1t79wEJewXS3hU8RxEPyaFw()c]] )
