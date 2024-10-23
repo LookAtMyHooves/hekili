@@ -36,11 +36,11 @@ spec:RegisterTalents( {
     echoing_blessings               = {  93520, 387801, 1 }, -- Blessing of Freedom increases the target's movement speed by 15%. Blessing of Protection and Blessing of Sacrifice reduce the target's damage taken by 15%. These effects linger for 8 sec after the Blessing ends.
     fading_light                    = {  81623, 405768, 1 }, -- Blessing of Dawn: Blessing of Dawn increases the damage and healing of your next Holy Power spending ability by an additional 10%. Blessing of Dusk: Blessing of Dusk causes your Holy Power generating abilities to also grant an absorb shield for 3% of damage or healing dealt.
     faiths_armor                    = {  81495, 406101, 1 }, --
-    fist_of_justice                 = {  81602, 234299, 2 }, -- Each Holy Power spent reduces the remaining cooldown on Hammer of Justice by 1 sec.
+    fist_of_justice                 = {  81602, 234299, 1 }, -- Each Holy Power spent reduces the remaining cooldown on Hammer of Justice by 1 sec.
     golden_path                     = {  81610, 377128, 1 }, -- Consecration heals you and 5 allies within it for 382 every 0.7 sec.
     greater_judgment                = {  92220, 231644, 1 }, -- Judgment deems the target unworthy, preventing the next 19,379 damage dealt by the target.
     hammer_of_wrath                 = {  81510,  24275, 1 }, -- Hurls a divine hammer that strikes an enemy for 19,714 Holy damage. Only usable on enemies that have less than 20% health, or during Avenging Wrath. Generates 1 Holy Power.
-    holy_aegis                      = {  81609, 385515, 2 }, -- Armor and critical strike chance increased by 2%.
+    holy_aegis                      = {  81609, 385515, 1 }, -- Armor and critical strike chance increased by 2%.
     improved_blessing_of_protection = {  81617, 384909, 1 }, -- Reduces the cooldown of Blessing of Protection by 60 sec.
     improved_cleanse                = {  81508, 393024, 1 }, -- Cleanse additionally removes all Disease and Poison effects.
     incandescence                   = {  81628, 385464, 1 }, -- Each Holy Power you spend has a 5% chance to cause your Consecration to flare up, dealing 3,943 Holy damage to up to 5 enemies standing within it.

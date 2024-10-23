@@ -31,12 +31,12 @@ spec:RegisterTalents( {
     divine_toll                     = {  81496, 375576, 1 }, -- Instantly cast Judgment on up to 5 targets within 30 yds. Divine Toll's Judgment deals 100% increased damage.
     fading_light                    = {  81623, 405768, 1 }, -- Blessing of Dawn: Blessing of Dawn increases the damage and healing of your next Holy Power spending ability by an additional 10%. Blessing of Dusk: Blessing of Dusk causes your Holy Power generating abilities to also grant an absorb shield for 3% of damage or healing dealt.
     faiths_armor                    = {  81495, 406101, 1 }, -- Word of Glory grants 20% bonus armor for 4.5 sec.
-    fist_of_justice                 = {  81602, 234299, 2 }, -- Each Holy Power spent reduces the remaining cooldown on Hammer of Justice by 1 sec.
+    fist_of_justice                 = {  81602, 234299, 1 }, -- Each Holy Power spent reduces the remaining cooldown on Hammer of Justice by 1 sec.
     golden_path                     = {  81610, 377128, 1 }, -- Consecration heals you and 5 allies within it for 784 every 0.7 sec.
     greater_judgment                = {  81603, 231663, 1 }, -- Judgment causes the target to take 20% increased damage from your next Holy Power ability. Multiple applications may overlap.
     hammer_of_wrath                 = {  81510,  24275, 1 }, -- Hurls a divine hammer that strikes an enemy for 32,110 Holy damage. Only usable on enemies that have less than 20% health. Generates 1 Holy Power.
     healing_hands                   = {  93189, 326734, 1 }, -- The cooldown of Lay on Hands is reduced up to 60%, based on the target's missing health. Word of Glory's healing is increased by up to 100%, based on the target's missing health.
-    holy_aegis                      = {  81609, 385515, 2 }, -- Armor and critical strike chance increased by 2%.
+    holy_aegis                      = {  81609, 385515, 1 }, -- Armor and critical strike chance increased by 2%.
     improved_blessing_of_protection = {  81617, 384909, 1 }, -- Reduces the cooldown of Blessing of Protection by 60 sec.
     incandescence                   = {  81628, 385464, 1 }, -- Each Holy Power you spend has a 5% chance to cause your Consecration to flare up, dealing 6,470 Holy damage to up to 5 enemies standing within it.
     judgment_of_light               = {  81608, 183778, 1 }, -- Judgment causes the next 5 successful attacks against the target to heal the attacker for 3,019.
