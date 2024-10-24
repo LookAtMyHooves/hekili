@@ -69,7 +69,6 @@ actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket2,if=trinket.2.has_use_buf
 
 # Defensives
 actions.defensives+=/bursting_shot,if=solo&aggro&target.distance<8
-actions.defensives+=/healthstone,if=health.pct<25
 actions.defensives+=/exhilaration,if=health.pct<25|pet.health_pct<25
 actions.defensives+=/survival_of_the_fittest,if=down&health.pct<40|pet.health_pct<25
 actions.defensives+=/revive_pet,if=pet.dead&!mounted

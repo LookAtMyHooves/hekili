@@ -169,7 +169,6 @@ actions.vanish+=/vanish,if=!talent.improved_garrote&talent.master_assassin&!dot.
 actions.vanish+=/vanish,if=talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&raid_event.adds.in>30
 
 # Defensives
-actions.defensives+=/healthstone,if=health.pct<25
 actions.defensives+=/crimson_vial,if=solo&health.pct<80|health.pct<25
 actions.defensives+=/evasion,if=buff.crimson_vial.down&(solo&health.pct<50|health.pct<25)
 actions.defensives+=/kidney_shot,if=solo&health.pct<25&!boss&aggro
