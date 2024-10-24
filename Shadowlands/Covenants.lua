@@ -1230,7 +1230,6 @@ elseif baseClass == "PALADIN" then
             gcd = "spell",
 
             startsCombat = true,
-            texture = 3565448,
 
             toggle = "essences",
 

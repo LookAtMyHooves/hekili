@@ -244,6 +244,11 @@ spec:RegisterAuras( {
         duration = 10,
         max_stack = 1
     },
+    dance_of_chiji = {
+        id = 438443,
+        duration = 15,
+        max_stack = 1
+    },
     -- Your dodge chance is increased by $w1% until you dodge an attack.
     dance_of_the_wind = {
         id = 432180,
@@ -1110,6 +1115,7 @@ spec:RegisterAbilities( {
 
         handler = function ()
             applyBuff( "spinning_crane_kick" )
+            if buff.dance_of_chiji.up then removeBuff( "dance_of_chiji" ) end
             if pet.chiji.up then
                 addStack( "invoke_chiji" )
                 gust_of_mist.count = min( 10, gust_of_mist.count + 1 )
@@ -1130,7 +1136,7 @@ spec:RegisterAbilities( {
 
         handler = function ()
             addStack( "thunder_focus_tea", nil, talent.focused_thunder.enabled and 2 or 1 )
-            if talent.jade_empowerment.enabled then applyBuff( "jade_empowerment" ) end
+            if talent.jade_empowerment.enabled then addStack( "jade_empowerment" ) end
             if talent.jadefire_teachings.enabled then applyBuff( "jadefire_teachings" ) end
             if talent.refreshing_jade_wind.enabled then applyBuff( "refreshing_jade_wind" ) end
             if set_bonus.tier30_4pc > 0 or set_bonus.tier31_4pc > 0 then applyBuff( "soulfang_vitality" ) end
@@ -1277,4 +1283,4 @@ spec:RegisterOptions( {
 
 
 
-spec:RegisterPack( "Mistweaver", 20240929, [[Hekili:DJvxVTTnx4Fl5MKuSgp)r6sYlsmW2EVynyTyaQd9ojrlrBZAjsnsQKMbd9BFhsAjtrrzRSLummeahBYdpF(WhYddNe(PWGuKeh(XPJNE54BMEZOPZUC64BcdKpvGddkqjBqRGVqr5WNFGiKpIrpG5QPEkJHsvQqWk5jW0HblkjzY3tdx4tVtMDniBbobg(QXHbRjPPyJSyrsyWVGrzyEvCbNW4ejblQIrCCv8))3cUagbtL40Qygn7PQ7RUxP6lgFZftV()vf)7fk7vfVKbk4tyuYAcDfSE2YQy5AyIpWOiHeZTw6vxmBmS0pPM(ZiyDFMiHLbHgNTKKbbekrsyuXOcooHLVaj)U7((cMASQ79nhy1OfLCHuzKDcaddXmIhTgrtJesozd2EYsboIiX5c7bxKXyPrllvUR1OyUaZ3arM9OzKvRLIOVuMUkhsr2tTKWXAvzpiIMGb3aLfLGYYAPF0Qi2YiWft20YDCIzyeEjnY8ROmau8wf(4UeoIIFRketK3n5TKL3vGLJGKYxiJklSx(xqPyLZb5dwEHsYteyPuvZgja8v0seoJqXB3kbmbvocCAv9pkHrty8uvmC6IYLl9nXOu2J09R8r0gmfNwRYDlZzuN1StPYAGuBB1mSEv2XLkJ2nVGyTZkkbGyeSFoaYNF3SJRc4)9RHBNzH3gjuir56sAkMhTKLukuoSZ8CIacGibug3avB3vtwbRTaLLRmwpjYrykArgo1KBAxrHYTz4MuLgyTghLxVpeSeqUC7LB3ombN44JlYGrzLsT)RCZZp)KE80DMWXfv1U3CuVSSyGo48zV50egltP2roP3rCCoIqfZxLKokh9vNq5bYdKLpPIH9BcGpZWr)jMgvuMj2HAB(P92jJoSOE6PuAJraePpqIhOLf4C3Q27ThWNmI6Kg8Q(TBBcAyrrCXMoU5)UrJgNSdCSgm2VQoUTklMp70Jwq8u6ntikiuQQaOjM3TrFVq6rvvjq1pQelxr3OsXKCCKKfbi1OK1i(kLz7aDRxUxu0ZLiD3gKB71kyHadC7GvOYxfd09iPxCtGPpGZyf2PATQi0hyBWrMdknKjt8uM6JYUwapLBpN2aB4CgzYPNCGtz7qQwNO66aVA7b8a6A4ecdGRJkGjBUSjClZhrCvMqegOVDhjVGXL7UD4zG7JkZKNvfZX)rjejWLkfSCqouju7r6Bzc4EkG7hvD)VcSlvXtMaxv8NzqfKRN)S(tzGILSdkrnzfi55t(6BoUrCi7CTqpCHdw9Uq5EIG9q9ogO6EpjAGf65LKFNF)RF0HJJEay0W8yXZevC5Ru9YRZPX(pp)B6Rwb3O)zQwVOIYcLFQSGzFkOjB(6ZAj)RP)0x94Ls)x9nGeOpB4Y)2hOQE((0)1Ft3K9(8AOX72Jou91OaPHb6VPFgcdPm81pQFwcJO63lODVZHb7Ss4pfkboFBHB6L2rOz2cTV3AhPUSLun9A7i17SLYP3Bhr)bBrB6f3rORSfQDV5osEDl)ZUxDhbVXwqtV7osmzSsK9dfKWH8gNGa5TAzhs)6Mov1Kgf606VPggzEGinfL2at61aNa8w(61VkE7waPD09lvXNwfFWE)BRPEiBTuJV3cWR30HFORViB92a7ZATVEPofnT3uu7lOvfp)oG60BXW91cAvnGZF1gA2Gn0T)TSd8t1FbnpfwNDXEbHT2620etBHKMOOwFdlimzRAn3P)KgB7vBDAQDVMmD(2qOmCNXaMC7Z1Alv7R23qg51cdgx3Pj49tDS(B1iHlnU9WxGfEX6(51CM9rgm4JvgM7OcZ56C(PMdCoa0OvdlDyS7bs2MX2ttxDqWIUBi6ckpWEdx4HNd3(VcsPFy)5WLkQIpza86nUINh8Rk(ndk2uPGNrizaCgvFShbul9U3i4aqX(3Z07JeUpYog)1ZhNB3WTd82CO)bPO98IsMnJDYdTEmQdZu)p5W5MAXTE8bVNyC8TzV4(HDpud7mHxCxO71w6hx2ZBzPX7wB4DEfSoWXdZ2D1Gp5DEZbVEMzIoJCYGVVPhEh3(So8zc13F)B8PGhGG5MHT9wDdSs5Agpm4hjBqu0gKE0W)k]] )
+spec:RegisterPack( "Mistweaver", 20241024, [[Hekili:DJ1wVTTnu4Fl(fNuSgnl7KMMHydSlpSgSwma3I(MKPLOTzTKOgjvsZGH(TVdPSKPOOUKUKIHH2e7qE45g)ox4XZ17JEldrcS3hMoz6LUWpotNE5KlVXBP4XuS3YuuWE0w4ljOy43VNWfpGr3JzYTEmIIcLSGtZybW2ElxNrIeVlXBTD(EnqBkoaw(6jEl3rcdXf0I5bEl)DmkcZYxLYiugrqW88vigoF1V9NlVawbNiWH5ROjrpMFx(DswFH7KlMo7NYx566mX5QQLNCZftFlS8NsLQr(QnuGVFeJc2rs2cSLUjFLyhSX7PjiUaZoXXjxFXSjWr)OC7pJGZ9zIaoM3YiW65kxgEdklsaF9dkxikqqOjkBdX83Hsc95cgzp4sWjO1r4qVFXtawToXzCSprGJ5gentNO1ruAO)Mm2JguDznQWmoMThmndQUsNQiY2DcU)xYc3gdUsdsFJoPBimSs0geDTorOKamyMOi)auuKbLVTM(H26t34dUKG9MM7n6eMsl(SgfUtKKCAPLba4aZiiGESWbUs)cXjlfC)sbipWjgYYs8l(UV82R4o0VamhWqjyLaCBvaJYxXXcHe04WbCV)geoIKaiJdhaeeGxteoGJqIn9dOjbuwO0V4CKB5RgNVAD2MnwjkK(qsDo9aApobhwkglSXKIM84OGeLO921LtKi5YjV2xqachGaakMgNQCrtB1fjpe4yaLkwfXUyE(QzwVmKWKwVnq0I7Izdwq3(njh4pL)BzkdhqJxJAgfBfewl0fCA(RZyCJyirHvuYVHzefERsol2LLeIz(BObzC59tLSTYn1T5FJt8tZI4yvqqjNUNCpzZJvjugUYuaMQq9Gf5Z471cPiCydFoezThINRsgzvcdgxxhYbwYPTQqPQCi7W(XL5SD4cO(KcjCzHAp8dOHxeKTGlpfffxLZSTKbhTNoKqLLne1rAMlu(CWy7bASocuDAMOYR)MUHf9i2Vbbwl7plJl5U)deOANIIoka0sat9K)8ussIKLQeZw4Pqf9AgU2mKPJixtWRLsV)Fbh3Eq555RG)pAavDQufdZQOOZRgKTjDbpbtQiCOG1buAKuuogxBomCmIKWvuVni0jg91oWTx9uWTThvDQra43ry)Q8UNCd9Lk(6HeuulYr7o1mwOO)LoR2iiXyFb1h8p(b7qSTLH5nCAmaa8G0Vetuvi7OOZ)M(mQU4U1IoyT4x)XKp76bMZXq7zGEKigw5TNDvOzhyTxwsXFsY909y)IMHpfkPLDaNCpoIMQFh)MHNA8PN7FqDCSOQHdl74QCFJgCF2wYOv6hlPR7QnLvK(ox9VJuxfV9P)Kbq6a4r5Cjvvp52B5diM0eHNCPEmljoLYehFm8zhFe7z5Ry4)kd8rGwZPXaDOma0HuV1gsAKajnCYV7puV6X1fEz8VsbOetT)zTF1amwq7KIsVfq55UF9v9leJ6uMsOLYydM9MHOTybnIYpjG87S4OHoOFAo5RSRFTJKmu0(XN9OX8NiQ4YxO7lRkNkE9PPFtFXUWl4VCauFkHNLk1tPekcyboPxk5SA0)sQpTDF8CX)3(DijqBYWmZEBGkZm)M8)MVRbzVlUeAC1j0HAEIW2YHrq3qIWLz65ovtN4hM)JfZJi)oB7v1dPuihjawUXGi13SAWJ6lEAqJ1wTAWI6RAmir9TQgCO(I1huyn(Rpyq9nmSzyfJj59A50CMRYf86Iran391KnZ1NiO(XR3qLKYrwhS3HdTdvh35G8oDsJ8AJBFWDnKwfQAChdQt3UmN1vHFbk5uZRuV5QfZN1plGpBNd3otdVbTBcCPrZ7g7B0EP5PR6SrkSEkqm2(lTh3x)wQ2IV9YdhggHUg6yTMZKQ55NpQfn9OiS8Q5x1RwMLoqfCXSxnUVxiV44llmVmmBG3y)IxSkTXwF074gp41GhAPMA5QwhdbiwBGilqpnW7XtDsB7qNki1WnzL9hoyo8ZgQ5)TrRfkzd46OERC1VSYsxmBCVxineD)STFM2bMTGalaUInS8upDONAvPa0hbI6IT50tUDEJaQYJBf7(utVFmS92wLIEdLVicOzHYNDrymjIkasZzySW1Y1uBfsQiODGsjjwqewktczcmwXD8OoApOr1GsFztf4fl40cUuBObWBK2rzEl)zYEucApsn5aV)j]] )

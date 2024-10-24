@@ -9,7 +9,7 @@ local class, state = Hekili.Class, Hekili.State
 
 local insert, wipe = table.insert, table.wipe
 local strformat = string.format
-
+local GetUnitChargedPowerPoints = GetUnitChargedPowerPoints
 local GetSpellInfo = ns.GetUnpackedSpellInfo
 
 local spec = Hekili:NewSpecialization( 261 )
@@ -333,7 +333,7 @@ spec:RegisterAuras( {
     },
     shadow_dance = {
         id = 185422,
-        duration = function() return 6 + talent.improved_shadow_dance.rank * 2 + buff.first_dance.up and 4 or 0 end,
+        duration = function() return 6 + ( talent.improved_shadow_dance.rank * 2 ) + ( buff.first_dance.up and 4 or 0 ) end,
         max_stack = 1,
         copy = 185313
     },
@@ -717,9 +717,10 @@ end )
 spec:RegisterHook( "reset_precast", function( amt, resource )
 
     -- Supercharged Combo Point handling
-    local charged = 0
-    if talent.supercharger.enabled then
-        for _, point in pairs( GetUnitChargedPowerPoints( "player" ) ) do
+    local cPoints = GetUnitChargedPowerPoints( "player" )
+    if talent.supercharger.enabled and cPoints then
+        local charged = 0
+        for _, point in pairs( cPoints ) do
             charged = charged + 1
         end
         if charged > 0 then applyBuff( "supercharged_combo_points", nil, charged ) end
@@ -1002,7 +1003,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         toggle = "cooldowns",
 
-        usable = covenant.kyrian,
+        usable = function() return covenant.kyrian end,
 
         cp_gain = function ()
             if buff.shadow_blades.up then return 7 end
