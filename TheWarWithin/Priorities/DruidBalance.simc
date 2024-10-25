@@ -36,8 +36,9 @@ actions+=/variable,name=eclipse_remains,value=buff.eclipse_lunar.remains<?buff.e
 actions+=/variable,name=enter_lunar,value=talent.lunar_calling|spell_targets.starfire>2-(talent.umbral_intensity.rank+talent.soul_of_the_forest>1)
 actions+=/variable,name=boat_stacks,value=buff.balance_of_all_things_arcane.stack+buff.balance_of_all_things_nature.stack
 actions+=/warrior_of_elune,if=talent.lunar_calling|!talent.lunar_calling&variable.eclipse_remains>=7&cooldown.ca_inc.remains>20
-actions+=/run_action_list,name=aoe,strict=1,if=spell_targets>1
-actions+=/run_action_list,name=st
+actions+=/call_action_list,name=aoe,strict=1,if=spell_targets>1
+actions+=/call_action_list,name=st
+actions+=/starfall,if=spell_targets>1
 actions+=/moonfire,if=refreshable
 actions+=/sunfire
 
