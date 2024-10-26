@@ -112,3 +112,10 @@ actions.st+=/call_action_list,name=movement
 
 # Defensives
 actions.defensives+=/healthstone,if=health.pct<25
+actions.defensives+=/ice_block,if=health.pct<25
+actions.defensives+=/greater_invisibility,if=health.pct<25&aggro&solo
+actions.defensives+=/ice_cold,if=health.pct<65
+actions.defensives+=/mirror_image,if=health.pct<65&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)
+actions.defensives+=/mass_barrier,if=health.pct<65&(buff.ice_cold.down&cooldown.ice_cold.remains>gcd.max|!talent.ice_cold)&group
+actions.defensives+=/remove_curse,if=health.pct<65
+actions.defensives+=/ice_barrier,if=health.pct<80&buff.ice_barrier.down
