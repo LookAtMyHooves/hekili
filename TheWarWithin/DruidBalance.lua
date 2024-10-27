@@ -374,6 +374,12 @@ spec:RegisterAuras( {
     },
     -- Increased movement speed by $s1% while in Cat Form.
     -- https://wowhead.com/beta/spell=1850
+    dream_burst = {
+        id = 433832,
+        duration = 30,
+        type = "Magic",
+        max_stack = function() return talent.power_of_the_dream.enabled and 4 or 3 end,
+    },
     dash = {
         id = 1850,
         duration = 10,
@@ -633,7 +639,7 @@ spec:RegisterAuras( {
         tick_time = function () return mod_circle_dot( 2 ) * ( 1 - 0.125 * talent.cosmic_rapidity.rank ) * haste end,
         type = "Magic",
         max_stack = 1,
-        copy = 155625
+        copy = { 155625, "moonfire_dmg" }
     },
     -- PvP Talent: Starsurge grants 4% spell critical strike chance to 8 allies within 40 yards for 18 sec, stacking up to 3 times.
     -- https://www.wowhead.com/spell=209746
@@ -715,7 +721,9 @@ spec:RegisterAuras( {
         duration = function () return mod_circle_hot( 12 ) end,
         tick_time =  function () return mod_circle_hot( 2 ) end,
         type = "Magic",
-        max_stack = 1
+        max_stack = 1,
+        dot = "buff",
+        friendly = true
     },
      -- Healing $w1 every $t1 sec.
     rejuvenation = {
@@ -1482,9 +1490,8 @@ local ExpireCelestialAlignment = setfenv( function()
 end, state )
 
 local ExpireEclipseLunar = setfenv( function()
-    eclipse.state = "SOLAR_NEXT"
+    eclipse.state = "ANY_NEXT"
     eclipse.reset_stacks()
-    eclipse.wrath_counter = 0
     removeBuff( "starsurge_empowerment_lunar" )
     if set_bonus.tier31_2pc > 0 then applyBuff( "dreamstate", nil, 2 ) end
     if set_bonus.tier31_4pc > 0 then
@@ -1494,9 +1501,8 @@ local ExpireEclipseLunar = setfenv( function()
 end, state )
 
 local ExpireEclipseSolar = setfenv( function()
-    eclipse.state = "LUNAR_NEXT"
+    eclipse.state = "ANY_NEXT"
     eclipse.reset_stacks()
-    eclipse.starfire_counter = 0
     removeBuff( "starsurge_empowerment_solar" )
     if set_bonus.tier31_2pc > 0 then applyBuff( "dreamstate", nil, 2 ) end
     if set_bonus.tier31_4pc > 0 then
@@ -1517,30 +1523,19 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
 
         if buff.eclipse_solar.up and buff.eclipse_lunar.up then
             eclipse.state = "IN_BOTH"
-            -- eclipse.reset_stacks()
-        elseif buff.eclipse_solar.up then
-            eclipse.state = "IN_SOLAR"
-            -- eclipse.reset_stacks()
-        elseif buff.eclipse_lunar.up then
-            eclipse.state = "IN_LUNAR"
-            -- eclipse.reset_stacks()
-        elseif eclipse.starfire_counter > 0 and eclipse.wrath_counter > 0 then
-            eclipse.state = "ANY_NEXT"
-        elseif eclipse.starfire_counter == 0 and eclipse.wrath_counter > 0 then
-            eclipse.state = "LUNAR_NEXT"
-        elseif eclipse.starfire_counter > 0 and eclipse.wrath_counter == 0 then
-            eclipse.state = "SOLAR_NEXT"
-        elseif eclipse.starfire_count == 0 and eclipse.wrath_counter == 0 and buff.eclipse_lunar.down and buff.eclipse_solar.down then
-            eclipse.state = "ANY_NEXT"
-            eclipse.reset_stacks()
-        end
-
-        if buff.ca_inc.up then
             state:QueueAuraExpiration( "ca_inc", ExpireCelestialAlignment, buff.ca_inc.expires )
         elseif buff.eclipse_solar.up then
+            eclipse.state = "IN_SOLAR"
             state:QueueAuraExpiration( "eclipse_solar", ExpireEclipseSolar, buff.eclipse_solar.expires )
         elseif buff.eclipse_lunar.up then
+            eclipse.state = "IN_LUNAR"
             state:QueueAuraExpiration( "eclipse_lunar", ExpireEclipseLunar, buff.eclipse_lunar.expires )
+        else
+            eclipse.state = "ANY_NEXT"
+            if eclipse.starfire_counter == 0 and eclipse.wrath_counter == 0 then
+                if Hekili.ActiveDebug then Hekili:Debug( "Resetting from %d / %d to ANY_NEXT.", eclipse.starfire_counter, eclipse.wrath_counter ) end
+                eclipse.reset_stacks()
+            end
         end
 
         buff.eclipse_solar.empowerTime = 0
@@ -1596,7 +1591,9 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
         if Hekili.ActiveDebug then Hekili:Debug( "Eclipse Advance (Pre): %s - Starfire(%d), Wrath(%d), Solar(%.2f), Lunar(%.2f)", eclipse.state, eclipse.starfire_counter, eclipse.wrath_counter, buff.eclipse_solar.remains, buff.eclipse_lunar.remains ) end
 
         if not ( eclipse.state == "IN_SOLAR" or eclipse.state == "IN_LUNAR" or eclipse.state == "IN_BOTH" ) then
-            if eclipse.starfire_counter == 0 and ( eclipse.state == "SOLAR_NEXT" or eclipse.state == "ANY_NEXT" ) then
+            local initial = eclipse.state
+
+            if eclipse.starfire_counter == 0 and ( initial == "SOLAR_NEXT" or initial == "ANY_NEXT" ) then
                 applyBuff( "eclipse_solar", class.auras.eclipse_solar.duration + buff.eclipse_solar.remains )
                 if set_bonus.tier29_4pc > 0 then applyBuff( "touch_the_cosmos" ) end
                 state:RemoveAuraExpiration( "eclipse_solar" )
@@ -1605,8 +1602,6 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
                 if talent.solstice.enabled then applyBuff( "solstice" ) end
                 if legendary.balance_of_all_things.enabled then applyBuff( "balance_of_all_things_nature", nil, 5, 8 ) end
                 eclipse.state = "IN_SOLAR"
-                eclipse.starfire_counter = 0
-                eclipse.wrath_counter = 2
                 if buff.parting_skies.up then
                     removeBuff( "parting_skies" )
                     applyDebuff( "target", "fury_of_elune", 8 )
@@ -1614,11 +1609,9 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
                 elseif talent.parting_skies.enabled then
                     applyBuff( "parting_skies" )
                 end
-                if Hekili.ActiveDebug then Hekili:Debug( "Eclipse Advance (Post): %s - Starfire(%d), Wrath(%d), Solar(%.2f), Lunar(%.2f)", eclipse.state, eclipse.starfire_counter, eclipse.wrath_counter, buff.eclipse_solar.remains, buff.eclipse_lunar.remains ) end
-                return
             end
 
-            if eclipse.wrath_counter == 0 and ( eclipse.state == "LUNAR_NEXT" or eclipse.state == "ANY_NEXT" ) then
+            if eclipse.wrath_counter == 0 and ( initial == "LUNAR_NEXT" or initial == "ANY_NEXT" ) then
                 applyBuff( "eclipse_lunar", class.auras.eclipse_lunar.duration + buff.eclipse_lunar.remains )
                 if set_bonus.tier29_4pc > 0 then applyBuff( "touch_the_cosmos" ) end
                 state:RemoveAuraExpiration( "eclipse_lunar" )
@@ -1626,10 +1619,7 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
                 if talent.astral_communion.enabled then applyBuff( "astral_communion" ) end
                 if talent.solstice.enabled then applyBuff( "solstice" ) end
                 if legendary.balance_of_all_things.enabled then applyBuff( "balance_of_all_things_nature", nil, 5, 8 ) end
-                eclipse.state = "IN_LUNAR"
-                eclipse.wrath_counter = 0
-                eclipse.starfire_counter = 2
-                if Hekili.ActiveDebug then Hekili:Debug( "Eclipse Advance (Post): %s - Starfire(%d), Wrath(%d), Solar(%.2f), Lunar(%.2f)", eclipse.state, eclipse.starfire_counter, eclipse.wrath_counter, buff.eclipse_solar.remains, buff.eclipse_lunar.remains ) end
+                eclipse.state = eclipse.state == "IN_SOLAR" and "IN_BOTH" or "IN_LUNAR"
                 if buff.parting_skies.up then
                     removeBuff( "parting_skies" )
                     applyDebuff( "target", "fury_of_elune", 8 )
@@ -1637,13 +1627,13 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
                 elseif talent.parting_skies.enabled then
                     applyBuff( "parting_skies" )
                 end
-                return
+            end
+
+            if eclipse.state ~= initial then
+                eclipse.starfire_counter = 0
+                eclipse.wrath_counter = 0
             end
         end
-
-        if eclipse.state == "IN_SOLAR" then eclipse.state = "LUNAR_NEXT" end
-        if eclipse.state == "IN_LUNAR" then eclipse.state = "SOLAR_NEXT" end
-        if eclipse.state == "IN_BOTH" then eclipse.state = "ANY_NEXT" end
 
         if Hekili.ActiveDebug then Hekili:Debug( "Eclipse Advance (Post): %s - Starfire(%d), Wrath(%d), Solar(%.2f), Lunar(%.2f)", eclipse.state, eclipse.starfire_counter, eclipse.wrath_counter, buff.eclipse_solar.remains, buff.eclipse_lunar.remains ) end
 
@@ -1780,6 +1770,8 @@ spec:RegisterHook( "spend", function( amt, resource )
 end )
 
 
+--Tww set
+spec:RegisterGear( "tww1", 212059, 212057, 212056, 212055, 212054 )
 -- Tier 29
 spec:RegisterGear( "tier29", 200351, 200353, 200354, 200355, 200356, 217193, 217195, 217191, 217192, 217194 )
 spec:RegisterSetBonuses( "tier29_2pc", 393632, "tier29_4pc", 393633 )
@@ -2085,9 +2077,11 @@ spec:RegisterAbilities( {
     force_of_nature = {
         id = 205636,
         cast = 0,
-        cooldown = function() return pvptalent.early_spring.enabled and 45 or 60 end,
+        cooldown = function() return talent.early_spring.enabled and 45 or 60 end,
         gcd = "spell",
         school = "nature",
+        spend = -20,
+        spendType = "astral_power",
 
         talent = "force_of_nature",
         startsCombat = true,
@@ -2098,6 +2092,8 @@ spec:RegisterAbilities( {
         handler = function ()
             summonPet( "treants", 10 )
             if talent.harmony_of_the_grove.enabled then applyBuff( "harmony_of_the_grove" ) end
+            addStack( "dream_burst", nil, spec.auras.dream_burst.max_stack )
+            -- queue aura ticks +2, +8 3 moonfires, actually triggers the handler
         end,
     },
 
@@ -2435,7 +2431,7 @@ spec:RegisterAbilities( {
         gcd = "spell",
         school = "arcane",
 
-        spend = -6,
+        spend = function() return talent.moon_guardian.enabled and -8 or -6 end,
         spendType = "astral_power",
 
         startsCombat = true,
@@ -2443,6 +2439,7 @@ spec:RegisterAbilities( {
         cycle = "moonfire",
 
         ap_check = function() return check_for_ap_overcap( "moonfire" ) end,
+        energize_amount = function() return action.moonfire.spend * -1 end,
 
         handler = function ()
             if not buff.moonkin_form.up and not buff.bear_form.up then unshift() end
@@ -2793,12 +2790,12 @@ spec:RegisterAbilities( {
         known = function () return state.spec.balance and IsPlayerSpell( 194153 ) or IsPlayerSpell( 197628 ) end,
         cast = function ()
             if buff.blooming_infusion.up or buff.warrior_of_elune.up or buff.owlkin_frenzy.up then return 0 end
-            return haste * ( buff.eclipse_lunar and ( level > 46 and 0.8 or 0.92 ) or 1 ) * 2.25 * ( buff.dreamstate.up and 0.6 or 1 )
+            return haste * 2.25 * ( buff.dreamstate.up and 0.6 or 1 )
         end,
         cooldown = 0,
         gcd = "spell",
 
-        spend = function () return ( talent.soul_of_the_forest.enabled and buff.eclipse_lunar.up and 1.3 or 1 ) * ( buff.warrior_of_elune.up and 1.3 or 1 ) * ( talent.wild_surges.enabled and -10 or -8 ) end,
+        spend = function () return ( -8 + ( talent.wild_surges.enabled and -2 or 0 ) + ( talent.moon_guardian.enabled and -2 or 0 ) + ( set_bonus.tww1 >= 4 and -2 or 0 ) ) * ( talent.soul_of_the_forest.enabled and buff.eclipse_lunar.up and 1.2 or 1 ) * ( buff.warrior_of_elune.up and 1.3 or 1 ) end,
         spendType = "astral_power",
 
         startsCombat = true,
@@ -2816,17 +2813,13 @@ spec:RegisterAbilities( {
             elseif not buff.moonkin_form.up then unshift() end
 
             removeBuff( "gathering_starstuff" )
-            removeStack( "dreamstate" )
+            if talent.natures_grace.enabled and buff.dreamstate.up then removeStack( "dreamstate" ) end
+            if talent.dream_surge.enabled and buff.dream_Burst.up then removeStack( "dream_burst" ) end
 
-            if eclipse.state == "ANY_NEXT" or eclipse.state == "SOLAR_NEXT" then
+            if not talent.lunar_calling.enabled and ( eclipse.state == "ANY_NEXT" or eclipse.state == "SOLAR_NEXT" ) then
                 eclipse.starfire_counter = eclipse.starfire_counter - 1
                 eclipse.advance()
-            end
-
-            if level > 53 then
-                if debuff.moonfire.up then debuff.moonfire.expires = debuff.moonfire.expires + 4 end
-                if debuff.sunfire.up then debuff.sunfire.expires = debuff.sunfire.expires + 4 end
-            end
+            end          
 
             if buff.blooming_infusion.up then
                 removeBuff( "blooming_infusion" )
@@ -3251,13 +3244,13 @@ spec:RegisterAbilities( {
         known = function () return state.spec.balance and IsPlayerSpell( 190984 ) or IsPlayerSpell( 5176 ) end,
         cast = function ()
             if buff.blooming_infusion.up then return 0 end
-            return haste * ( buff.eclipse_solar.up and ( level > 46 and 0.8 or 0.92 ) or 1 ) * 1.5 * ( buff.dreamstate.up and 0.6 or 1 )
+            return haste * 1.5 * ( buff.dreamstate.up and 0.6 or 1 )
         end,
         cooldown = 0,
         gcd = "spell",
 
         spend = function ()
-            if state.spec.balance then return ( talent.soul_of_the_forest.enabled and buff.eclipse_solar.up and 1.3 or 1 ) * ( talent.wild_surges.enabled and -8 or -6 ) end
+            if state.spec.balance then return -1 * (  6 + ( talent.wild_surges.enabled and 2 or 0 ) + ( set_bonus.tww1 >= 4 and 2 or 0 ) ) * ( talent.soul_of_the_forest.enabled and buff.eclipse_solar.up and 1.6 or 1 ) end
             return 0.002
         end,
         spendType = function()
@@ -3265,7 +3258,7 @@ spec:RegisterAbilities( {
             return "mana"
         end,
 
-        startsCombat = false,
+        startsCombat = true,
         texture = 535045,
 
         ap_check = function () return check_for_ap_overcap( "solar_wrath" ) end,
@@ -3273,10 +3266,11 @@ spec:RegisterAbilities( {
         velocity = 20,
 
         impact = function ()
-            if not state.spec.balance and ( eclipse.state == "ANY_NEXT" or eclipse.state == "LUNAR_NEXT" ) then
+            if state.spec.balance and ( eclipse.state == "ANY_NEXT" or eclipse.state == "LUNAR_NEXT" ) then
                 eclipse.wrath_counter = eclipse.wrath_counter - 1
                 eclipse.advance()
             end
+            if talent.dream_surge.enabled and buff.dream_Burst.up then removeStack( "dream_burst" ) end
         end,
 
         energize_amount = function() return action.wrath.spend * -1 end,
@@ -3288,7 +3282,7 @@ spec:RegisterAbilities( {
 
             removeBuff( "blooming_infusion" )
             removeBuff( "gathering_starstuff" )
-            removeStack( "dreamstate" )
+            if talent.natures_grace.enabled and buff.dreamstate.up then removeStack( "dreamstate" ) end
 
             if state.spec.balance and ( eclipse.state == "ANY_NEXT" or eclipse.state == "LUNAR_NEXT" ) then
                 eclipse.wrath_counter = eclipse.wrath_counter - 1
@@ -3365,4 +3359,4 @@ end, state )
 } ) ]]
 
 
-spec:RegisterPack( "Balance", 20241024, [[Hekili:T3ZAVjos2(BjA1qBh6qWMaPZOaJ0UR0QTV7D(WnR09BaoGjyfaZAB6mzfIF736PD94CkBsGEsp7vAMjtCv1Po1PoVRtvzCW4)54hMhvep(xd7gEtq3W(Dcg0TFy44hkEDB84h2gn75ONi)pBIwt(V)5OvrBMX((RRsJMthFE6Um6NwwuSn)NV(6h595Q8K1Z68usXYDp2jj9AXqV6HK1)LRxpVZYI1R(LfjRIhkgqNIFRy8dpUlzvXFFZ4hHrSGXpeTRyzA24hOaImRjZNhZ7EC(SXpq7(vbDVkm8NpmniOt3o9p81dFv(5Ud(m5ZDVkiG)ZWas3Oq6W0DBPtyzN7E3vHFH0j6pVZrN6gW7u3Be)umOGUIF2xae8z6le0H04)Du2ZhMMU4W0ILXhM()MSAEvFU9QWEK(8pzTeLrBUyzYMXpSkjViNTpgViA3QcY)7VY2xJMvKKUHU)SkkBYJXrRh)q8MOhxfpF8FECbHYQ3RuYSA0JE0Eu9fgjolzlFe)14fXBYt(wCEfuMfTA1e(VmHIyC0BcN5zE1aiW(gdytaCrCws04hU4W0h3TyrN1PPBEozZKfPzR7SBB1SO2afu9navkPV5Xfvd4BreatAL()TAh5hdom96dtZ3gtq3Lr5KnJPTjK9OvXBk6SjQyxwC(ejFPaYQDjn7XKIjpMfh9CCwvhU8W05PfmeFrsgHJozgbpFI1GNyvPp08cIa2HPJyThE7HPxr(bR)Sot27YjajMS8pm1N9pKMcVHTKeK1Tr5uI6KO8TuIXGJMymlnD180x20zw0KKnZ6KfVokzt(HP3)lhMw2iHyplEs6IjCYJSxQycz8XlwetMhc6mBofBU9OXMhtZjtDRdtxK80YIjviJcUiq057YIOqHTZibuhtSqbbxr2QNWhmf5(YrJCEqOf5Jb9z4qF22JGhHmjrzByi4KzltZJ3qPEXR2TrHLYxYBeW26fd9LLjzRimotiShz5A8xD7eYg1(9wOYiQgngPJapIq0Y4S0jfzXXDEooEBCgD6jY4tEkl9BXCiizkxgLToDZRA9GXZ1sLQNU5BPphZ6r(2eI8AEhv6Wa1jxklf)YeQ4q1AGoTLGSS5zem4jIm3ImoTpAfz9mKjl4l)htyJrLOZqvVGWATUwd0ogkWtZM3zD0VXfsnwQoh7iBM7f7i6MYI5eMjfjRJvOd2ISrZFL1Iu5PObQAtfb05tiOX8eg3nra4odbaEVIEmollAtXeM(rICp1(VuKaQrcKc6AaQs7kBFDnvbBw(KxIFuvnFLaRcwj3L5A)QgBw820Scf1LH3bkd4ulHqSXHgMWUsIGbEtxIbilXK1eHlQchIk4zXBMtmA86K84SDRvxUudd5742fu33VrUK1SCy0df(uIanH8Nlfv1fU4qQoD2SLApbXWP4pNBdt1kdobnGOITvHd4wnq3udeVysfLsnUzQUNQU5o5(VJnvkVqicVaD3zgvX7UCIQ3On5RtkiZLkJGxne0E)XKGIrzOutt)mR3qC5cDtkz5nHlB87ovrysTw9xoCxH5y6ag0u0YDQDkQEj7rvSzLDI4iZUCYAplzZZXeQnz)TRQ5LNI3qyXNj7GUTMath(Rezy9oWieaXN7ue0jjVJU6yPLo9(GlYc3Feosjxb6Y(IHmTETuGxyNYTbvn3skOJTppEVAZ)b3xqNGLk)3xkdQT9Gs(jDLipTkTqHyt3rmJBYyhjeBhjSb7iHh5os47DhjuFhj48SJab2tYosiBhzGAi50LiH8Vo3iQ8aZGQQ2LqxwecuVUvGEBAPyPzqqaoOzRJ1b5JWvvoneFfj720qGztLP7M1RMNPgnE2QKTeAbjYPOSsvYAnXYXHHZUI2yz6W07030mRfxmW0derSSdYMO4IPBK1Jlcp)yyXeAkwieu9yy4zYOGgQaXGencgQxKCoEwGLEL(pUB9JzrRiMkkOjJP41oe5SNvZTrE6UvsRGehiJZlQMRrmnF(AlrcGY4ui2YZ0ZO6xEmsPizl0jMMdjAUTEkFsu2Sis4YvMnD0xHpUS(QIGpMgvmH9vo930zJkg(6PZvHvI0jvBQgB(8aAVfj(nvvuv0QxIYYssZktCaBbGN5mn2a(Uf5JenmZOIFnmnDrP8PbZ6GZbt(v6yntcvnOyzWIugxc4zWaxlxw8ccB5sotKAsbPm9SX(fTuBYJ6sxlkbT3sIUoD9Jr2PmDDu2ZsrGxswn3vIt1sgP70NwVOGsAlIxrK8sisQrRsEAZA63u5YU44YZeL5DE2UK5CL5AkPuvVdLz26rBnVa1noJLF2O5ZDNNnftUlJYNSnlDgQf(kFEzbk70ZrGEqOVeJZI97TubUxLoiB50yuw0ZK)DsE0ShZstN7ELdLm2Ax56EacV4dRDXd6KgqpWw8xkDPYYlntsGHbbBQaUKCnPOuJpNSmwrpjJfK)tSMSqepSfAcuYIjd9LILYGtK0z53Hs7RMtUeLcFRtqNxi00Lk6Hz)kqgZQgR6aLyUNaEHYptP)SV0Z6l3i)IpW0ALEnDhZRJavrMzQfYf6jmu8kuEgOF6rQa1sfk1wHu5PBFivCta0kznMoPb6stEpnpOa0htNo0ipNxCqL0H7AbzCuVU2M(sCwN5XlsMLuWDlVC(uohhMRodGTlIfgDP9pydLYyO4wE7qxdtksNmpjM5Fy5IKN3HbC5kqKEKdCMgVZtj)BYhwNUJgSaxoGgUabVED2QyPPFktdGPblB2NMfd3dydFpUwE8cNILk8YZu))h(nl8DkCL4OYx8tRXwktlgzNIzWAdDQa)7f2Ok3BAvar557AV(QYUSBJyN9w22ObxnNF24JItPu7qgrceKlQeQEsMcwR81epoupUBFvWHeqKpm3KddAvHQY4LLUemploATMvnrVIJYw96KCIRlgbIPEw9u0N4rYZ6h9Q7TEA4A9Q2mnomLktLGRc8dvx5ycBzEAPIkp4PSOzXwrEESSUJKjsUblZAJknGNsSaTJ4Ew6MIS0v4BrEqhsTi2r5Sjp5C98SBJbgaY39odUhbMucf4Sl7vTqTToyIgfdmXDor1pyLZ7Ao9tLjWo8pganTx2yaQeLidq4rO3KCCGN9lgd(TIinCaMXoZXHJuC61SSWGLrmEU7lRMaWSi2KLih7lbChfJe0LUyGKGZNSjDdULdhPFLFesK((sC03yrWfLTvp9NfP7MTKj6nlLODoFI0rrTYLs17rRCW6A(IxuybO8DIt8NNtvR5Witj4ki9QQvbMEdcekkR5ezlcBuX0FmRSvS92koVMU7JNg7(LNMNE5uuVEQB6EqRAvAqz4Cehaj6r6pIRC2xJvd44kzBlAzWsweoM7D9u70YOvla71nQ9Iv0kq9QVAVOPuBY6D5lZstTkkrNkMCslDAqWr6eRpTVihdHdwrG8AcMBsrEgujbfSSO()hvnAu1hrmIQZspyprFpXtRbEB35CwQonwQUNMgr8s1Pzby3aMOtCGsLStoLS)EHnQmwMQeosV7AWjNEuo3HBA(i9Tdp2kqa9gtFGWditwxR8Ia69WFyICAW)bf5uF9AksJH4EywOJj4kllYuoMvPzZTd9OSfzPMPfPUoNgMcE3MpG1MIwYmnXAXhoBdwbbwra)DiVvi44j9ge8dRx9QhWM0PE9YRd3AuZkb97TkFDv32SNtePTMyedhwyXRGBrtxDG2oM(kqPmqkZ5fDpWMj5gSiEXTzD8wpTs(omUiRxnNgy6delxbqP4CsXxG8NyuMueWf)BXZ2veRKyexPvXAa(NkYsv0RfoRaO)tJUufVEHZclcl3q1LlkMSJJCiHhDYzj7xosUaYb0wV)VSWBm96L1bp7Sec1n4jWx7sdINhspD129mZaKo9gpji1zsZPpJH4gFAwoG1sqYD1NGeLRskqIsKJTSOpWV4Qvi6Y4OvKnYTZ4B7FPBL3MpUknDn9QHLSzXUC6g6UTUZpIbWgOcSyQJvMxPvIBvB(3jXZjsZSIgUmyoCDvgZrOQ6owt5fPCpTXLRnGrFTkMHyljA1yzPYrd61bT(CFpVEt3acF8BZvdoFi4GT1RPz8TNAatvfy)hM7fXWYldMRU07G1DprJazFpf(H6Ak4APB6tn(6oKj2r(DQPpAZYNbHByNx2gAbpp(b2Jbab5jsme5Iucc8jXJaWNObG9V2r0OsIMmpL6Zq0UI01rf0pmBz0MNIZ7C4R)Je6zt1)Npm9Vq88ooJ18NmYPIOCRjWSifTvPoDsV8c(n)6GT2TG3aYGxU(AGB6wHotIkHeIK)Ng8tk3U)2UX52UM4lHUr)x6XuCbCx(h5fE7vHxY1RvD7999Vm8g56CW1FaXTsk7xG3XCuMXg7FnOGKn3nrMt97KTX0aFHTBiKLXjzYuBCD1Bi0oF4jqaXgGhkO(JBoobyp79lba0az5Ya(oYdM1K0Rgz(snRQv0((9AEmCFL6x9R8ylpx5Rz)(6VcO(73755YHM2yZ9pnWFu4D73tDYPLo6I5CdkS8BH1YOWU73JyFAyx5(YpSeXR)iqeRywVXuIq4cbGBBLIeoCTZsyWj8X9ObEUC2)JyEr8mcEsX7CZMr7BhR18a2LZj0pxW97fwB5UwjCRNRfUp64Tt4FeCT13)JyEBkxBnDUzZO9nigq6O29)tl0pxW97ewhI49HwsNm87amHuMimgGTVISgqh)o0Anf9ox4(PhWh(kqeNL3IYpDuXCIGDaLgHbo64IrAscqMJZAKm4S4YlYhaRTstneyLcdsxzCjWO0NZk4BaGR3ksd89Xn4bUqJitcCpB(uzEriHNgGEPnfdqnnHYXeIYXGdS63sH7Zzf8naW1ZX0a)oCd(MWX4QNnFQQLJbRxAtXTiwLuRAddnzG3nut4g09KdyqtgrPXhNXI6s2NszP0YZUGuUs4XG)Obx5Pv2j)uOFlOt(Be0HY12407KuI38SF97A2lPo3bVRPFRTm22GVsxMmeiq(D4cHBgn7l8Lb0XVrynDkuVTygah6IK1uWQFjZmam8nqZc0ioBQvAJgqgSShBkGHQbrd47QmfTMglnFNkULZgGruK(UbC4PhWGksZpsNUTYAaFQpTzP9hD2yKOgK1y2NmT)PxJQwGd5aWoP08qKm7FQ534LbW7KN70glWVtPb97EwqpZjM73P8Y9DmTCh(6FNXltNNbYkZ6Wu2ZNpPzAnUKs)ZrGS(cY7uMzJ2dV28fH6Wxb7LYBbfCpKE29zADPmu9iw(mR6LhEHuLLDAoAjBZrAj2Vx9vEQj4G(ryiWIUVHrMUDy085ca4vjqidvTv1NSceC)EhQfmBeiimFcTjZrK5V7LJxfNP16biW2kugq2ZSrO1ZLHvRiWyc9p81)0F6W0)NY37iQmHOSPykR)Vy1WNYFpj(BStHRthyAHSw5(CYIHoleWsUqTi)AfnZ6nycJlIvsF055cT3mj39vTRTUWt9zvA)E1NujXVjEoL8HbRSEdzyb46b5jtcdCkdLQQr0jAtL)13q)R0)ABq2cpmTQAev7G5vqJZIohSVQADyli2XNQ(vADZQmaD(ELymfC7nP2zaRlLty9OGJVghiRaNrQ457)LYgWUJfOtKYFTietYP4OLDSWuQhmPEh9jZlOF7(xwVva)l9cUs0n9c44YUDc9non)rbDB5DHtH(97DEW(TQ5C95y)a60i5MefAJsjb44VfeJgg677xnA910(9xu5NV5Stu2cnMMHXIkR(YWARCboH0KzW(VHdKvHnNA08xBDHXfssHlr(oaZ5sa(dWa3uq1aMZ2iHChI4Rr(ZuDeiIlewH97BkMOBvJcvWsBSLZY5GvYgntKYhS2oc7IJH4oIsXwG)Imm6MwEq)Dyy0nL8raHL1YRoLm33tqwreGWR3K7dqw1Fhljh)wU2bVFy4D4BbimIu6Vh6AU3pARzDf5Op73cT6)WwIvFeQtnqwnAXtpu0LaUtD4XtyeRaUscJoIWk3YdbxVyyaumcsvk0vjaH0lSB7WUx6HpY7d777RqHqz38RLwfQrRaIvXikKMqRCfoUdAviu8HhjTYEKVpALMZH8BSbLGbGjd7PXywDjr0ml6sEpO)roCaSiOpUsjXvit6jR99tKQ8a4YM5k0bJxebCyx6nUJBZg(Su9IGiMbOuyUFp8BXZOWR8e9h8fpugiJDj7mkWhhPuUoXQl76Fg7B7OFBuEc7vNAZNinkxbmn4cOpxPP1ydB0WBbChvkYvF8OrPXFM)8YpKP1vBhyuq9aiVqlQyXv1SgqjDoJ2n1hKaviXDRtju8oeCTTs(eQijvCxw0juc39vpUmgtGwMfoRtIGqbDaY3xT8upb5bMWPKsQ9YlW3lB(PA)2pdBsup0R1N5QB3jaPoLh0)hoYgevZnNT3fMCzkgfr578pEU7t2ePKrT3bD(kEtJUTTg7GFlTF9EVGY8LaAK4kVqzAx0RCc)RGu4ATCmclKf9JyG2L0qlrlQ1Jql10Tvwkb(402rd71aKalRzIeFOKVg1tOLyMP5BYJg4glrnaf0TDqzYUGob3w6zhRm7lT7RgfKoq1gH92K6BuKUSK4HJYyaWw14htQvFTprh0CMyowLC914Xa50aS7b4oLD)TL59qBiU0l4bpjWENnmWxeqRPxNUWk(Kx9SkuQhz)EXaKp8QWAWeMo5Xaxy9gti8d217lbeyzpZcWWv8AzGGlwCk2rUZjSmaR9APkYBO17Kkc5MUF6AJWoKI(Yu)wMqqCHRB66xFIKBy2lqsK2Oas8CM0lzMJn)E5R(ITCU4zpXsMr9LjTb6pDVyDjLa7(oyyzi7LkofR6cGQpV5f16yW7YB0CRZs7CnhnZLqjy6zm8M6Ww54Rm8bKU3gWL2tixILU3JAl6D7svd3MonZtZmjY76BYIiBOhNbXscqPkAWbCeEKlSavZJFPbg8H0bSbFmCaJtGm9)QFBiQ)9q7tU2TLP4PGxRETknqx9gsAPZOzQCEJkA((QE5ChmLX0j3YeNQDQXR9h(zP)b0xdxCvn5iHRoczLJ7WKIyQwe29VgpEyFrvFFehDtf2OKits0yMzL(gdylD1Ic6MRT0qTO5KqZUpQsO(gyqPtDVluWiOdTSups9X2dmN4qD0SQkoUvvPhP)HAv1OOICfTL89deYxMtzqC2ylyAvD5ka47ayBprRLHQA2biq6FjuiXYDapPkLE(w2pF7rOy5JO7W(RCBvnEdUxETpFfkYrCWZ(AvftfQ1GIJPgVjlbfYX0vZOQohXMoIp2hZ9Wa8tRVN6P8)gwKF3pFASfsi26aRgo7uvRMTnRUw5BU49FPl3vuOhyseib(qrAa2bsWQ8utIaoLxksdGe2hDTWEyin6o9PJK4v4m6F(b4VEDJ))(]] )
+spec:RegisterPack( "Balance", 20241027, [[Hekili:T3ZFZjoow(zj1wdTDOdbBcKotfyQA3RQR2(UB)JlBv3)b4aMGVayoBtNjBrXN9tswYw)49Kfjq6UNDRAMHjiPNE6P3V1tIXbJ)7JFyEur84)wy3WBc6gEBNGW(d6D34hkEDB84h2gn75ONi)pBIwt(V)5OvrBMX((xxLgnNo(80Dz0VAzrX28F96RFSSpxLNSEwNNskwU7XojPxZh6vpKS(VC965DwwSE1VTizv8q(a6u87fJF4XDjRk(RBg)imID74hI2vSmnB8duarM1K5ZJl7EC(SXpq7(vbDVkCWVEykTlhMUBlfsF(W0O5)V7YlwhVPi)W0fPzhMUk(BXRs280HVE4RvJSN2ivAmK0yqqNUD6l)1Dhqap5ZGGYpddWGr37Uk8lKor)8olDQBqzN6Ed)t(Gc6Y)Sphi4Z0xiOdPX)ROSNpmnDXHPflJpm9)jz186(CB5Y9VZAjkJ2CXYKnJFyvsEroJ9iEr0UvfK)3)gJDjAwrs6g62(QOSjpghTE8dXBIECv88X)5XfKnm1ELsMvTE0J2J6VHTZLLSTCe)BXlI3KN8T48AOmlA1QjL)XekIvIEtk5jNxpacSVrd2eaxeNLen(Hlom9XDlw0zDA6MNt2mHWaSUZUT1ZICduq1xduPK(MhxupGVframPv6)3QDKpgCy61hMMVnMGUlJYjBgtBti7rRiSCD2evSlloFIGDNdz5UKM9ysXKhZIJEooRUdxEy680cgIVijJiOKm7zktlTbp(QsDO5fe52dthXAp82dtVI8bR)Sot27YjajMS8pm1N9pKMcVHTK4K1Tr5uI6KO8TuIXGJMymlnD180x20zw0KKnZ6KfVokzdrY7(F7W0Qgje7zXtsxmPK8i6LmMqgF8IfXK5HGoZMtXMBpAS5X0CYu3Ii3N80YIj1iJeUWr057YIOqHTZiauhDSqcbxr2QNuoykY9LJg5OBI44hP1G(mKPpBFIZSqMTOSnmmDYSLP5XBOKX4v72iXB5lyscy8a8H(YYKmQAVje(KSCfgTUDczJA)Eduzev1gdhjWJinTmolDsrwCCNNJJ3gNrNEIW(KNYs)wCje8e9LpXlJYwNU5vLEwp90rW4pb7gNxTL8gw6MVL(CmRt5BtiI65DKPCdKrxHyy8ltOssQtBfiRAEgbjEIiUUiRCBlAfHcmKjg5l(hDyJrxPZqDVGWALU2a0ogkWtZM3zD0VxkFRTuTo2rMYfl2ruRLfxsyMuKSowIoykThn)vwlc9U8gOACLKTNpHGgZtycgezN70KDk7v0JXzzrBkMWuTsuzq9irinb1ibsbD1avLjPTVUMQBolFYlXpkBHOwwxcRe7YLkoRhBw820ScjnTH3bk1yvbdxqZIWFyxbrqdVPlXaKLyYAI4ivxfr79S4nZj2BEDsEC2U1YlxQnL8DLMuK33VrSKvm6O1dj(uIkac5pxiTQkCvcPMu3ZwQ9CxdaMwzgCcCGOITvHdyjUauKZbXlMurLuJDMQ7PQBUtS)BztLYleIWlq3DMrvvVlNOSoAt(6KcYCjZi41abT3FmjOyugk1u3f1MTHxTq3KswEtkLn(UtvQncBNYyXthMpTdyqtsl3P2FQMLShvZMv1jIRp7YjR9SKnphtO2K93UYMxEkEdHfFMOdQ2Ac0JvOwKH17aTOh4FDNIGoj5DuvhlS0P2hCrw4(JWrk4kqx2xmKP1RLe8c7uTniR5wqbT7UjTxTl)O07rRGLk)3xidQS9Gs(jDLipTkTqIyt3r0d5sBhjeBhj0HDKWJChj89UJeQUJeCE2rGa7jzhjKTJmqoAE6sKq(xNRfqFGE8y17sOllcbQx3AqVnTsSup(jah0m1XAH8r4QQMgIVIKDBA0ZSPs3DZMvZZuJgpBvYwcTGeRvuwLkzLMyPhrZzxEBSKKO7D6BAMvcPgy6bcMw0brtuCr3nYMXfUNFmSycn7mecQAmmLjbPGgQaXGencgQxKLC8Sqr9Q8FC36hZIwrmvuqZJtXRDiYzplNwK80DRewbjoqgNxupxJyA(8vwIeaLvsHylpDpJAE5XiL880qNyA6NOPf7P8jrzZIibyxB20sF5(4Y6Rmc(yAuXe23ws)1D2OMHVz6CDyLiDs2MQ2MFzaT3Ie)MSkQAA1lrzzjPzvPAGTaWt6McBq5Uf5ljAyMrf)CmdFrPLtdM1bRdM8N0XQN)QgqXQGfPmUeWZGbUwUS4fe2YLLmrY5tKY0Zg7xuYkAzuxQArjO9ws01PRFmYmBRRJYEwic8sYQ52Y5QsEmTN51MffKsBr8kIKxcrsnAvYtBOPrxHl7IJlZuuM35z7sMxQmxrjLS6DOK62mAR4fOQXzSu7gnFU9u0jzYDzu(KTzPZqTWx7ZllqzREoc0dc9LyCMVFVLkW9QWbzdNgJYIEM8VtYJM9ywA6C7RCO8424kx1dq4fFyJlEqN0a6b2I)sHlvgEPPtc0miysfWLKBiPMk85KLXk6HGSG8FIvKfkjMeLOKH9sXYo0KLnjNixex6rs3QErcUHMMfrpfHWi2neFpuELvCfMO64BDc68cHYVusBn7pbYRw9yLhOy95XHxO4RP7sSVPNX3CJ4B8bMwJKWP6(EtKX6ndMYJCU2en1ZCvSbQhpLmqnu0sTOiuXA3ttjNjaTL2GbwA4W0thOmBPLu3VbLMraINUFlk0UVJiOmrh31fcqPE1Tn9L4SoZJxKmlPO0T)kWlDetmxPgaB3flm9k7RWgIfXOvAzVueSiDY8KyM)NvuGY8Amq09lClVMg(4YaQKeTa7MmF9tIzqjXnOPcDelJBTQZCEdjd9IYOFiKHxNTkwGpuUBalDgUGCAODLo0RrqUU80sGrmDdr)RDv1Dv8TuDJxiQ8ExKVRQ6YUnu52rS4eABqDkXvTVKFMLkh5isqEL8nHYNRjxXr(Acfv(uW9LbhsWoi8A4woRJcLPOsSzmNWKSwXueVxXrzREDsoXReTySKpbFk2tC24z1ZHvjpmGrI1REVuJnYUjC8tAx6aa1LdeLJWtzrZInIP00ksdOVifXoSkBmEZGYKDfOCC3edrfzPRW3H8GoWAEuHIztCk6Qzq3ed0aKV1nglo5OtjKGZUSxvcIg9W8SgDlXfmEjryCaqnCUMstGzGDmaIBBVbakf)hdqwRjNgZEbEETym43YJHWcygBn7fgjDwr7GlyiwUUkZkFvDcaMFqxwI8OjeaUJKdB0LoFGKWUNSjDtSc7QIdY45aP8WHi99L4OVXInlkBRAInls3nBjt0Bwkr3C(eHlAk1qLSFB2YkSX8fVOWaq57eNLVA2teZHAUnmsMR((iBsz6niqOiwq8fTWTqft)ywvRy7T1CEUU7JNG6(vNtNAHs0SEQB6EqPouCOKCoIJw0MVmb8ZxqsnI5brYIIPR8ENO8A0ZFLsSBlJwTaSxkP5Ivokq9QNCVOjlBY6D5lZstnQurRkMSslTAqWirLhtcDroGblSIazSuK1rLtVHNBazsqbl)O)RiHFJiOTiHpIaTKrHEWEW(EIbwb8VHaICsFGRX2CCrP6OVp4g2EBU(GB46488XHtYuNP17n5(TkVluM4WnoAte6eJnkEJ4GxZg1HhCsLgzjNsCFN0zDPhd(tj)ds)wNUBtbMFh4QfFtXC1yLF6wTzEVADD27ygRJ11jZsKlL4JT5Qnd38HDJbAwldo7id9dkkVZeHV9Bk2uie8urFT2rLcVQVKNIhvCYoHMAcbTzEh7ReAMLYz2LDPwUsvgzXIvnf5QQtHbB9nY1junZ1qjia3)L(QffNI2R7H13zlhcnwjbuA)Q0S5Mryx1IOwjvYhLQArmVrS7RdSPF0A(YfxB(HZrgJySRjGFhsolcoEsV9m)0g8Q8jelKVvRpuC33CtXW9g3)c5aqmNtePnCx3CbwwdlheQQQdu2Xuxbs1XuvQDP7bMmj3GS2mk9SAS44D1tZNomCruWLwZaDFGuwuaulzNu8TLzAc1QZpc4I)94z7ku8tZs2dngG)PISuNKMcRLW2)SrxQtlL9mmHLc0Ms5kt2bpvPwY90zjjVwkSoKkaO5G1ybTQhIgRdEMjdhQBWtGVYfMfpD7EgHx5BefBn9gpxbnzsZQpJH4gFC7OouYd4DnNhqPRrnq(afJTQEKWV021i6Y4OvKnYTZk32)s3AVnFCvA6AAWajBwSlNUHUBR9m9PbSbYalM6yL(15M4w1M)rs8CI0mRQ3RYkdUUkT5iuwDhRP8I0spTXLR1GrFLI5IyljA1yrTEsZELfA95(IkEeb2jDJfXVoIV5dGuTO8FZh7y9vi4pmxSNHv3MrBDP3bJlpLcbY8I28t19SX2sx3NA81DitSJ83utF0MfVSid6eWoy4n0A2F8dSNcdc6tKz4psiFI)ey8jAiy)F7i6ujXtMNs9AiAxr66Oc6xmBz0MNIZ7C4R)Nj0dHT)VEy6FH47DCgR5pPv2f8BmabMfPOTk0Qt6LxWV73eSvEdi0Gm4tlrdWnDlxRjrPqcr2)td(fP32I22X522M4lHEplU0JP6c4LSyKx4TxfEzPMT63UcF)ldVrSohC9pG4wfL9lW7ywQuET9phQPE9DtK5unpCAtdCs6CeYqbMRbFBpaeoolI4X0fD0ExhCeANpQbqG3AG3s(oDCoobyp7ncca0azttd(wY3MXK0RbnlvAWLV6h73R4zY91Q5vVBWT8SLxO97BiBnrZF1F)EppBoo1gBU)Lb(JcVB)EQZuTurxmNOqHLFlSwgf2D)Ee7Gd7k2x(PLiE9pceXAM1B0Li4UQa4EyLiHfxinegScFCpNGNlR9)iMxepWGNu8o72mAEnYnMhWUCoH(5cUFuyTHtHvWTzUw4(OI3wH)rW12C)pI51vU2g6SBZO5vThq6OX9)tl0pxW9dcRdr8(qj5wA(DaM4lDegdWM3LCnOJFzZnMIENlC)0d4dFfiU2QRB8NoQiBrWoGAPsdhTCdI1jbiZXznEjCwCXnEfG1wQjhbwLWGWvgBcms95ScEhaCZwrCW3h7Gh4M)ImjW909Ps)gddpna9szkgGAAcLJjeLJbhynVLc3NZk4DaWnZX4GFh2bVlCm26P7tvJCmy9szkUfXQKC1HOPjd86rRd3GUNCadAYikn(4mwy4T7zi7cnL2sPsSPLNzX1Cf3Re)rdUYtPeA(LqFbw9MHX1eyGZHDgOgiSyQxRsnWdFNlDeYVd3skHlsYTmVrMAah)kB64miFBo1Gn0f90rOQEhq1Gl8fevhY3bdzL7SPgGbVpNocxO6xvd82kXvdLric9VBgLZhGrorL3nGdp9aguVC(r6d)hHAzSmlFstmULj5KYs)pbRLZ4HjCAjtibhkkzXpP7MJAjp7QS)jvwieXwXPwpqzvL8o1fCAd577u2U)Wt29zo)RFNs)6hy2xp81)kJxMopdef63HPSFjsintl5O4z0lowiT6PsP)2XiQCL8ov5YQ9WR1FS8o8vWEj9m5b3dXzf9zAfpnu(q1(mRU4hEHq5LzITAjAZsIO2Vx(bWZfCq9qR4yr33Wit3omA(Coa8QLnejNOv9xze6)(9w0qO3iqy3(eAtMLCX8UxoE1mPgRhGuzuJYaIH6ncTEUmSEfbMfa)dF9p9Nom9)U6rEJkEWlipME7)dw1Hk9R0Z)o7Cx70bMwiQcZpNSyO1smTIlujw)w8AOf45P7(GUSw1Ew6W4XyLskflUq5zKZEFL7ARl8KFP52Vx(vMJ)x8xyoFyWkQZvgwaUArEf5WaN0qP6K4DI2u1V4rQFl9x4iYg8HP1vbRCh0VdZLmWZb7RSoj2cIDC6YFlTETLgGQuHu5oZLfCPITaRgQtyvqHJVAhqphNrQ0(7)TQgWUBpOtK0Vqp8j5uuQbwwys1HOqReWm6f0VD)lB2qH)LEbxb6i(LD7e6RvIhJiYWExyvVaTsneclqv8X(92kge)wnumiLRUbu0qWYXRolP6iXYV0oJgg677xpA118(9xGh0arFn0yCdJ5L9)LHnwUlLeADogZ70SVmTs6xgNwxODB5KyLeVY6LSsa)82uAnPEaZzB0qoxrCxj)zQIeezkcRcFR2bmr1WifQG1DBlR1aeRoFCtUZhSGGc7IJH4U1sXwGFVBgDtlpOFLBgDtfFeqqET8Ast099AscctNY9biR6pW64YVLTDW7hgEh(wacJiL(7HUM79Z2AwvBp6pQcCv))0wxE)iuCJGSA0k7FiVlbLE(HhsIw4g4kj06icRClpeC9IHbqHziuPqxLq(ae2TDy3l9Wh59H999LOqOSB(nsRcvOvaH7OfiJl0kBb3BHwfcfI5rsRmh57JwP4bz51jIsWaWKH9uymRVbtkMfTjVh0)ihoawe0hxPe)(nkC318YZsvEaCtiTfFH2l9doSRCz3YvTeFwQFeI4Zaucr3Vh(9qBu4vE8(d(MZkI2XSoVgf4JJus31D5LDZ)iH02s)2i9deI8uR)mvs5kGPbxa911AA12Wgn8wa3rfICnh0AuA8Nl)X7yitRRYoWOGMbqEHsOZ87rCdGs4CgTBYVwgYqQ0ToP417qW12sjDOMKuZDzqNqjC3x9Ew16cqNE1NxLSs89yU5K1iG7G991edPeg0EGoCQO7kpIiL78Uxoe1rXb4jTMq8vrZaFPThnqYphexUh1JhtfQl3xWUWR6eRDNG1OzzJ8hDAzjPukmuD5nm1mvmZT5bB3cu6W7cDXbjJ6Oci(qOKSOO7yfSq7BgT0rjPKm(oyjUQSPr32wzR3VLYFEVxqv2JanjELxOijuQfcK)vqMxmwoACrSy94d0SeDAXBrUaBAjNbYQIJXhN2oAyphqcSejk2JRZoLCTZqmQ6(M8Ob2XsuZTbDBhuL6pOtVVLNAs9eaQDF5y(ubQYim3MKFUWuTjYFxh1gaSn8YJy2OVMhbgAgI0hRuMpDEmqUib7meUlO3FBvwEugInJ5EWtcSVOdd85HVR7JTnSQCYRFHtQ0JSFpFaIN6Bafl1M(lJ4VW45EH71VTN6fiWYEXtGHl)HRbbxm4umZtrjHLbyL3NBUviJxMBeYnD)02gHzauezjp10FIlCDtx)MtRUJ5QbZUBaj6vD6Lip56FF1dWKPCo)fiYqMr(TW2b9N2xS2KsGdwbmiuK9sPqaKDTq2d)8IVlo4NBCQJFWtTBESkGEpTH7QNOvJVbNoBKNUjFj1Wp3m6u213Knh2qpotooWP9U9m0r2Qt38uPqhCX3ckYXrGboYTx1WtSSgg8ECxd8y)C5a7QoGVEU1FhoGVgsoooSB3Z30wJj8B3Vb)eRWXta9PDJELwnBV91T1ovDmc99T5aSdhiHy6U1h7iHXPwoDAXJq18jwexf0TLjMoYfGlNnMs5fDN373gsy8EiXwBc)ISHwuwKSTQ8UR(Ta2WeIBwGEJ2D(yT2CUJexB6eBz8Qejv7vBfV2u(b0rvBCvUWIxxTfsNmOofr3IpCSdopE4azKFNBhDtn2iLZFsO86hGZnAWw4Nof0UB8uZkP(Kqpim0ui0xddQIi4DHcArSQCGoJKF0ubp(iOoQxGsh3QQkCM)qTQCkKABHQlEhyH8G8uMbatSf8mfS5zi475ABpERv55qVdqG0)sO8Pi2b8Q8VZxx907i8wdpZTNZO6GfKdwTmaM2NVAQYbxIQkSk10KxHAouhzneOufOqor7ggv9rU76i(XUIqggGxyl9KliM3WI8dVuoWwiHyRdSAIUtDTp3wVw2fVDU3)LULUIc9qbJajWh8xnWoqawPNmyeWj9I)QbKW(ORf2d8Rw373L9WJo())]] )
