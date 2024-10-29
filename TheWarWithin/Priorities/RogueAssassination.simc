@@ -12,7 +12,12 @@ actions.precombat+=/slice_and_dice,precombat_seconds=1,if=refreshable&!buff.indi
 # Restealth if possible (no vulnerable enemies in combat)
 actions+=/stealth
 # Interrupt on cooldown to allow simming interactions with that
+actions+=/cheap_shot # Only from stealth, use first.
+actions+=/blind
 actions+=/kick
+actions+=/garrote,if=stealthed.rogue&talent.iron_wire
+actions+=/gouge,if=aggro # Only way to know for sure it is looking at us.
+actions+=/kidney_shot # Expensive, use last.
 # Defensives
 actions+=/call_action_list,name=defensives
 # Combined Energy Regen needed to saturate (TODO: estimate poisoned_bleeds better)
@@ -168,6 +173,7 @@ actions.vanish+=/vanish,if=!talent.improved_garrote&talent.master_assassin&!dot.
 actions.vanish+=/vanish,if=talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&raid_event.adds.in>30
 
 # Defensives
-actions.defensives+=/crimson_vial,if=health.pct<50
-actions.defensives+=/evasion,if=buff.crimson_vial.down&(solo&health.pct<50|health.pct<25)
-actions.defensives+=/kidney_shot,if=solo&health.pct<25&!boss&aggro
+actions.defensives+=/evasion,if=health.pct<50&aggro
+actions.defensives+=/cloak_of_shadows,if=health.pct<50&incoming_magic_damage_5s>incoming_damage_5s/2
+actions.defensives+=/crimson_vial,if=health.pct<50&buff.evasion.down
+actions.defensives+=/feint,if=health.pct<50&buff.evasion.down

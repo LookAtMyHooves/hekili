@@ -1753,8 +1753,12 @@ spec:RegisterAbilities( {
         startsCombat = true,
 
         toggle = "interrupts",
+        debuff = function () return "casting" end,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
+        usable = function () return not target.is_boss end,
         handler = function ()
+            if not target.is_boss then interrupt() end
             applyDebuff( "target", "blind" )
         end,
     },
@@ -1772,6 +1776,10 @@ spec:RegisterAbilities( {
         spendType = "energy",
 
         startsCombat = true,
+
+        toggle = "interrupts",
+        debuff = function () return "casting" end,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         cycle = function ()
             if talent.prey_on_the_weak.enabled then return "prey_on_the_weak" end
@@ -1797,6 +1805,10 @@ spec:RegisterAbilities( {
 
             if pvptalent.control_is_king.enabled then
                 applyBuff( "slice_and_dice" )
+            end
+
+            if not target.is_boss then
+                interrupt()
             end
 
             gain( action.cheap_shot.cp_gain, "combo_points" )
@@ -2118,6 +2130,9 @@ spec:RegisterAbilities( {
         aura = "garrote",
         cycle = "garrote",
 
+        debuff = function () return stealthed.rogue and talent.iron_wire.enabled and "casting" or nil end,
+        readyTime = function () return stealthed.rogue and talent.iron_wire.enabled and state.timeToInterrupt( gcd.max ) or nil end,
+
         cp_gain = function() return ( stealthed.rogue or stealthed.improved_garrote ) and talent.shrouded_suffocation.enabled and 3 or 1 end,
 
         handler = function ()
@@ -2139,6 +2154,7 @@ spec:RegisterAbilities( {
                 if talent.iron_wire.enabled then
                     applyDebuff( "target", "garrote_silence" )
                     applyDebuff( "target", "iron_wire" )
+                    if not target.is_boss then interrupt() end
                 end
                 if azerite.shrouded_suffocation.enabled then
                     debuff.garrote.ss_buffed = true
@@ -2161,12 +2177,17 @@ spec:RegisterAbilities( {
         talent = "gouge",
         startsCombat = true,
 
+        toggle = "interrupts",
+        debuff = function () return "casting" end,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
+
         cp_gain = function ()
             if buff.shadow_blades.up then return combo_points.max end
             return 1 + ( buff.broadside.up and 1 or 0 ) + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 )
         end,
 
         handler = function ()
+            if not target.is_boss then interrupt() end
             applyDebuff( "target", "gouge" )
             gain( action.gouge.cp_gain, "combo_points" )
         end,
@@ -2221,7 +2242,7 @@ spec:RegisterAbilities( {
         toggle = "interrupts",
 
         debuff = "casting",
-        readyTime = state.timeToInterrupt,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
 
         handler = function ()
             interrupt()
@@ -2245,6 +2266,10 @@ spec:RegisterAbilities( {
         aura = "internal_bleeding",
         cycle = "internal_bleeding",
 
+        toggle = "interrupts",
+        debuff = function () return "casting" end,
+        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
+
         usable = function ()
             if target.is_boss then return false, "kidney_shot assumed unusable in boss fights" end
             return combo_points.current > 0, "requires combo points"
@@ -2260,6 +2285,10 @@ spec:RegisterAbilities( {
 
             if pvptalent.control_is_king.enabled then
                 gain( 10 * combo_points.current, "energy" )
+            end
+
+            if not target.is_boss then
+                interrupt()
             end
 
             spend( combo_points.current, "combo_points" )
