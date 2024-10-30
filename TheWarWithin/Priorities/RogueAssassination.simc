@@ -12,7 +12,7 @@ actions.precombat+=/slice_and_dice,precombat_seconds=1,if=refreshable&!buff.indi
 # Restealth if possible (no vulnerable enemies in combat)
 actions+=/stealth
 # Interrupt on cooldown to allow simming interactions with that
-actions+=/cheap_shot
+actions+=/cheap_shot,if=stealthed.rogue
 actions+=/blind
 actions+=/kick
 actions+=/garrote,if=stealthed.rogue&talent.iron_wire
