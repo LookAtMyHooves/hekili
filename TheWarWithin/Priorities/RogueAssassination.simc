@@ -12,12 +12,12 @@ actions.precombat+=/slice_and_dice,precombat_seconds=1,if=refreshable&!buff.indi
 # Restealth if possible (no vulnerable enemies in combat)
 actions+=/stealth
 # Interrupt on cooldown to allow simming interactions with that
-actions+=/cheap_shot # Only from stealth, use first.
+actions+=/cheap_shot
 actions+=/blind
 actions+=/kick
 actions+=/garrote,if=stealthed.rogue&talent.iron_wire
-actions+=/gouge,if=aggro # Only way to know for sure it is looking at us.
-actions+=/kidney_shot # Expensive, use last.
+actions+=/gouge,if=aggro
+actions+=/kidney_shot
 # Defensives
 actions+=/call_action_list,name=defensives
 # Combined Energy Regen needed to saturate (TODO: estimate poisoned_bleeds better)
