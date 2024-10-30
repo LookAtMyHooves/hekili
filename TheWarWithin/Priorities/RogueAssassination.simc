@@ -161,19 +161,22 @@ actions.stealthed+=/garrote,if=stealthed.improved_garrote&(pmultiplier<=1|remain
 # Stealth Cooldowns   Vanish Sync for Improved Garrote with Deathmark
 actions.vanish+=/pool_resource,for_next=1,extra_amount=45
 # Vanish to fish for Fateful Ending
-actions.vanish+=/vanish,if=!buff.fatebound_lucky_coin.up&effective_combo_points>=variable.effective_spend_cp&(buff.fatebound_coin_tails.stack>=5|buff.fatebound_coin_heads.stack>=5)
+actions.vanish+=/call_action_list,name=combat_stealth,if=!buff.fatebound_lucky_coin.up&effective_combo_points>=variable.effective_spend_cp&(buff.fatebound_coin_tails.stack>=5|buff.fatebound_coin_heads.stack>=5)
 # Vanish to spread Garrote during Deathmark without Indiscriminate Carnage
-actions.vanish+=/vanish,if=!talent.master_assassin&!talent.indiscriminate_carnage&talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&combo_points.deficit>=(spell_targets.fan_of_knives>?4)
+actions.vanish+=/call_action_list,name=combat_stealth,if=!talent.master_assassin&!talent.indiscriminate_carnage&talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&combo_points.deficit>=(spell_targets.fan_of_knives>?4)
 actions.vanish+=/pool_resource,for_next=1,extra_amount=45
 # Vanish for cleaving Garrotes with Indiscriminate Carnage
-actions.vanish+=/vanish,if=!talent.master_assassin&talent.indiscriminate_carnage&talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&spell_targets.fan_of_knives>2&(target.time_to_die-remains>15|raid_event.adds.in>20)
+actions.vanish+=/call_action_list,name=combat_stealth,if=!talent.master_assassin&talent.indiscriminate_carnage&talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&spell_targets.fan_of_knives>2
 # Vanish fallback for Master Assassin
-actions.vanish+=/vanish,if=!talent.improved_garrote&talent.master_assassin&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.deathmark.up&(debuff.shiv.up|debuff.deathmark.remains<4)
+actions.vanish+=/call_action_list,name=combat_stealth,if=!talent.improved_garrote&talent.master_assassin&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.deathmark.up&(debuff.shiv.up|debuff.deathmark.remains<4)
 # Vanish fallback for Improved Garrote during Deathmark if no add waves are expected
-actions.vanish+=/vanish,if=talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&raid_event.adds.in>30
+actions.vanish+=/call_action_list,name=combat_stealth,if=talent.improved_garrote&cooldown.garrote.up&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&raid_event.adds.in>30
+
+actions.combat_stealth+=/vanish
+actions.combat_stealth+=/shadowmeld
 
 # Defensives
 actions.defensives+=/evasion,if=health.pct<50&aggro
 actions.defensives+=/cloak_of_shadows,if=health.pct<50&incoming_magic_damage_5s>incoming_damage_5s/2
 actions.defensives+=/crimson_vial,if=health.pct<50&buff.evasion.down
-actions.defensives+=/feint,if=health.pct<50&buff.evasion.down
+actions.defensives+=/feint,if=health.pct<50&buff.evasion.down&buff.feint.down
