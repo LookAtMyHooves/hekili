@@ -2915,7 +2915,7 @@ do
                 return ( t.minR >= tonumber( minR ) and t.maxR <= tonumber( maxR ) )
 
             elseif k == "adds" then t[k] = state.active_enemies - 1
-            elseif k == "casting" then return state.debuff.casting.up and not state.debuff.casting.v2
+            elseif k == "casting" then return state.debuff.casting.up
             elseif k == "class" then
                 if not t.exists then t[k] = "virtual"
                 elseif not t.is_player then t[k] = "npc"

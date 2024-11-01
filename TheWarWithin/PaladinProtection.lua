@@ -1080,6 +1080,8 @@ spec:RegisterAbilities( {
             if conduit.vengeful_shock.enabled then applyDebuff( "target", "vengeful_shock" ) end
             if legendary.bulwark_of_righteous_fury.enabled then addStack( "bulwark_of_righteous_fury", nil, min( 5, active_enemies ) ) end
         end,
+       -- debuff = function () return "casting" or nil end,
+       -- readyTime = function () return state.timeToInterrupt( gcd.max ) or nil end,
     },
 
     -- Talent: Call upon the Light to become an avatar of retribution, causing Judgment to generate 1 additional Holy Power, allowing Hammer of Wrath to be used on any target, increasing your damage, healing and critical strike chance by 20% for 25 sec.
