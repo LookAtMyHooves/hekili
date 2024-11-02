@@ -1185,7 +1185,7 @@ spec:RegisterAbilities( {
         spendType = "mana",
 
         startsCombat = false,
-
+        usable = function () return target.maxR < 8, "target must be in range" end,
         handler = function ()
         end,
     },

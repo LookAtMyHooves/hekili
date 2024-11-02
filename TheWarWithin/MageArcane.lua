@@ -1340,7 +1340,7 @@ spec:RegisterAbilities( {
 
         startsCombat = true,
 
-        usable = function () return not settings.check_explosion_range or target.maxR < 10, "target out of range" end,
+        usable = function () return target.maxR < 10 end,
         handler = function ()
             if buff.expanded_potential.up then removeBuff( "expanded_potential" )
             else
