@@ -763,7 +763,7 @@ spec:RegisterAbilities( {
         texture = 613534,
 
         toggle = "cooldowns",
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
             applyBuff( "avatar" )
             if talent.immovable_object.enabled then
@@ -919,7 +919,7 @@ spec:RegisterAbilities( {
         startsCombat = true,
         toggle = "cooldowns",
         velocity = 30,
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
             applyDebuff( "target", "champions_spear" )
             if talent.champions_might.enabled or legendary.elysian_might.enabled then applyBuff( "champions_might" ) end
@@ -1001,7 +1001,7 @@ spec:RegisterAbilities( {
         talent = "demoralizing_shout",
         startsCombat = false,
         texture = 132366,
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
             applyDebuff( "target", "demoralizing_shout" )
             active_dot.demoralizing_shout = max( active_dot.demoralizing_shout, active_enemies )
@@ -1456,7 +1456,7 @@ spec:RegisterAbilities( {
             if rage.current >= threshold or ( buff.shield_block.remains > 3 and buff.ignore_pain.remains > 3 ) or not tanking then return 0 end
             return rage[ "time_to_" .. threshold ]
         end,
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
             if set_bonus.tier29_2pc > 0 then applyBuff( "vanguards_determination" ) end
             if buff.revenge.up then removeBuff( "revenge" ) end
@@ -1546,7 +1546,7 @@ spec:RegisterAbilities( {
         talent = "shield_charge",
         equipped = "shield",
         startsCombat = true,
-
+        usable = function () return target.maxR < 8 end,
         handler = function ()
             if talent.battering_ram.enabled then
                 applyBuff( "battering_ram" )
