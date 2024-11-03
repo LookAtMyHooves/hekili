@@ -1,14 +1,15 @@
-actions.precombat+=/summon_pet
+# actions.precombat+=/summon_pet
 actions.precombat+=/use_item,name=imperfect_ascendancy_serum
 actions.precombat+=/hunters_mark,if=(settings.mark_any|target.is_boss)&active_dot.hunters_mark=0&target.time_to_pct_80>20
 actions.precombat+=/use_item,name=algethar_puzzle_box
 
 actions+=/muzzle
 actions+=/tranquilizing_shot
+actions+=/intimidation
 # Defensives
 actions+=/call_action_list,name=defensives
 actions+=/hunters_mark,if=(settings.mark_any|target.is_boss)&active_dot.hunters_mark=0&target.time_to_pct_80>20
-actions+=/mend_pet,if=pet.health_pct<pet_healing
+# actions+=/mend_pet,if=pet.health_pct<pet_healing
 actions+=/call_action_list,name=cds
 actions+=/call_action_list,name=plst,strict=1,if=active_enemies<3&talent.vicious_hunt
 actions+=/call_action_list,name=plcleave,strict=1,if=active_enemies>2&talent.vicious_hunt
@@ -104,9 +105,10 @@ actions.sentcleave+=/raptor_bite,cycle_targets=1,if=!talent.contagious_reagents
 actions.sentcleave+=/raptor_bite,cycle_targets=1
 
 # Defensives
-actions.defensives+=/healthstone,if=health.pct<25
-actions.defensives+=/exhilaration,if=health.pct<25|pet.health_pct<25
-actions.defensives+=/survival_of_the_fittest,if=down&health.pct<40|pet.health_pct<25
+actions.defensives+=/exhilaration,if=health.pct<50|pet.health_pct<25
+actions.defensives+=/survival_of_the_fittest,if=down&health.pct<50|pet.health_pct<25
+actions.defensives+=/aspect_of_the_turtle,if=down&health.pct<30&buff.survival_of_the_fittest.down
+actions.defensives+=/misdirection,if=aggro&down&health.pct<75
 actions.defensives+=/revive_pet,if=pet.dead&!mounted
 actions.defensives+=/summon_pet,if=!pet.exists&!pet.dead&!mounted
 actions.defensives+=/mend_pet,if=pet.alive&pet.exists&pet.health_pct<pet_healing
