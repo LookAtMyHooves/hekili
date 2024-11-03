@@ -968,6 +968,7 @@ spec:RegisterAbilities( {
 
         toggle = "cooldowns",
 
+        usable = function () return target.maxR <= 8 end,
         handler = function ()
             applyBuff( "coordinated_assault" )
             if talent.bombardier.enabled then
@@ -1017,7 +1018,7 @@ spec:RegisterAbilities( {
         talent = "flanking_strike",
         startsCombat = true,
 
-        usable = function () return pet.alive end,
+        usable = function () return pet.alive and target.maxR <= 8 end,
 
         handler = function()
             addStack( "tip_of_the_spear" )
@@ -1036,6 +1037,7 @@ spec:RegisterAbilities( {
         talent = "fury_of_the_eagle",
         startsCombat = true,
 
+        usable = function () return target.maxR <= 8 end,
         start = function()
             if set_bonus.tier31_2pc > 0 then applyBuff( "fury_strikes" ) end
             if set_bonus.tier31_4pc > 0 then applyBuff( "contained_explosion" ) end
@@ -1220,6 +1222,7 @@ spec:RegisterAbilities( {
 
         usable = function () return pet.alive or group, "requires a living pet or ally" end,
         handler = function ()
+            applyBuff( "misdirection_buff" )
             applyBuff( "misdirection" )
         end,
     },
