@@ -1925,6 +1925,7 @@ spec:RegisterAbilities( {
         talent = "implosive_trap",
         startsCombat = false,
 
+        usable = function () return target.maxR <= 8 end,
         handler = function()
         end,
     },
@@ -1958,7 +1959,7 @@ spec:RegisterAbilities( {
         toggle = "interrupts",
 
         debuff = "casting",
-        readyTime = function () return state.timeToInterrupt( gcd.max ) end,
+        readyTime = function () return not boss and state.timeToInterrupt( gcd.max ) end,
 
         usable = function () return not boss end,
         handler = function ()
