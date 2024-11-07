@@ -761,9 +761,9 @@ spec:RegisterHook( "reset_precast", function()
         state:QueueAuraEvent( "coordinated_assault", TriggerBombardier, buff.coordinated_assault.expires, "AURA_EXPIRATION" )
     end
 
-    if now - action.harpoon.lastCast < 1.5 then
-        setDistance( 5 )
-    end
+    -- if now - action.harpoon.lastCast < 1.5 then
+    --     setDistance( 5 )
+    -- end
 
     if debuff.tar_trap.up then
         debuff.tar_trap.expires = debuff.tar_trap.applied + 30
@@ -1066,7 +1066,7 @@ spec:RegisterAbilities( {
         handler = function ()
             applyDebuff( "target", "harpoon" )
             if talent.terms_of_engagement.enabled then applyBuff( "terms_of_engagement" ) end
-            setDistance( 5 )
+            -- setDistance( 5 )
         end,
     },
 
